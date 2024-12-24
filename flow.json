@@ -1,11 +1,6 @@
 {
 	"contracts": {
-		"Counter": {
-			"source": "contracts/Counter.cdc",
-			"aliases": {
-				"testing": "0000000000000007"
-			}
-		}
+
 	},
 	"dependencies": {
 		"Burner": {
@@ -112,7 +107,7 @@
 	   "deployments": {
 		"emulator": {
 		 "emulator-account": [
-		  "Counter"
+		  
 		 ],
 		 "emulator-bob": []
 		}
