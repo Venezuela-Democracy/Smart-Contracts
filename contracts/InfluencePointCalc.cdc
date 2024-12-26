@@ -4,6 +4,6 @@ import "NonFungibleToken"
 import "MetadataViews"
 
 access(all)
-contract Democracy {
+contract InfluencePointCalc {
     
 }
