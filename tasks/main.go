@@ -18,7 +18,19 @@ func main() {
 	//
 	color.Red("Admin should be able to upload metadata to the contract")
 	// upload_metadata
-	o.Tx("admin/upload_metadata",
+	o.Tx("admin/upload_location_metadata",
+		WithSigner("account"),
+		WithArg("", ""),
+		WithArg("", ""),
+		WithArg("", ""),
+	)
+	o.Tx("admin/upload_character_metadata",
+		WithSigner("account"),
+		WithArg("", ""),
+		WithArg("", ""),
+		WithArg("", ""),
+	)
+	o.Tx("admin/upload_item_metadata",
 		WithSigner("account"),
 		WithArg("", ""),
 		WithArg("", ""),

@@ -13,8 +13,12 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
     // A struct containing all the information related to the contract
 	access(self) let collectionInfo: {String: AnyStruct}
-    // Variable size dictionary of Play structs
-    access(self) var cardDatas: {UInt32: Card}
+    // Variable size dictionary of LocationCard structs
+    access(self) var locationCardDatas: {UInt32: LocationCard}
+    // Variable size dictionary of CharacterCard structs
+    access(self) var characterCardDatas: {UInt32: CharacterCard}
+    // Variable size dictionary of CulturalItemCard structs
+    access(self) var culturalItemCardDatas: {UInt32: CulturalItemCard}
     // Season is a concept that indicates a group of Sets through time.
     // Many Sets can exist at a time, but only one Season.
     access(all) var currentSeason: UInt32
@@ -40,7 +44,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) event ContractInitialized()
     access(all) event Withdraw(id: UInt64, from: Address?)
 	access(all) event Deposit(id: UInt64, to: Address?)
-    access(all) event CardCreated(cardID: UInt32, metadata: {String:String})
+    access(all) event CardCreated(cardID: UInt32, cardType: String)
 	access(all) event VenezuelaNFTMinted(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address)
 
     // -----------------------------------------------------------------------
@@ -127,6 +131,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // The amount of Influence Points generated per day when equipped
         access(all) let generation: UInt32
         // The amount of Development Points generated per day when equipped
+        // DP represent the region's economic
         access(all) let regionalGeneration: UInt32
         // Card's avaible proposals for the Region
         access(all) let availableProposals: [LocationProposal]
@@ -192,6 +197,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // CharacterCard is a Struct that holds metadata associated 
     // with a specific VenezuelaNFT Card
     access(all) struct CharacterCard {
+        // The unique ID for the Card
+        access(all) let cardID: UInt32
         // Character type
         // characters have different influence types
         // ex: Educational, Technological, etc
@@ -202,12 +209,14 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         access(all) let influencePointsGeneration: UInt32
         // Character launch cost
         // it costs Development points to launch a Character
+        // this represents a political campaign cost
         access(all) let launchCost: UInt32
         // Character effects as President
         access(all) let presidentEffects: PresidentEffects
         // Card's narrative effect when adopted by the Region
         // there are different narratives depending on the % of adoption
         access(all) let cardNarratives: {UInt32: String}
+
         init(
             characterTypes: [String],
             influencePointsGeneration: UInt32,
@@ -221,6 +230,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 launchCost > 0: "Launch cost  must be higher than zero"
                 cardNarratives != nil: "Card's narratives can't be empty"
             }
+            self.cardID = VenezuelaNFT.nextCardID
             self.characterTypes = characterTypes
             self.influencePointsGeneration = influencePointsGeneration
             self.launchCost = launchCost
@@ -258,6 +268,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // CulturalItemCard is a Struct that holds metadata associated 
     // with a specific VenezuelaNFT Card
     access(all) struct CulturalItemCard {
+        // The unique ID for the Card
+        access(all) let cardID: UInt32
         // Card type defines what kind of development
         // this card influences
         access(all) let type: String
@@ -281,6 +293,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 cardNarratives != nil: "Card's narratives can't be empty"
                 specialEffects != nil: "Card's special effects can't be empty"
             }
+            self.cardID = VenezuelaNFT.nextCardID
             self.type = type
             self.influencePointsGeneration = influencePointsGeneration
             self.cardNarratives = cardNarratives
@@ -553,28 +566,87 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // various aspects of the Cards, Sets, and Seasons
     //
     access(all) resource Admin {
-        // createCard creates a new Card struct 
-        // and stores it in the Cards dictionary in the VenezuelaNFT smart contract
-        //
-        // Parameters: metadata: A dictionary mapping metadata titles to their data
-        //                       example: {"Card Type": "Location", "Card Name": "Angel's Falls"}
+        // createLocationCard creates a new LocationCard struct 
+        // and stores it in the LocationCards dictionary in the VenezuelaNFT smart contract
         //
         // Returns: the ID of the new Card object
         //
-        access(all) fun createCard(metadata: {String: String}): UInt32 {
+        access(all) fun createLocationCard(
+            region: String,
+            type: String,
+            generation: UInt32,
+            regionalGeneration: UInt32,
+            cardNarratives: {UInt32: String},
+            proposals: [LocationProposal]): UInt32 {
             // Create the new Card
-            var newCard = Card(metadata: metadata)
+            var newCard = LocationCard(
+                region: region,
+                type: type,
+                generation: generation,
+                regionalGeneration: regionalGeneration,
+                cardNarratives: cardNarratives,
+                proposals: proposals
+            )
             let newID = newCard.cardID
 
             // Increment the ID so that it isn't used again
             VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
             // Store it in the contract storage
-            VenezuelaNFT.cardDatas[newID] = newCard
+            // for LocationCards
+            VenezuelaNFT.locationCardDatas[newID] = newCard
             // emit event
-            emit CardCreated(cardID: newCard.cardID, metadata: metadata)
+            emit CardCreated(cardID: newCard.cardID, cardType: "Location")
 
             return newID
-        }        
+        }
+        access(all) fun createCharacterCard(
+            characterTypes: [String],
+            influencePointsGeneration: UInt32,
+            launchCost: UInt32,
+            presidentEffects: PresidentEffects,
+            cardNarratives: {UInt32: String}): UInt32 {
+            // Create the new Card
+            var newCard = CharacterCard(
+                characterTypes: characterTypes,
+                influencePointsGeneration: influencePointsGeneration,
+                launchCost: launchCost,
+                presidentEffects: presidentEffects,
+                cardNarratives: cardNarratives
+            )
+            let newID = newCard.cardID
+
+            // Increment the ID so that it isn't used again
+            VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
+            // Store it in the contract storage
+            VenezuelaNFT.characterCardDatas[newID] = newCard
+            // emit event
+            emit CardCreated(cardID: newCard.cardID, cardType: "Character")
+
+            return newID
+        }
+        access(all) fun createCulturalItemCard(
+            type: String,
+            influencePointsGeneration: UInt32,
+            cardNarratives: {UInt32: String},
+            specialEffects: CulturalItemEffects): UInt32 {
+            // Create the new Card
+            var newCard = CulturalItemCard(
+                type: type,
+                influencePointsGeneration: influencePointsGeneration,
+                cardNarratives: cardNarratives,
+                specialEffects: specialEffects
+            )
+            let newID = newCard.cardID
+
+            // Increment the ID so that it isn't used again
+            VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
+            // Store it in the contract storage
+            VenezuelaNFT.culturalItemCardDatas[newID] = newCard
+            // emit event
+            emit CardCreated(cardID: newCard.cardID, cardType: "Cultural Item")
+
+            return newID
+        }         
     }
     
     // -----------------------------------------------------------------------
@@ -658,7 +730,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
     init() {
         let identifier = "VenezuelaNFT_".concat(self.account.address.toString())
-        self.cardDatas = {}
+        self.locationCardDatas = {}
+        self.characterCardDatas = {}
+        self.culturalItemCardDatas = {}
         self.setDatas = {}
         self.totalSupply = 0
         self.currentSeason = 0
