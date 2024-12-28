@@ -157,6 +157,71 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             self.availableProposals = proposals
         }
     }
+    // Struct to store a CharacterCard effects
+    // citizens vote on Character to become a region's governor
+    // or the Country's President and the card's effects activate
+    // when the CharacterCard is selected
+    access(all) struct PresidentEffects {
+        // Global cost effect
+        // this affects the cost % of a specific
+        // type of proposals
+        // this maps proposal cost reduction % and on what type
+        access(all) let costEffect: {String: UInt32}
+        // Development Generation % effect
+        access(all) let developmentEffect: {String: UInt32}
+        // Special Bonus
+        // some character have an extra bonus effect when Elected
+        access(all) let bonusEffect: {String: UInt32}  
+
+        init(
+            costEffect: {String: UInt32},
+            developmentEffect: {String: UInt32},
+            bonusEffect: {String: UInt32}
+            ) {
+            pre {
+                costEffect != nil: "Cost Effect cannot be empty"
+                developmentEffect != nil: "Development Effect cannot be empty"     
+            }
+            self.costEffect = costEffect
+            self.developmentEffect = developmentEffect
+            self.bonusEffect = bonusEffect
+        }
+    }
+    // CharacterCard is a Struct that holds metadata associated 
+    // with a specific VenezuelaNFT Card
+    access(all) struct CharacterCard {
+        // Character type
+        // characters have different influence types
+        // ex: Educational, Technological, etc
+        // a character can belong to multiple types
+        access(all) let characterTypes: [String]
+        // Character Influence Points generation 
+        // characters generate IP per day when equipped
+        access(all) let influencePointsGeneration: UInt32
+        // Character launch cost
+        // it costs Development points to launch a Character
+        access(all) let launchCost: UInt32
+        // Character effects as President
+        access(all) let presidentEffects: PresidentEffects
+        init(
+            characterTypes: [String],
+            influencePointsGeneration: UInt32,
+            launchCost: UInt32,
+            presidentEffects: PresidentEffects
+            ) {
+            pre {
+                characterTypes.length != 0: "Character must have at least one(1) type"
+                influencePointsGeneration > 0: "IP generation must be higher than zero"
+                launchCost > 0: "Launch cost  must be higher than zero"
+            }
+            self.characterTypes = characterTypes
+            self.influencePointsGeneration = influencePointsGeneration
+            self.launchCost = launchCost
+            self.presidentEffects = presidentEffects
+        }
+    }
+
+
     // Metadata struct for each Card
     // this is created and used at the time of minting/revealing
     access(all) struct CardData {
