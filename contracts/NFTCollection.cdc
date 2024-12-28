@@ -66,10 +66,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // read the metadata associated with a specific Card ID
     //
     access(all) struct Card {
-
         // The unique ID for the Card
         access(all) let cardID: UInt32
-
         // Stores all the metadata about the Card as a string mapping
         access(all) let metadata: {String: String}
 
@@ -88,6 +86,75 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
             // VenezuelaNFT.cardsDatas[self.CardID] = self
             return self.cardID
+        }
+    }
+
+    // Struct to store a LocationCard available proposals
+    // citizens vote on proposals and the card's effects activate
+    // based on the % of adoption of said proposal
+    access(all) struct LocationProposal {
+        // The name of the proposal
+        access(all) let proposalName: String
+        // The proposal's effect when adopted
+        // this is usually a % increase on Development Points
+        // generation during a set time
+        access(all) let effect: UInt32
+        // Duration of the effect
+        access(all) let duration: UFix64
+        // Adoption % required to be activated
+        access(all) let adoptionRequirement: UInt32
+
+        init(proposalName: String, effect: UInt32, duration: UFix64, adoptionRequirement: UInt32) {
+            self.proposalName = proposalName
+            self.effect = effect
+            self.duration = duration
+            self.adoptionRequirement = adoptionRequirement
+        }
+    }
+    // LocationCard is a Struct that holds metadata associated 
+    // with a specific VenezuelaNFT Card
+    // VenezuelaNFTs will all reference a single Card as the owner of
+    // its metadata. The Cards are publicly accessible, so anyone can
+    // read the metadata associated with a specific Card ID
+    //    
+    access(all) struct LocationCard {
+        // The unique ID for the Card
+        access(all) let cardID: UInt32
+        // The Location's region
+        access(all) let region: String
+        // The type of bonus this Card gives
+        access(all) let type: String
+        // The amount of Influence Points generated per day when equipped
+        access(all) let generation: UInt32
+        // The amount of Development Points generated per day when equipped
+        access(all) let regionalGeneration: UInt32
+        // Card's narrative effect when adopted by the Region
+        // there are different narratives depending on the % of adoption
+        access(all) let cardNarratives: {UInt32: String}
+        // Card's avaible proposals for the Region
+        access(all) let availableProposals: [LocationProposal]
+
+        init(
+            region: String,
+            type: String,
+            generation: UInt32,
+            regionalGeneration: UInt32,
+            cardNarratives: {UInt32: String},
+            proposals: [LocationProposal]
+            ) {
+            pre {
+                region.length != 0: "Location region cannot be empty"
+                type.length != 0: "Location type cannot be empty"
+                generation > 0: "Location generation cannot be zero or less"
+                regionalGeneration > 0: "Location regional generation cannot be zero or less"
+            }
+            self.cardID = VenezuelaNFT.nextCardID
+            self.region = region
+            self.type = type
+            self.generation = generation
+            self.regionalGeneration = regionalGeneration
+            self.cardNarratives = cardNarratives
+            self.availableProposals = proposals
         }
     }
     // Metadata struct for each Card
@@ -370,11 +437,10 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
             // Increment the ID so that it isn't used again
             VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
-
-            emit CardCreated(cardID: newCard.cardID, metadata: metadata)
-
             // Store it in the contract storage
             VenezuelaNFT.cardDatas[newID] = newCard
+            // emit event
+            emit CardCreated(cardID: newCard.cardID, metadata: metadata)
 
             return newID
         }        
