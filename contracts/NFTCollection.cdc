@@ -128,11 +128,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         access(all) let generation: UInt32
         // The amount of Development Points generated per day when equipped
         access(all) let regionalGeneration: UInt32
+        // Card's avaible proposals for the Region
+        access(all) let availableProposals: [LocationProposal]
         // Card's narrative effect when adopted by the Region
         // there are different narratives depending on the % of adoption
         access(all) let cardNarratives: {UInt32: String}
-        // Card's avaible proposals for the Region
-        access(all) let availableProposals: [LocationProposal]
 
         init(
             region: String,
@@ -147,6 +147,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 type.length != 0: "Location type cannot be empty"
                 generation > 0: "Location generation cannot be zero or less"
                 regionalGeneration > 0: "Location regional generation cannot be zero or less"
+                cardNarratives != nil: "Card's narratives can't be empty"
             }
             self.cardID = VenezuelaNFT.nextCardID
             self.region = region
@@ -187,6 +188,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             self.bonusEffect = bonusEffect
         }
     }
+    
     // CharacterCard is a Struct that holds metadata associated 
     // with a specific VenezuelaNFT Card
     access(all) struct CharacterCard {
@@ -203,24 +205,88 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         access(all) let launchCost: UInt32
         // Character effects as President
         access(all) let presidentEffects: PresidentEffects
+        // Card's narrative effect when adopted by the Region
+        // there are different narratives depending on the % of adoption
+        access(all) let cardNarratives: {UInt32: String}
         init(
             characterTypes: [String],
             influencePointsGeneration: UInt32,
             launchCost: UInt32,
-            presidentEffects: PresidentEffects
+            presidentEffects: PresidentEffects,
+            cardNarratives: {UInt32: String}
             ) {
             pre {
                 characterTypes.length != 0: "Character must have at least one(1) type"
                 influencePointsGeneration > 0: "IP generation must be higher than zero"
                 launchCost > 0: "Launch cost  must be higher than zero"
+                cardNarratives != nil: "Card's narratives can't be empty"
             }
             self.characterTypes = characterTypes
             self.influencePointsGeneration = influencePointsGeneration
             self.launchCost = launchCost
+            self.cardNarratives = cardNarratives
             self.presidentEffects = presidentEffects
         }
     }
+    // Struct to store a CulturalItemCard effects
+    // citizens vote on CulturalItems to be adopted by the region
+    access(all) struct CulturalItemEffects {
+        // CulturalItem effects influence your voting power
+        // on certain type of proposals
+        // ex: Arepas, when equipped, double your voting power 
+        // in food-related proposals
+        access(all) let votingEffect: {UInt32: String}
 
+        // Special effect
+        // CulturalItems have special effects that active
+        // when the item has been adopted by the region
+        // these effect are related to Crisis-management
+        // not all items have one
+        access(all) let specialEffect: {UInt32: String}
+        init(
+            votingEffect: {UInt32: String},
+            specialEffect: {UInt32: String}
+        ) {
+            pre {
+                votingEffect != nil: "Voting Effect cannot be empty"    
+            }
+            self.votingEffect = votingEffect
+            self.specialEffect = specialEffect
+        }
+    }
+
+    // CulturalItemCard is a Struct that holds metadata associated 
+    // with a specific VenezuelaNFT Card
+    access(all) struct CulturalItemCard {
+        // Card type defines what kind of development
+        // this card influences
+        access(all) let type: String
+        // Card Influence Points generation per day when equipped
+        access(all) let influencePointsGeneration: UInt32
+        // Card's narrative effect when adopted by the Region
+        // there are different narratives depending on the % of adoption
+        access(all) let cardNarratives: {UInt32: String}
+        // CulturalItem's special effects when equipped or 
+        // adopted by the region
+        access(all) let specialEffects: CulturalItemEffects
+        init(
+            type: String,
+            influencePointsGeneration: UInt32,
+            cardNarratives: {UInt32: String},
+            specialEffects: CulturalItemEffects
+        ) {
+            pre {
+                type.length > 0: "Type can't be empty"
+                influencePointsGeneration > 0: "IP generation must be higher than zero"
+                cardNarratives != nil: "Card's narratives can't be empty"
+                specialEffects != nil: "Card's special effects can't be empty"
+            }
+            self.type = type
+            self.influencePointsGeneration = influencePointsGeneration
+            self.cardNarratives = cardNarratives
+            self.specialEffects = specialEffects
+        }
+    }
 
     // Metadata struct for each Card
     // this is created and used at the time of minting/revealing
