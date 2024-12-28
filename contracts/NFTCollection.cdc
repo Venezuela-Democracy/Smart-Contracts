@@ -13,6 +13,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
     // A struct containing all the information related to the contract
 	access(self) let collectionInfo: {String: AnyStruct}
+    // Variable size dictionary of Play structs
+    access(self) var cardDatas: {UInt32: Card}
     // Season is a concept that indicates a group of Sets through time.
     // Many Sets can exist at a time, but only one Season.
     access(all) var currentSeason: UInt32
@@ -38,17 +40,16 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) event ContractInitialized()
     access(all) event Withdraw(id: UInt64, from: Address?)
 	access(all) event Deposit(id: UInt64, to: Address?)
-	access(all) event CardMinted(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address)
+    access(all) event CardCreated(cardID: UInt32, metadata: {String:String})
+	access(all) event VenezuelaNFTMinted(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address)
 
     // -----------------------------------------------------------------------
     // VenezuelaNFT account paths
     // -----------------------------------------------------------------------
-
 	access(all) let CollectionStoragePath: StoragePath
 	access(all) let CollectionPublicPath: PublicPath
 	access(all) let CollectionPrivatePath: PrivatePath
 	access(all) let AdministratorStoragePath: StoragePath
-
     // -----------------------------------------------------------------------
     // VenezuelaNFT contract-level Composite Type definitions
     // -----------------------------------------------------------------------
@@ -79,7 +80,6 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             self.cardID = VenezuelaNFT.nextCardID
             self.metadata = metadata
         }
-
         /// This function is intended to backfill the Card on blockchain with a more detailed
         /// description of the Card. The benefit of having the description is that anyone would
         /// be able to know the story of the Card directly from Flow
@@ -93,16 +93,13 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // Metadata struct for each Card
     // this is created and used at the time of minting/revealing
     access(all) struct CardData {
-
         // The ID of the Set that the Card comes from
         access(all) let setID: UInt32
         // The ID of the Card that the Card references
         access(all) let cardID: UInt32
         // Address of the original minter
         access(all) let minter: Address
-
         // The place in the edition that this Card was minted
-        // Otherwise know as the serial number
         access(all) let serialNumber: UInt64
 
         init(_ setID: UInt32,_ cardID: UInt32,_ serialNumber: UInt64,_ minter: Address) {
@@ -160,7 +157,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 			// Set the metadata struct
 			self.metadata = CardData(setID, cardID, serialNumber, minter)
             // Emit event
-            emit CardMinted(
+            emit VenezuelaNFTMinted(
                 nftID: self.id,
                 cardID: cardID,
                 setID: self.metadata.setID,
@@ -353,7 +350,36 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // -----------------------------------------------------------------------
     // VenezuelaNFT Administrator Resource
     // -----------------------------------------------------------------------
+    // Admin is a special authorization resource that 
+    // allows the owner to perform important functions to modify the 
+    // various aspects of the Cards, Sets, and Seasons
+    //
+    access(all) resource Admin {
+        // createCard creates a new Card struct 
+        // and stores it in the Cards dictionary in the VenezuelaNFT smart contract
+        //
+        // Parameters: metadata: A dictionary mapping metadata titles to their data
+        //                       example: {"Card Type": "Location", "Card Name": "Angel's Falls"}
+        //
+        // Returns: the ID of the new Card object
+        //
+        access(all) fun createCard(metadata: {String: String}): UInt32 {
+            // Create the new Card
+            var newCard = Card(metadata: metadata)
+            let newID = newCard.cardID
 
+            // Increment the ID so that it isn't used again
+            VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
+
+            emit CardCreated(cardID: newCard.cardID, metadata: metadata)
+
+            // Store it in the contract storage
+            VenezuelaNFT.cardDatas[newID] = newCard
+
+            return newID
+        }        
+    }
+    
     // -----------------------------------------------------------------------
     // VenezuelaNFT public functions
     // -----------------------------------------------------------------------
@@ -435,6 +461,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
     init() {
         let identifier = "VenezuelaNFT_".concat(self.account.address.toString())
+        self.cardDatas = {}
         self.setDatas = {}
         self.totalSupply = 0
         self.currentSeason = 0
