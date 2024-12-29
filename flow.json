@@ -1,6 +1,8 @@
 {
 	"contracts": {
-
+		"VenezuelaNFT": {
+			"source": "./contracts/VenezuelaNFT.cdc"
+		}
 	},
 	"dependencies": {
 		"Burner": {
@@ -107,7 +109,7 @@
 	   "deployments": {
 		"emulator": {
 		 "emulator-account": [
-		  
+			"VenezuelaNFT"
 		 ],
 		 "emulator-bob": []
 		}

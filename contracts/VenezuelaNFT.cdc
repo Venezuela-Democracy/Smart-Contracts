@@ -565,7 +565,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // allows the owner to perform important functions to modify the 
     // various aspects of the Cards, Sets, and Seasons
     //
-    access(all) resource Admin {
+    access(all) resource Administrator {
         // createLocationCard creates a new LocationCard struct 
         // and stores it in the LocationCards dictionary in the VenezuelaNFT smart contract
         //
@@ -751,7 +751,12 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 		self.CollectionPrivatePath = PrivatePath(identifier: identifier)!
 		self.AdministratorStoragePath = StoragePath(identifier: identifier.concat("Administrator"))!
 
+		// Create a Administrator resource and save it to VenezuelaNFT account storage
+		let administrator <- create Administrator()
+		self.account.storage.save(<- administrator, to: self.AdministratorStoragePath)
         // Emit contract init event
 		emit ContractInitialized()
+
+
     }
 }

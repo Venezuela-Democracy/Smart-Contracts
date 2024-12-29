@@ -18,11 +18,17 @@ func main() {
 	//
 	color.Red("Admin should be able to upload metadata to the contract")
 	// upload_metadata
-	o.Tx("admin/upload_location_metadata",
+	o.Tx("admin/create_locationCard",
 		WithSigner("account"),
-		WithArg("", ""),
-		WithArg("", ""),
-		WithArg("", ""),
+		WithArg("region", "Merida"),
+		WithArg("type", "Educational"),
+		WithArg("generation", "15"),
+		WithArg("regionalGeneration", "100"),
+		WithArg("cardNarratives", `{80: "ULA consolidates as Merida's intellectual heart", 60: "The university sets the rhythm of Merida’s life"}`),
+		WithArg("proposal_1_name", "Scholarship Program"),
+		WithArg("proposal_1_effect", "10"),
+		WithArg("proposal_1_duration", "7.0"),
+		WithArg("proposal_1_adoptionRequirement", "30"),
 	)
 	o.Tx("admin/upload_character_metadata",
 		WithSigner("account"),
