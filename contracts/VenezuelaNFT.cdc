@@ -172,23 +172,23 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // this affects the cost % of a specific
         // type of proposals
         // this maps proposal cost reduction % and on what type
-        access(all) let costEffect: {String: UInt32}
+        access(all) let effectCostReduction: {String: UInt32}
         // Development Generation % effect
         access(all) let developmentEffect: {String: UInt32}
         // Special Bonus
         // some character have an extra bonus effect when Elected
-        access(all) let bonusEffect: {String: UInt32}  
+        access(all) let bonusEffect: {String: UInt32}?
 
         init(
-            costEffect: {String: UInt32},
+            effectCostReduction: {String: UInt32},
             developmentEffect: {String: UInt32},
-            bonusEffect: {String: UInt32}
+            bonusEffect: {String: UInt32}?
             ) {
             pre {
-                costEffect != nil: "Cost Effect cannot be empty"
+                effectCostReduction != nil: "Cost Effect cannot be empty"
                 developmentEffect != nil: "Development Effect cannot be empty"     
             }
-            self.costEffect = costEffect
+            self.effectCostReduction = effectCostReduction
             self.developmentEffect = developmentEffect
             self.bonusEffect = bonusEffect
         }
@@ -756,7 +756,6 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 		self.account.storage.save(<- administrator, to: self.AdministratorStoragePath)
         // Emit contract init event
 		emit ContractInitialized()
-
 
     }
 }
