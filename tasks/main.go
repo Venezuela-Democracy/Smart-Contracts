@@ -40,11 +40,13 @@ func main() {
 		WithArg("bonusEffect", `{"Educational": 50}`),
 		WithArg("cardNarratives", `{70: "Bello's legacy defines regional identity", 50: "Bello's ideas inspire local development"}`),
 	)
-	o.Tx("admin/upload_item_metadata",
+	o.Tx("admin/create_itemCard",
 		WithSigner("account"),
-		WithArg("", ""),
-		WithArg("", ""),
-		WithArg("", ""),
+		WithArg("votingEffect", `{"Gastronomic": 2}`),
+		WithArg("specialEffect", `{"Gastronomic": 20}`),
+		WithArg("type", "Gastronomic"),
+		WithArg("influencePointsGeneration", "10"),
+		WithArg("cardNarratives", `{90: "The arepa crowns itself as the region’s undisputed symbol", 70: "The arepa defines local gastronomic identity"}`),
 	)
 	color.Red("Admin should be able to create a set")
 	// Incrementa el contador

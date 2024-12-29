@@ -245,17 +245,17 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // on certain type of proposals
         // ex: Arepas, when equipped, double your voting power 
         // in food-related proposals
-        access(all) let votingEffect: {UInt32: String}
+        access(all) let votingEffect: {String: UInt32}
 
         // Special effect
         // CulturalItems have special effects that active
         // when the item has been adopted by the region
         // these effect are related to Crisis-management
         // not all items have one
-        access(all) let specialEffect: {UInt32: String}
+        access(all) let specialEffect: {String: UInt32}
         init(
-            votingEffect: {UInt32: String},
-            specialEffect: {UInt32: String}
+            votingEffect: {String: UInt32},
+            specialEffect: {String: UInt32}
         ) {
             pre {
                 votingEffect != nil: "Voting Effect cannot be empty"    
