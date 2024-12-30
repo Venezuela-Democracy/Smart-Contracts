@@ -352,7 +352,56 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             self.season = VenezuelaNFT.currentSeason
         }
     }
+    // Set is a resource type that contains the functions to add and remove
+    // Cards from a set and mint VenezuelaNFTs.
+    //
+    // It is stored in a private field in the contract so that
+    // the admin resource can call its methods.
+    //
+    // The admin can add Cards to a Set so that the set can mint VenezuelaNFTs
+    // that reference that metadata.
+    // The VenezuelaNFTs that are minted by a Set will be listed as belonging to
+    // the Set that minted it, as well as the Card it references.
+    //
+    // If the admin locks the Set, no more Cards can be added to it, but 
+    // VenezuelaNFTs can still be minted.
+    access(all) resource Set {
 
+        // Unique ID for the set
+        access(all) let setID: UInt32
+
+        // Array of cards that are a part of this set.
+        // When a Card is added to the set, its ID gets appended here.
+        // The ID does not get removed from this array when a Card is retired.
+        access(contract) var cards: [UInt32]
+
+        // Indicates if the Set is currently locked.
+        // When a Set is created, it is unlocked 
+        // and cards are allowed to be added to it.
+        // When a set is locked, cards cannot be added.
+        // A Set can never be changed from locked to unlocked,
+        // the decision to lock a Set it is final.
+        // If a Set is locked, cards cannot be added, but
+        // VenezuelaNFTs can still be minted from cards
+        // that exist in the Set.
+        access(all) var locked: Bool
+
+        // Mapping of Card IDs that indicates the number of VenezuelaNFTs 
+        // that have been minted for specific cards in this Set.
+        // When a VenezuelaNFT is minted, this value is stored in the VenezuelaNFT to
+        // show its place in the Set, eg. 13 of 60.
+        access(contract) var numberMintedPerCard: {UInt32: UInt32}
+
+        init(name: String) {
+            self.setID = VenezuelaNFT.nextSetID
+            self.cards = []
+            self.locked = false
+            self.numberMintedPerCard = {}
+
+            // Create a new SetData for this Set and store it in contract storage
+            VenezuelaNFT.setDatas[self.setID] = SetData(name: name)
+        }
+    }
     //
     /// The resource that represents a VenezulaNFT
 	access(all) resource NFT: NonFungibleToken.NFT {
@@ -599,6 +648,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
             return newID
         }
+        // createCharacterCard creates a new CharacterCard struct 
+        // and stores it in the CharacterCards dictionary in the VenezuelaNFT smart contract
+        //
+        // Returns: the ID of the new Card object
+        //
         access(all) fun createCharacterCard(
             characterTypes: [String],
             influencePointsGeneration: UInt32,
@@ -624,6 +678,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
             return newID
         }
+        // createCulturalItemCard creates a new CulturalItemCard struct 
+        // and stores it in the CulturalItemCards dictionary in the VenezuelaNFT smart contract
+        //
+        // Returns: the ID of the new Card object
+        //
         access(all) fun createCulturalItemCard(
             type: String,
             influencePointsGeneration: UInt32,
@@ -646,7 +705,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             emit CardCreated(cardID: newCard.cardID, cardType: "Cultural Item")
 
             return newID
-        }         
+        }
+
+        access(all) fun createSet(setName: String, cardId: UInt32): UInt32 {
+            return 0
+        }
     }
     
     // -----------------------------------------------------------------------
