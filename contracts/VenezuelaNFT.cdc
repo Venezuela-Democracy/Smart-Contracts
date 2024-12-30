@@ -24,6 +24,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) var currentSeason: UInt32
     // Variable size dictionary of SetData structs
     access(self) var setDatas: {UInt32: SetData}
+    // Variable size dictionary of Set resources
+    access(self) var sets: @{UInt32: Set}
     // The total number of NFTs that have been created
     // Because NFTs can be destroyed, it doesn't necessarily mean that this
     // reflects the total number of NFTs in existence, just the number that
@@ -46,7 +48,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 	access(all) event Deposit(id: UInt64, to: Address?)
     access(all) event CardCreated(cardID: UInt32, cardType: String)
 	access(all) event VenezuelaNFTMinted(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address)
-
+    access(all) event SetCreated(setID: UInt32, season: UInt32)
     // -----------------------------------------------------------------------
     // VenezuelaNFT account paths
     // -----------------------------------------------------------------------
@@ -707,8 +709,28 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             return newID
         }
 
-        access(all) fun createSet(setName: String, cardId: UInt32): UInt32 {
-            return 0
+        // createSet creates a new Set resource and stores it
+        // in the sets mapping in the VenezuelaNFT contract
+        //
+        // Parameters: name: The name of the Set
+        //
+        // Returns: The ID of the created set
+        access(all) fun createSet(name: String): UInt32 {
+
+            // Create the new Set
+            var newSet <- create Set(name: name)
+
+            // Increment the setID so that it isn't used again
+            VenezuelaNFT.nextSetID = VenezuelaNFT.nextSetID + 1
+
+            let newID = newSet.setID
+
+            emit SetCreated(setID: newSet.setID, season: VenezuelaNFT.currentSeason)
+
+            // Store it in the sets mapping field
+            VenezuelaNFT.sets[newID] <-! newSet
+
+            return newID
         }
     }
     
@@ -797,6 +819,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         self.characterCardDatas = {}
         self.culturalItemCardDatas = {}
         self.setDatas = {}
+        self.sets <- {}
         self.totalSupply = 0
         self.currentSeason = 0
         self.nextCardID = 0
