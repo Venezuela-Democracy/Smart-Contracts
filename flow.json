@@ -1,8 +1,6 @@
 {
 	"contracts": {
-		"VenezuelaNFT": {
-			"source": "./contracts/VenezuelaNFT.cdc"
-		}
+		"VenezuelaNFT": "./contracts/VenezuelaNFT.cdc"
 	},
 	"dependencies": {
 		"Burner": {
@@ -85,6 +83,20 @@
 				"mainnet": "1d7e57aa55817448",
 				"testnet": "631e88ae7f1d7c20"
 			}
+		},
+		"Xorshift128plus": {
+			"source": "testnet://ed24dbe901028c5c.Xorshift128plus",
+			"hash": "219161c40707967b50ff71e507ac0e5ee24d932ea8925112fe108ff2638711aa",
+			"aliases": {
+				"testnet": "ed24dbe901028c5c"
+			}
+		},
+		"RandomConsumer": {
+			"source": "testnet://ed24dbe901028c5c.RandomConsumer",
+			"hash": "45a33ec0de147ff4dd5adf22cdb9922559c6ed652fba2927d099521e9339e793",
+			"aliases": {
+				"testnet": "ed24dbe901028c5c"
+			}
 		}
 	},
 	"networks": {
@@ -95,23 +107,25 @@
 	},
 	"accounts": {
 		"emulator-account": {
-		 "address": "f8d6e0586b0a20c7",
-		 "key": {
-		  "type": "file",
-		  "location": "emulator-account.pkey"
-		 }
+			"address": "f8d6e0586b0a20c7",
+			"key": {
+				"type": "file",
+				"location": "emulator-account.pkey"
+			}
 		},
 		"emulator-bob": {
-		 "address": "179b6b1cb6755e31",
-		 "key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
+			"address": "179b6b1cb6755e31",
+			"key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
 		}
-	   },
-	   "deployments": {
+	},
+	"deployments": {
 		"emulator": {
-		 "emulator-account": [
-			"VenezuelaNFT"
-		 ],
-		 "emulator-bob": []
+			"emulator-account": [
+				"VenezuelaNFT"
+			],
+			"emulator-bob": [
+				"Xorshift128plus"
+			]
 		}
-	   }
+	}
 }

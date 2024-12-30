@@ -3,6 +3,7 @@ import "FungibleToken"
 import "NonFungibleToken"
 import "MetadataViews"
 import "ViewResolver"
+import "RandomConsumer"
 
 access(all)
 contract VenezuelaNFT: NonFungibleToken, ViewResolver {
