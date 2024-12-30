@@ -129,6 +129,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) struct LocationCard {
         // The unique ID for the Card
         access(all) let cardID: UInt32
+        // The card's name
+        access(all) let name: String
         // The Location's region
         access(all) let region: String
         // The type of bonus this Card gives
@@ -146,6 +148,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
         init(
             region: String,
+            name: String,
             type: String,
             generation: UInt32,
             regionalGeneration: UInt32,
@@ -154,6 +157,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             ) {
             pre {
                 region.length != 0: "Location region cannot be empty"
+                name.length != 0: "Location name cannot be empty"
                 type.length != 0: "Location type cannot be empty"
                 generation > 0: "Location generation cannot be zero or less"
                 regionalGeneration > 0: "Location regional generation cannot be zero or less"
@@ -161,6 +165,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             }
             self.cardID = VenezuelaNFT.nextCardID
             self.region = region
+            self.name = name
             self.type = type
             self.generation = generation
             self.regionalGeneration = regionalGeneration
@@ -204,6 +209,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) struct CharacterCard {
         // The unique ID for the Card
         access(all) let cardID: UInt32
+        // The card's name
+        access(all) let name: String
         // Character type
         // characters have different influence types
         // ex: Educational, Technological, etc
@@ -223,6 +230,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         access(all) let cardNarratives: {UInt32: String}
 
         init(
+            name: String,
             characterTypes: [String],
             influencePointsGeneration: UInt32,
             launchCost: UInt32,
@@ -230,12 +238,14 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             cardNarratives: {UInt32: String}
             ) {
             pre {
+                name.length != 0: "Character name cannot be empty"
                 characterTypes.length != 0: "Character must have at least one(1) type"
                 influencePointsGeneration > 0: "IP generation must be higher than zero"
                 launchCost > 0: "Launch cost  must be higher than zero"
                 cardNarratives != nil: "Card's narratives can't be empty"
             }
             self.cardID = VenezuelaNFT.nextCardID
+            self.name = name
             self.characterTypes = characterTypes
             self.influencePointsGeneration = influencePointsGeneration
             self.launchCost = launchCost
@@ -275,6 +285,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) struct CulturalItemCard {
         // The unique ID for the Card
         access(all) let cardID: UInt32
+        // Name of the card
+        access(all) let name: String
         // Card type defines what kind of development
         // this card influences
         access(all) let type: String
@@ -287,6 +299,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // adopted by the region
         access(all) let specialEffects: CulturalItemEffects
         init(
+            name: String,
             type: String,
             influencePointsGeneration: UInt32,
             cardNarratives: {UInt32: String},
@@ -299,6 +312,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 specialEffects != nil: "Card's special effects can't be empty"
             }
             self.cardID = VenezuelaNFT.nextCardID
+            self.name = name
             self.type = type
             self.influencePointsGeneration = influencePointsGeneration
             self.cardNarratives = cardNarratives
@@ -678,6 +692,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         //
         access(all) fun createLocationCard(
             region: String,
+            name: String,
             type: String,
             generation: UInt32,
             regionalGeneration: UInt32,
@@ -686,6 +701,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             // Create the new Card
             var newCard = LocationCard(
                 region: region,
+                name: name,
                 type: type,
                 generation: generation,
                 regionalGeneration: regionalGeneration,
@@ -710,6 +726,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // Returns: the ID of the new Card object
         //
         access(all) fun createCharacterCard(
+            name: String,
             characterTypes: [String],
             influencePointsGeneration: UInt32,
             launchCost: UInt32,
@@ -717,6 +734,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             cardNarratives: {UInt32: String}): UInt32 {
             // Create the new Card
             var newCard = CharacterCard(
+                name: name,
                 characterTypes: characterTypes,
                 influencePointsGeneration: influencePointsGeneration,
                 launchCost: launchCost,
@@ -740,12 +758,14 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // Returns: the ID of the new Card object
         //
         access(all) fun createCulturalItemCard(
+            name: String,
             type: String,
             influencePointsGeneration: UInt32,
             cardNarratives: {UInt32: String},
             specialEffects: CulturalItemEffects): UInt32 {
             // Create the new Card
             var newCard = CulturalItemCard(
+                name: name,
                 type: type,
                 influencePointsGeneration: influencePointsGeneration,
                 cardNarratives: cardNarratives,

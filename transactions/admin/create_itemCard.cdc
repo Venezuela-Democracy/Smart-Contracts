@@ -6,6 +6,7 @@ import VenezuelaNFT from "../../contracts/VenezuelaNFT.cdc"
 
 
 transaction(
+    name: String,
     votingEffect: {String: UInt32},
     specialEffect: {String: UInt32},
     type: String,
@@ -30,6 +31,7 @@ transaction(
 
     execute {
         let newCardID = self.Administrator.createCulturalItemCard(
+            name: name,
             type: type,
             influencePointsGeneration: influencePointsGeneration,
             cardNarratives: cardNarratives,

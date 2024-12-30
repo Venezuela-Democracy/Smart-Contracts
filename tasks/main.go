@@ -21,6 +21,7 @@ func main() {
 	o.Tx("admin/create_locationCard",
 		WithSigner("account"),
 		WithArg("region", "Merida"),
+		WithArg("name", "University of Los Andes"),
 		WithArg("type", "Educational"),
 		WithArg("generation", "15"),
 		WithArg("regionalGeneration", "100"),
@@ -35,6 +36,7 @@ func main() {
 	// Admin create characterCard
 	o.Tx("admin/create_characterCard",
 		WithSigner("account"),
+		WithArg("name", "Andrés Bello"),
 		WithArg("characterTypes", `["Educational", "Cultural"]`),
 		WithArg("influencePointsGeneration", "20"),
 		WithArg("launchCost", "800"),
@@ -45,6 +47,7 @@ func main() {
 	)
 	o.Tx("admin/create_itemCard",
 		WithSigner("account"),
+		WithArg("name", "Arepa"),
 		WithArg("votingEffect", `{"Gastronomic": 2}`),
 		WithArg("specialEffect", `{"Gastronomic": 20}`),
 		WithArg("type", "Gastronomic"),
