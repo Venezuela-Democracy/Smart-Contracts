@@ -45,6 +45,8 @@ func main() {
 		WithArg("bonusEffect", `{"Educational": 50}`),
 		WithArg("cardNarratives", `{70: "Bello's legacy defines regional identity", 50: "Bello's ideas inspire local development"}`),
 	)
+	// Script to get card metadata
+	o.Script("get_card_metadata", WithArg("cardID", "1"))
 	o.Tx("admin/create_itemCard",
 		WithSigner("account"),
 		WithArg("name", "Arepa"),
@@ -54,6 +56,8 @@ func main() {
 		WithArg("influencePointsGeneration", "10"),
 		WithArg("cardNarratives", `{90: "The arepa crowns itself as the region’s undisputed symbol", 70: "The arepa defines local gastronomic identity"}`),
 	)
+	// Script to get card metadata
+	o.Script("get_card_metadata", WithArg("cardID", "2"))
 	color.Red("Admin should be able to create a set")
 	// Incrementa el contador
 	o.Tx("admin/create_set",
@@ -75,8 +79,17 @@ func main() {
 		WithSigner("account"),
 		WithArg("setID", "0"),
 	)
+
 	color.Red("User should be able to open a Pack")
 
+	o.Tx("reveal_pack",
+		WithSigner("account"),
+	)
+	color.Red("User should be able to buy a second Pack")
+	o.Tx("buy_pack",
+		WithSigner("account"),
+		WithArg("setID", "0"),
+	)
 	o.Tx("reveal_pack",
 		WithSigner("account"),
 	)

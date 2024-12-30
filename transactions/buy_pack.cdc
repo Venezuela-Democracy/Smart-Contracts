@@ -18,5 +18,4 @@ transaction(setID: UInt32) {
         // Note: production systems would consider handling path collisions
         signer.storage.save(<-receipt, to: VenezuelaNFT.ReceiptStoragePath)
     }
-
 }
