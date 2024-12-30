@@ -52,9 +52,7 @@ func main() {
 	// Incrementa el contador
 	o.Tx("admin/create_set",
 		WithSigner("account"),
-		WithArg("", ""),
-		WithArg("", ""),
-		WithArg("", ""),
+		WithArg("setName", "Base Locations"),
 	)
 	color.Red("Admin should be able to add cards to a set")
 	// create_season
