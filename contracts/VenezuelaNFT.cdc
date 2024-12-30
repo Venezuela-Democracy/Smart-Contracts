@@ -555,8 +555,20 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 		}
 
 	}
-    // CollectionResource
-	access(all) resource Collection: NonFungibleToken.Collection {
+    // to allow others to deposit VenezuelaNFTs into their Collection. It also allows for reading
+    // the IDs of VenezuelaNFTs in the Collection.
+    /// Defines the methods that are particular to this NFT contract collection
+    ///
+    access(all) resource interface VenezuelaNFTCollectionPublic {
+        access(all) fun deposit(token: @{NonFungibleToken.NFT})
+        access(all) fun getIDs(): [UInt64]
+    }
+
+
+    // Collection is a resource that every user who owns NFTs 
+    // will store in their account to manage their NFTS
+    //
+	access(all) resource Collection: NonFungibleToken.Collection, VenezuelaNFTCollectionPublic {
         // *** Collection Variables *** //
 		access(all) var ownedNFTs: @{UInt64: {NonFungibleToken.NFT}}
         // *** Collection Constructor *** //
@@ -774,6 +786,15 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
             return newID
         }
+        access(all) view fun borrowSet(setID: UInt32): &Set {
+            pre {
+                VenezuelaNFT.sets[setID] != nil: "Cannot borrow Set: The Set doesn't exist"
+            }
+            
+            // Get a reference to the Set and return it
+            // use `&` to indicate the reference to the object and type
+            return (&VenezuelaNFT.sets[setID])!
+        }
     }
     // -----------------------------------------------------------------------
     // VenezuelaNFT private functions
@@ -814,11 +835,16 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     //
     // Returns: The NFT that was minted
     // 
-    access(all) fun mintNFT(cardID: UInt32, setID: UInt32, minter: Address): @NFT {
+    access(all) fun mintNFT(cardID: UInt32, setID: UInt32, minter: Address) {
         pre {
 
         }
+        // Get reference to set
         let set = self.borrowSet(setID: setID)
+        // Get account collection reference
+        let recipient = getAccount(minter)
+        let receiverRef = recipient.capabilities.borrow<&{VenezuelaNFT.VenezuelaNFTCollectionPublic}>(VenezuelaNFT.CollectionPublicPath)
+            ?? panic("Cannot borrow a reference to the recipient's moment collection")
         // Gets the number of VenezuelaNFT that have been minted for this Play
         // to use as this VenezuelaNFT's serial number
         let currentSerial = set.numberMintedPerCard[cardID]!
@@ -830,10 +856,14 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                                         minter: minter
                                     )
 
+        // Deposit NFT into user's account
+        receiverRef.deposit(token: <- newNFT)
         // Increment the count of VenezuelaNFT minted for this Play
         set.incrementCount(cardID: cardID)
 
-        return <-newNFT
+
+
+        // return <-newNFT
     }
     // Public function to fetch a collection attribute
     access(all) fun getCollectionAttribute(key: String): AnyStruct {
@@ -920,6 +950,12 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 		self.CollectionPrivatePath = PrivatePath(identifier: identifier)!
 		self.AdministratorStoragePath = StoragePath(identifier: identifier.concat("Administrator"))!
 
+		// Create a Collection resource and save it to storage
+		let collection <- create Collection()
+		self.account.storage.save(<- collection, to: self.CollectionStoragePath)
+        // create a public capability for the collection
+	    let collectionCap = self.account.capabilities.storage.issue<&VenezuelaNFT.Collection>(self.CollectionStoragePath)
+		self.account.capabilities.publish(collectionCap, at: self.CollectionPublicPath)
 		// Create a Administrator resource and save it to VenezuelaNFT account storage
 		let administrator <- create Administrator()
 		self.account.storage.save(<- administrator, to: self.AdministratorStoragePath)

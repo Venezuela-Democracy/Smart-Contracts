@@ -67,11 +67,18 @@ func main() {
 	// Script to get all cards
 	o.Script("get_all_cards")
 	color.Red("Admin should be able to starts a new season with selected sets")
+
+	o.Tx("mintNFT",
+		WithSigner("account"),
+		WithArg("setID", "0"),
+		WithArg("cardID", "1"),
+	)
+
 	// create_season
-	o.Tx("admin/start_new_season",
+	/* 	o.Tx("admin/start_new_season",
 		WithSigner("account"),
 		WithArg("", ""),
 		WithArg("", ""),
 		WithArg("", ""),
-	)
+	) */
 }
