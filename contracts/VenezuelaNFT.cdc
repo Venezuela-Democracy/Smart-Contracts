@@ -4,6 +4,7 @@ import "NonFungibleToken"
 import "MetadataViews"
 import "ViewResolver"
 import "RandomConsumer"
+import "Burner"
 
 access(all)
 contract VenezuelaNFT: NonFungibleToken, ViewResolver {
@@ -41,6 +42,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // Season is a concept that indicates a group of Sets through time.
     // Many Sets can exist at a time, but only one Season.
     access(all) var currentSeason: UInt32
+    /// The RandomConsumer.Consumer resource used to request & fulfill randomness
+    access(self) let consumer: @RandomConsumer.Consumer
 
     // -----------------------------------------------------------------------
     // VenezuelaNFT contract Events
@@ -50,9 +53,10 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) event Withdraw(id: UInt64, from: Address?)
 	access(all) event Deposit(id: UInt64, to: Address?)
     access(all) event CardCreated(cardID: UInt32, cardType: String)
-	access(all) event VenezuelaNFTMinted(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address)
     access(all) event SetCreated(setID: UInt32, season: UInt32)
     access(all) event CardAddedToSet(setID: UInt32, cardID: UInt32)
+	access(all) event BoughtPack(commitBlock: UInt64, receiptID: UInt64)
+    access(all) event PackRevealed(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address, commitBlock: UInt64, receiptID: UInt64)
     // -----------------------------------------------------------------------
     // VenezuelaNFT account paths
     // -----------------------------------------------------------------------
@@ -60,6 +64,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 	access(all) let CollectionPublicPath: PublicPath
 	access(all) let CollectionPrivatePath: PrivatePath
 	access(all) let AdministratorStoragePath: StoragePath
+    /// The canonical path for common Receipt storage
+    access(all) let ReceiptStoragePath: StoragePath
     // -----------------------------------------------------------------------
     // VenezuelaNFT contract-level Composite Type definitions
     // -----------------------------------------------------------------------
@@ -476,13 +482,13 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 			// Set the metadata struct
 			self.metadata = CardData(setID, cardID, serialNumber, minter)
             // Emit event
-            emit VenezuelaNFTMinted(
+/*             emit BoughtPack(
                 nftID: self.id,
                 cardID: cardID,
                 setID: self.metadata.setID,
                 serialNumber: self.metadata.serialNumber,
                 recipient: minter
-            )
+            ) */
 		}
 
 /*  		access(all) fun getMetadata(): CardData {
@@ -818,6 +824,26 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         }
     }
     // -----------------------------------------------------------------------
+    // VenezuelaNFT Receipt Resource
+    // -----------------------------------------------------------------------
+    /// The Receipt resource is used to store the associated randomness request. By listing the
+    /// RandomConsumer.RequestWrapper conformance, this resource inherits all the default implementations of the
+    /// interface. This is why the Receipt resource has access to the getRequestBlock() and popRequest() functions
+    /// without explicitly defining them.
+    ///
+    access(all) resource Receipt : RandomConsumer.RequestWrapper {
+        /// The associated randomness request which contains the block height at which the request was made
+        // The setID of the intended pack
+        access(all) let setID: UInt32
+        /// and whether the request has been fulfilled.
+        access(all) var request: @RandomConsumer.Request?
+
+        init(setID: UInt32, request: @RandomConsumer.Request) {
+            self.setID = setID
+            self.request <- request
+        }
+    }
+    // -----------------------------------------------------------------------
     // VenezuelaNFT private functions
     // -----------------------------------------------------------------------
     // borrowSet returns a reference to a set in the VenezuelaNFT
@@ -838,6 +864,15 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // use `&` to indicate the reference to the object and type
         return (&VenezuelaNFT.sets[setID])!
     }
+    /// Returns a random number between 0 and 1 using the RandomConsumer.Consumer resource contained in the contract.
+    /// For the purposes of this contract, a simple modulo operation could have been used though this is not the case
+    /// for all ranges. Using the Consumer.fulfillRandomInRange function ensures that we can get a random number
+    /// within any range without a risk of bias.
+    ///
+    access(self) 
+    fun _randomNumber(request: @RandomConsumer.Request, max: Int): UInt8 {
+        return UInt8(self.consumer.fulfillRandomInRange(request: <-request, min: 0, max: UInt64(max)))
+    }
     // -----------------------------------------------------------------------
     // VenezuelaNFT public functions
     // -----------------------------------------------------------------------
@@ -847,26 +882,27 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) fun createEmptyCollection(nftType: Type): @{NonFungibleToken.Collection} {
         return <- create Collection()
     }
-    // mintNFT mints a new VenezuelaNFT and returns the newly minted VenezuelaNFT
+    // buyPack mints a new VenezuelaNFT.Receipt and returns it
     // 
-    // Parameters: cardID: The ID of the Card that the VenezuelaNFT references
+    // Parameters: setID: The ID of the Set that the VenezuelaNFT references
     //
     // Pre-Conditions:
-    // The Card must exist in the Set and be allowed to mint new VenezuelaNFTs
+    // The Set must exist in the Set and be allowed to mint new VenezuelaNFTs
     //
-    // Returns: The NFT that was minted
+    // Returns: A Receipt for it to be redeemed later
     // 
-    access(all) fun mintNFT(cardID: UInt32, setID: UInt32, minter: Address) {
+    access(all) fun buyPack(setID: UInt32, minter: Address): @Receipt {
         pre {
 
         }
-        // Get reference to set
-        let set = self.borrowSet(setID: setID)
+
+        let request <- self.consumer.requestRandomness()
+        let receipt <- create Receipt(setID: setID, request: <-request)
         // Get account collection reference
-        let recipient = getAccount(minter)
+/*         let recipient = getAccount(minter)
         let receiverRef = recipient.capabilities.borrow<&{VenezuelaNFT.VenezuelaNFTCollectionPublic}>(VenezuelaNFT.CollectionPublicPath)
             ?? panic("Cannot borrow a reference to the recipient's moment collection")
-        // Gets the number of VenezuelaNFT that have been minted for this Play
+        // Gets the number of VenezuelaNFT that have been minted for this Card
         // to use as this VenezuelaNFT's serial number
         let currentSerial = set.numberMintedPerCard[cardID]!
 
@@ -879,12 +915,59 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
         // Deposit NFT into user's account
         receiverRef.deposit(token: <- newNFT)
-        // Increment the count of VenezuelaNFT minted for this Play
+        // Increment the count of VenezuelaNFT minted for this Card
+        set.incrementCount(cardID: cardID) */
+
+        emit BoughtPack(commitBlock: receipt.getRequestBlock()!, receiptID: receipt.uuid)
+
+        return <- receipt
+    }
+    /* --- Reveal --- */
+    //
+    /// Here the caller provides the Receipt given to them at commitment. The contract then "reveals pack" with
+    /// _randomNumber(), providing the Receipt's contained Request.
+    ///
+    access(all) fun revealPack(receipt: @Receipt, minter: Address): @NFT {
+        pre {
+            receipt.request != nil: 
+            "CoinToss.revealCoin: Cannot reveal the coin! The provided receipt has already been revealed."
+            receipt.getRequestBlock()! <= getCurrentBlock().height:
+            "CoinToss.revealCoin: Cannot reveal the coin! The provided receipt was committed for block height ".concat(receipt.getRequestBlock()!.toString())
+            .concat(" which is greater than the current block height of ")
+            .concat(getCurrentBlock().height.toString())
+            .concat(". The reveal can only happen after the committed block has passed.")
+        }
+        // Get reference to set
+        let commitBlock = receipt.getRequestBlock()!
+        let receiptID = receipt.uuid
+        let set = self.borrowSet(setID: receipt.setID)
+
+        let cardID = UInt32(self._randomNumber(request: <-receipt.popRequest(), max: set.cards.length))
+        // Burn the receipt
+        Burner.burn(<-receipt)
+        // Gets the number of VenezuelaNFT that have been minted for this cardID
+        // to use as this VenezuelaNFT's serial number
+        let currentSerial = set.numberMintedPerCard[cardID]!
+        // Mint the new VenezuelaNFT
+        let newNFT: @NFT <- create NFT(serialNumber: currentSerial + 1,
+                                        cardID: cardID,
+                                        setID: set.setID,
+                                        minter: minter
+                                    )
+        // Increment the count of VenezuelaNFT minted for this Card
         set.incrementCount(cardID: cardID)
+        // Emit event
+        emit PackRevealed(
+            nftID: newNFT.uuid,
+            cardID: cardID,
+            setID: set.setID,
+            serialNumber: currentSerial + 1,
+            recipient: minter,
+            commitBlock: commitBlock,
+            receiptID: receiptID,
+            )
 
-
-
-        // return <-newNFT
+        return <- newNFT
     }
     // Public function to fetch a collection attribute
     access(all) fun getCollectionAttribute(key: String): AnyStruct {
@@ -965,11 +1048,14 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             			),
             			mediaType: "image/jpeg"
           			)
+        // Create a RandomConsumer.Consumer resource
+        self.consumer <-RandomConsumer.createConsumer()
 		// Set the named paths
 		self.CollectionStoragePath = StoragePath(identifier: identifier)!
 		self.CollectionPublicPath = PublicPath(identifier: identifier)!
 		self.CollectionPrivatePath = PrivatePath(identifier: identifier)!
 		self.AdministratorStoragePath = StoragePath(identifier: identifier.concat("Administrator"))!
+		self.ReceiptStoragePath = StoragePath(identifier: identifier.concat("ReceiptStorageå"))!
 
 		// Create a Collection resource and save it to storage
 		let collection <- create Collection()
