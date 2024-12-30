@@ -56,11 +56,10 @@ func main() {
 	)
 	color.Red("Admin should be able to add cards to a set")
 	// create_season
-	o.Tx("admin/add_card_to_set",
+	o.Tx("admin/add_cards_to_set",
 		WithSigner("account"),
-		WithArg("", ""),
-		WithArg("", ""),
-		WithArg("", ""),
+		WithArg("setID", "0"),
+		WithArg("cards", "[0, 1, 2]"),
 	)
 	color.Red("Admin should be able to starts a new season with selected sets")
 	// create_season

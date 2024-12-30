@@ -14,14 +14,13 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // A struct containing all the information related to the contract
 	access(self) let collectionInfo: {String: AnyStruct}
     // Variable size dictionary of LocationCard structs
-    access(self) var locationCardDatas: {UInt32: LocationCard}
+//    access(self) var locationCardDatas: {UInt32: LocationCard}
     // Variable size dictionary of CharacterCard structs
-    access(self) var characterCardDatas: {UInt32: CharacterCard}
+//    access(self) var characterCardDatas: {UInt32: CharacterCard}
     // Variable size dictionary of CulturalItemCard structs
-    access(self) var culturalItemCardDatas: {UInt32: CulturalItemCard}
-    // Season is a concept that indicates a group of Sets through time.
-    // Many Sets can exist at a time, but only one Season.
-    access(all) var currentSeason: UInt32
+//    access(self) var culturalItemCardDatas: {UInt32: CulturalItemCard}
+    // Variable size dictionary of Cards structs
+    access(self) var cardDatas: {UInt32: AnyStruct}
     // Variable size dictionary of SetData structs
     access(self) var setDatas: {UInt32: SetData}
     // Variable size dictionary of Set resources
@@ -38,6 +37,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // The ID that is used to create Sets. Every time a Set is created
     // setID is assigned to the new set's ID and then is incremented by 1.
     access(all) var nextSetID: UInt32
+    // Season is a concept that indicates a group of Sets through time.
+    // Many Sets can exist at a time, but only one Season.
+    access(all) var currentSeason: UInt32
 
     // -----------------------------------------------------------------------
     // VenezuelaNFT contract Events
@@ -49,6 +51,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) event CardCreated(cardID: UInt32, cardType: String)
 	access(all) event VenezuelaNFTMinted(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address)
     access(all) event SetCreated(setID: UInt32, season: UInt32)
+    access(all) event CardAddedToSet(setID: UInt32, cardID: UInt32)
     // -----------------------------------------------------------------------
     // VenezuelaNFT account paths
     // -----------------------------------------------------------------------
@@ -403,6 +406,40 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             // Create a new SetData for this Set and store it in contract storage
             VenezuelaNFT.setDatas[self.setID] = SetData(name: name)
         }
+        // addCard adds a card to the set
+        //
+        // Parameters: cardID: The ID of the card that is being added
+        //
+        // Pre-Conditions:
+        // The card needs to be an existing card
+        // The Set needs to be not locked
+        // The card can't have already been added to the Set
+        //
+        access(all) fun addCard(cardID: UInt32) {
+            pre {
+                VenezuelaNFT.cardDatas[cardID] != nil: "Cannot add the Card to Set: Card doesn't exist."
+                !self.locked: "Cannot add the card to the Set after the set has been locked."
+                self.numberMintedPerCard[cardID] == nil: "The card has already beed added to the set."
+            }
+
+            // Add the Card to the array of Cards in the set
+            self.cards.append(cardID)
+
+            // Initialize the VenezuelaNFT count to zero
+            self.numberMintedPerCard[cardID] = 0
+
+            emit CardAddedToSet(setID: self.setID, cardID: cardID)
+        }
+        // addCards adds multiple Cards to the Set
+        //
+        // Parameters: cardIDs: The IDs of the Cards that are being added
+        //                      as an array
+        //
+        access(all) fun addCards(cardIDs: [UInt32]) {
+            for play in cardIDs {
+                self.addCard(cardID: play)
+            }
+        }
     }
     //
     /// The resource that represents a VenezulaNFT
@@ -644,7 +681,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
             // Store it in the contract storage
             // for LocationCards
-            VenezuelaNFT.locationCardDatas[newID] = newCard
+            VenezuelaNFT.cardDatas[newID] = newCard
             // emit event
             emit CardCreated(cardID: newCard.cardID, cardType: "Location")
 
@@ -674,7 +711,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             // Increment the ID so that it isn't used again
             VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
             // Store it in the contract storage
-            VenezuelaNFT.characterCardDatas[newID] = newCard
+            VenezuelaNFT.cardDatas[newID] = newCard
             // emit event
             emit CardCreated(cardID: newCard.cardID, cardType: "Character")
 
@@ -702,7 +739,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             // Increment the ID so that it isn't used again
             VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
             // Store it in the contract storage
-            VenezuelaNFT.culturalItemCardDatas[newID] = newCard
+            VenezuelaNFT.cardDatas[newID] = newCard
             // emit event
             emit CardCreated(cardID: newCard.cardID, cardType: "Cultural Item")
 
@@ -731,6 +768,24 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             VenezuelaNFT.sets[newID] <-! newSet
 
             return newID
+        }
+        // borrowSet returns a reference to a set in the VenezuelaNFT
+        // contract so that the admin can call methods on it
+        //
+        // Parameters: setID: The ID of the Set that you want to
+        // get a reference to
+        //
+        // Returns: A reference to the Set with all of the fields
+        // and methods exposed
+        //
+         access(all) view fun borrowSet(setID: UInt32): &Set {
+            pre {
+                VenezuelaNFT.sets[setID] != nil: "Cannot borrow Set: The Set doesn't exist"
+            }
+            
+            // Get a reference to the Set and return it
+            // use `&` to indicate the reference to the object and type
+            return (&VenezuelaNFT.sets[setID])!
         }
     }
     
@@ -815,9 +870,10 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
     init() {
         let identifier = "VenezuelaNFT_".concat(self.account.address.toString())
-        self.locationCardDatas = {}
-        self.characterCardDatas = {}
-        self.culturalItemCardDatas = {}
+//        self.locationCardDatas = {}
+//        self.characterCardDatas = {}
+//        self.culturalItemCardDatas = {}
+        self.cardDatas = {}
         self.setDatas = {}
         self.sets <- {}
         self.totalSupply = 0
