@@ -69,12 +69,16 @@ func main() {
 	)
 	// Script to get all cards
 	o.Script("get_all_cards")
-	color.Red("Admin should be able to starts a new season with selected sets")
+	color.Red("User should be able to buy a Pack")
 
-	o.Tx("mintNFT",
+	o.Tx("buy_pack",
 		WithSigner("account"),
 		WithArg("setID", "0"),
-		WithArg("cardID", "1"),
+	)
+	color.Red("User should be able to open a Pack")
+
+	o.Tx("reveal_pack",
+		WithSigner("account"),
 	)
 
 	// create_season

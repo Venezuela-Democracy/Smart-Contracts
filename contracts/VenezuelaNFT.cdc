@@ -891,7 +891,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     //
     // Returns: A Receipt for it to be redeemed later
     // 
-    access(all) fun buyPack(setID: UInt32, minter: Address): @Receipt {
+    access(all) fun buyPack(setID: UInt32): @Receipt {
         pre {
 
         }
@@ -899,24 +899,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         let request <- self.consumer.requestRandomness()
         let receipt <- create Receipt(setID: setID, request: <-request)
         // Get account collection reference
-/*         let recipient = getAccount(minter)
-        let receiverRef = recipient.capabilities.borrow<&{VenezuelaNFT.VenezuelaNFTCollectionPublic}>(VenezuelaNFT.CollectionPublicPath)
-            ?? panic("Cannot borrow a reference to the recipient's moment collection")
-        // Gets the number of VenezuelaNFT that have been minted for this Card
-        // to use as this VenezuelaNFT's serial number
-        let currentSerial = set.numberMintedPerCard[cardID]!
 
-        // Mint the new VenezuelaNFT
-        let newNFT: @NFT <- create NFT(serialNumber: currentSerial + 1,
-                                        cardID: cardID,
-                                        setID: set.setID,
-                                        minter: minter
-                                    )
-
-        // Deposit NFT into user's account
-        receiverRef.deposit(token: <- newNFT)
         // Increment the count of VenezuelaNFT minted for this Card
-        set.incrementCount(cardID: cardID) */
+        // set.incrementCount(cardID: cardID) 
 
         emit BoughtPack(commitBlock: receipt.getRequestBlock()!, receiptID: receipt.uuid)
 
@@ -927,7 +912,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     /// Here the caller provides the Receipt given to them at commitment. The contract then "reveals pack" with
     /// _randomNumber(), providing the Receipt's contained Request.
     ///
-    access(all) fun revealPack(receipt: @Receipt, minter: Address): @NFT {
+    access(all) fun revealPack(receipt: @Receipt, minter: Address) {
         pre {
             receipt.request != nil: 
             "CoinToss.revealCoin: Cannot reveal the coin! The provided receipt has already been revealed."
@@ -941,8 +926,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         let commitBlock = receipt.getRequestBlock()!
         let receiptID = receipt.uuid
         let set = self.borrowSet(setID: receipt.setID)
-
-        let cardID = UInt32(self._randomNumber(request: <-receipt.popRequest(), max: set.cards.length))
+        let recipient = getAccount(minter)
+        // Get reference to recipient's account
+        let receiverRef = recipient.capabilities.borrow<&{VenezuelaNFT.VenezuelaNFTCollectionPublic}>(VenezuelaNFT.CollectionPublicPath)
+            ?? panic("Cannot borrow a reference to the recipient's moment collection")
+        let cardID = UInt32(self._randomNumber(request: <-receipt.popRequest(), max: set.cards.length - 1))
         // Burn the receipt
         Burner.burn(<-receipt)
         // Gets the number of VenezuelaNFT that have been minted for this cardID
@@ -954,8 +942,6 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                                         setID: set.setID,
                                         minter: minter
                                     )
-        // Increment the count of VenezuelaNFT minted for this Card
-        set.incrementCount(cardID: cardID)
         // Emit event
         emit PackRevealed(
             nftID: newNFT.uuid,
@@ -966,8 +952,12 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             commitBlock: commitBlock,
             receiptID: receiptID,
             )
+        // Deposit NFT into user's account
+        receiverRef.deposit(token: <- newNFT)
+        // Increment the count of VenezuelaNFT minted for this Card
+        set.incrementCount(cardID: cardID)
 
-        return <- newNFT
+        // return <- newNFT
     }
     // Public function to fetch a collection attribute
     access(all) fun getCollectionAttribute(key: String): AnyStruct {

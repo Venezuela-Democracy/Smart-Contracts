@@ -75,6 +75,14 @@
 				"testnet": "8c5303eaa26202d6"
 			}
 		},
+		"RandomConsumer": {
+			"source": "mainnet://45caec600164c9e6.RandomConsumer",
+			"hash": "961617e2cd8f73000ebffd9ba4b2667053135948cb009f00f4b05a9b8fc6fc27",
+			"aliases": {
+				"mainnet": "45caec600164c9e6",
+				"testnet": "ed24dbe901028c5c"
+			}
+		},
 		"ViewResolver": {
 			"source": "mainnet://1d7e57aa55817448.ViewResolver",
 			"hash": "374a1994046bac9f6228b4843cb32393ef40554df9bd9907a702d098a2987bde",
@@ -85,16 +93,10 @@
 			}
 		},
 		"Xorshift128plus": {
-			"source": "testnet://ed24dbe901028c5c.Xorshift128plus",
+			"source": "mainnet://45caec600164c9e6.Xorshift128plus",
 			"hash": "219161c40707967b50ff71e507ac0e5ee24d932ea8925112fe108ff2638711aa",
 			"aliases": {
-				"testnet": "ed24dbe901028c5c"
-			}
-		},
-		"RandomConsumer": {
-			"source": "testnet://ed24dbe901028c5c.RandomConsumer",
-			"hash": "45a33ec0de147ff4dd5adf22cdb9922559c6ed652fba2927d099521e9339e793",
-			"aliases": {
+				"mainnet": "45caec600164c9e6",
 				"testnet": "ed24dbe901028c5c"
 			}
 		}
@@ -121,11 +123,11 @@
 	"deployments": {
 		"emulator": {
 			"emulator-account": [
-				"VenezuelaNFT"
-			],
-			"emulator-bob": [
+				"VenezuelaNFT",
+				"RandomConsumer",
 				"Xorshift128plus"
-			]
+			],
+			"emulator-bob": []
 		}
 	}
 }
