@@ -15,7 +15,6 @@ transaction(setID: UInt32, cards: [UInt32]) {
         self.Administrator = deployer.storage.borrow<&VenezuelaNFT.Administrator>(from: VenezuelaNFT.AdministratorStoragePath)!
     }
 
-
     execute {
 
         // borrow a reference to the set to be added to

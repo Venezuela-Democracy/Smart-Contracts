@@ -30,6 +30,9 @@ func main() {
 		WithArg("proposal_1_duration", "7.0"),
 		WithArg("proposal_1_adoptionRequirement", "30"),
 	)
+	// Script to get card metadata
+	o.Script("get_card_metadata", WithArg("cardID", "0"))
+	// Admin create characterCard
 	o.Tx("admin/create_characterCard",
 		WithSigner("account"),
 		WithArg("characterTypes", `["Educational", "Cultural"]`),
@@ -61,6 +64,8 @@ func main() {
 		WithArg("setID", "0"),
 		WithArg("cards", "[0, 1, 2]"),
 	)
+	// Script to get all cards
+	o.Script("get_all_cards")
 	color.Red("Admin should be able to starts a new season with selected sets")
 	// create_season
 	o.Tx("admin/start_new_season",

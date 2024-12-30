@@ -395,7 +395,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // that have been minted for specific cards in this Set.
         // When a VenezuelaNFT is minted, this value is stored in the VenezuelaNFT to
         // show its place in the Set, eg. 13 of 60.
-        access(contract) var numberMintedPerCard: {UInt32: UInt32}
+        access(contract) var numberMintedPerCard: {UInt32: UInt64}
 
         init(name: String) {
             self.setID = VenezuelaNFT.nextSetID
@@ -439,6 +439,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             for play in cardIDs {
                 self.addCard(cardID: play)
             }
+        }
+        // Function to increase mint count of a Card
+        access(all) fun incrementCount(cardID: UInt32) {
+            let currentCount = self.numberMintedPerCard[cardID]!
+            self.numberMintedPerCard[cardID] = currentCount + 1
         }
     }
     //
@@ -769,29 +774,85 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
             return newID
         }
-        // borrowSet returns a reference to a set in the VenezuelaNFT
-        // contract so that the admin can call methods on it
-        //
-        // Parameters: setID: The ID of the Set that you want to
-        // get a reference to
-        //
-        // Returns: A reference to the Set with all of the fields
-        // and methods exposed
-        //
-         access(all) view fun borrowSet(setID: UInt32): &Set {
-            pre {
-                VenezuelaNFT.sets[setID] != nil: "Cannot borrow Set: The Set doesn't exist"
-            }
-            
-            // Get a reference to the Set and return it
-            // use `&` to indicate the reference to the object and type
-            return (&VenezuelaNFT.sets[setID])!
-        }
     }
-    
+    // -----------------------------------------------------------------------
+    // VenezuelaNFT private functions
+    // -----------------------------------------------------------------------
+    // borrowSet returns a reference to a set in the VenezuelaNFT
+    // contract so that the admin can call methods on it
+    //
+    // Parameters: setID: The ID of the Set that you want to
+    // get a reference to
+    //
+    // Returns: A reference to the Set with all of the fields
+    // and methods exposed
+    //
+    access(account) view fun borrowSet(setID: UInt32): &Set {
+        pre {
+            VenezuelaNFT.sets[setID] != nil: "Cannot borrow Set: The Set doesn't exist"
+        }
+            
+        // Get a reference to the Set and return it
+        // use `&` to indicate the reference to the object and type
+        return (&VenezuelaNFT.sets[setID])!
+    }
     // -----------------------------------------------------------------------
     // VenezuelaNFT public functions
     // -----------------------------------------------------------------------
+
+    /// createEmptyCollection creates an empty Collection for the specified NFT type
+    /// and returns it to the caller so that they can own NFTs
+    access(all) fun createEmptyCollection(nftType: Type): @{NonFungibleToken.Collection} {
+        return <- create Collection()
+    }
+    // mintNFT mints a new VenezuelaNFT and returns the newly minted VenezuelaNFT
+    // 
+    // Parameters: cardID: The ID of the Card that the VenezuelaNFT references
+    //
+    // Pre-Conditions:
+    // The Card must exist in the Set and be allowed to mint new VenezuelaNFTs
+    //
+    // Returns: The NFT that was minted
+    // 
+    access(all) fun mintNFT(cardID: UInt32, setID: UInt32, minter: Address): @NFT {
+        pre {
+
+        }
+        let set = self.borrowSet(setID: setID)
+        // Gets the number of VenezuelaNFT that have been minted for this Play
+        // to use as this VenezuelaNFT's serial number
+        let currentSerial = set.numberMintedPerCard[cardID]!
+
+        // Mint the new VenezuelaNFT
+        let newNFT: @NFT <- create NFT(serialNumber: currentSerial + 1,
+                                        cardID: cardID,
+                                        setID: set.setID,
+                                        minter: minter
+                                    )
+
+        // Increment the count of VenezuelaNFT minted for this Play
+        set.incrementCount(cardID: cardID)
+
+        return <-newNFT
+    }
+    // Public function to fetch a collection attribute
+    access(all) fun getCollectionAttribute(key: String): AnyStruct {
+		return self.collectionInfo[key] ?? panic(key.concat(" is not an attribute in this collection."))
+	}
+    // getAllCards returns all the cards in VenezuelaNFT
+    //
+    // Returns: An array of all the cards that have been created
+    access(all) view fun getAllCards(): [AnyStruct] {
+        return VenezuelaNFT.cardDatas.values
+    }
+    // getCardMetaData returns all the metadata associated with a specific Card
+    // 
+    // Parameters: cardID: The id of the Card that is being searched
+    //
+    // Returns: The metadata as a String to String mapping optional
+    access(all) view fun getCardMetaData(cardID: UInt32): AnyStruct? {
+        return self.cardDatas[cardID]
+    }
     /// Function that returns all the Metadata Views implemented by a Non Fungible Token
     ///
     /// @return An array of Types defining the implemented views. This value will be used by
@@ -826,46 +887,12 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                     squareImage: media,
                     bannerImage: media,
                     socials: {
-                        "twitter": MetadataViews.ExternalURL("https://twitter.com/CreateAVenezuelaNFT")
+                        "twitter": MetadataViews.ExternalURL("https://twitter.com/VenezuelaNFT")
                     }
                 )
-            
-/*             case Type<MetadataViews.EVMBridgedMetadata>():
-                // Implementing this view gives the project control over how the bridged NFT is represented as an ERC721
-                // when bridged to EVM on Flow via the public infrastructure bridge.
-
-                // Compose the contract-level URI. In this case, the contract metadata is located on some HTTP host,
-                // but it could be IPFS, S3, a data URL containing the JSON directly, etc.
-                return MetadataViews.EVMBridgedMetadata(
-                    name: "ExampleNFT",
-                    symbol: "XMPL",
-                    uri: MetadataViews.URI(
-                        baseURI: nil, // setting baseURI as nil sets the given value as the uri field value
-                        value: "https://example-nft.onflow.org/contract-metadata.json"
-                    )
-                ) */
-            // case Type<MetadataViews.EVMBridgedMetadata>():
-            //     return MetadataViews.EVMBridgedMetadata(
-            //         name: self.name,
-            //         symbol: "XMPL",
-            //         uri: MetadataViews.URI(
-            //             baseURI: nil,
-            //             value: SerializeMetadata.serializeNFTMetadataAsURI(&self as &{NonFungibleToken.NFT})
-            //         )
-            //     )
         }
         return nil
     }
-    /// createEmptyCollection creates an empty Collection for the specified NFT type
-    /// and returns it to the caller so that they can own NFTs
-    access(all) fun createEmptyCollection(nftType: Type): @{NonFungibleToken.Collection} {
-        return <- create Collection()
-    }
-    // Public function to fetch a collection attribute
-    access(all) fun getCollectionAttribute(key: String): AnyStruct {
-		return self.collectionInfo[key] ?? panic(key.concat(" is not an attribute in this collection."))
-	}
-
     // Init
 
     init() {
