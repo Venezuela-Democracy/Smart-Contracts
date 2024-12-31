@@ -3,13 +3,13 @@ import "FungibleToken"
 import "NonFungibleToken"
 import "MetadataViews"
 import "ViewResolver"
-import "RandomConsumer"
-import "Burner"
+import RandomConsumer from "./random/RandomConsumer.cdc"
+import Burner from "./random/Burner.cdc"
 
 access(all)
-contract VenezuelaNFT: NonFungibleToken, ViewResolver {
+contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
     // -----------------------------------------------------------------------
-    // VenezuelaNFT contract-level fields.
+    // VenezuelaNFT_4 contract-level fields.
     // These contain actual values that are stored in the smart contract.
     // -----------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(self) let consumer: @RandomConsumer.Consumer
 
     // -----------------------------------------------------------------------
-    // VenezuelaNFT contract Events
+    // VenezuelaNFT_4 contract Events
     // -----------------------------------------------------------------------
 
     access(all) event ContractInitialized()
@@ -58,7 +58,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 	access(all) event BoughtPack(commitBlock: UInt64, receiptID: UInt64)
     access(all) event PackRevealed(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address, commitBlock: UInt64, receiptID: UInt64)
     // -----------------------------------------------------------------------
-    // VenezuelaNFT account paths
+    // VenezuelaNFT_4 account paths
     // -----------------------------------------------------------------------
 	access(all) let CollectionStoragePath: StoragePath
 	access(all) let CollectionPublicPath: PublicPath
@@ -67,7 +67,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     /// The canonical path for common Receipt storage
     access(all) let ReceiptStoragePath: StoragePath
     // -----------------------------------------------------------------------
-    // VenezuelaNFT contract-level Composite Type definitions
+    // VenezuelaNFT_4 contract-level Composite Type definitions
     // -----------------------------------------------------------------------
     // These are just *definitions* for Types that this contract
     // and other accounts can use. These definitions do not contain
@@ -76,8 +76,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // -----------------------------------------------------------------------
 
     // Card is a Struct that holds metadata associated 
-    // with a specific VenezuelaNFT Card
-    // VenezuelaNFTs will all reference a single Card as the owner of
+    // with a specific VenezuelaNFT_4 Card
+    // VenezuelaNFT_4s will all reference a single Card as the owner of
     // its metadata. The Cards are publicly accessible, so anyone can
     // read the metadata associated with a specific Card ID
     //
@@ -91,7 +91,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             pre {
                 metadata.length != 0: "New Card metadata cannot be empty"
             }
-            self.cardID = VenezuelaNFT.nextCardID
+            self.cardID = VenezuelaNFT_4.nextCardID
             self.metadata = metadata
         }
         /// This function is intended to backfill the Card on blockchain with a more detailed
@@ -100,7 +100,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         access(contract) fun updateTagline(tagline: String): UInt32 {
             self.metadata["Tagline"] = tagline
 
-            // VenezuelaNFT.cardsDatas[self.CardID] = self
+            // VenezuelaNFT_4.cardsDatas[self.CardID] = self
             return self.cardID
         }
     }
@@ -128,8 +128,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         }
     }
     // LocationCard is a Struct that holds metadata associated 
-    // with a specific VenezuelaNFT Card
-    // VenezuelaNFTs will all reference a single Card as the owner of
+    // with a specific VenezuelaNFT_4 Card
+    // VenezuelaNFT_4s will all reference a single Card as the owner of
     // its metadata. The Cards are publicly accessible, so anyone can
     // read the metadata associated with a specific Card ID
     //    
@@ -152,6 +152,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // Card's narrative effect when adopted by the Region
         // there are different narratives depending on the % of adoption
         access(all) let cardNarratives: {UInt32: String}
+        // The main image of the NFT
+        access(all) let image: MetadataViews.IPFSFile
 
         init(
             region: String,
@@ -160,7 +162,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             generation: UInt32,
             regionalGeneration: UInt32,
             cardNarratives: {UInt32: String},
-            proposals: [LocationProposal]
+            proposals: [LocationProposal],
+            image: MetadataViews.IPFSFile
             ) {
             pre {
                 region.length != 0: "Location region cannot be empty"
@@ -170,7 +173,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 regionalGeneration > 0: "Location regional generation cannot be zero or less"
                 cardNarratives != nil: "Card's narratives can't be empty"
             }
-            self.cardID = VenezuelaNFT.nextCardID
+            self.cardID = VenezuelaNFT_4.nextCardID
             self.region = region
             self.name = name
             self.type = type
@@ -178,6 +181,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             self.regionalGeneration = regionalGeneration
             self.cardNarratives = cardNarratives
             self.availableProposals = proposals
+            self.image = image
         }
     }
     // Struct to store a CharacterCard effects
@@ -212,7 +216,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     }
     
     // CharacterCard is a Struct that holds metadata associated 
-    // with a specific VenezuelaNFT Card
+    // with a specific VenezuelaNFT_4 Card
     access(all) struct CharacterCard {
         // The unique ID for the Card
         access(all) let cardID: UInt32
@@ -251,7 +255,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 launchCost > 0: "Launch cost  must be higher than zero"
                 cardNarratives != nil: "Card's narratives can't be empty"
             }
-            self.cardID = VenezuelaNFT.nextCardID
+            self.cardID = VenezuelaNFT_4.nextCardID
             self.name = name
             self.characterTypes = characterTypes
             self.influencePointsGeneration = influencePointsGeneration
@@ -288,7 +292,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     }
 
     // CulturalItemCard is a Struct that holds metadata associated 
-    // with a specific VenezuelaNFT Card
+    // with a specific VenezuelaNFT_4 Card
     access(all) struct CulturalItemCard {
         // The unique ID for the Card
         access(all) let cardID: UInt32
@@ -318,7 +322,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 cardNarratives != nil: "Card's narratives can't be empty"
                 specialEffects != nil: "Card's special effects can't be empty"
             }
-            self.cardID = VenezuelaNFT.nextCardID
+            self.cardID = VenezuelaNFT_4.nextCardID
             self.name = name
             self.type = type
             self.influencePointsGeneration = influencePointsGeneration
@@ -373,24 +377,24 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             pre {
                 name.length > 0: "New Set name cannot be empty"
             }
-            self.setID = VenezuelaNFT.nextSetID
+            self.setID = VenezuelaNFT_4.nextSetID
             self.name = name
-            self.season = VenezuelaNFT.currentSeason
+            self.season = VenezuelaNFT_4.currentSeason
         }
     }
     // Set is a resource type that contains the functions to add and remove
-    // Cards from a set and mint VenezuelaNFTs.
+    // Cards from a set and mint VenezuelaNFT_4s.
     //
     // It is stored in a private field in the contract so that
     // the admin resource can call its methods.
     //
-    // The admin can add Cards to a Set so that the set can mint VenezuelaNFTs
+    // The admin can add Cards to a Set so that the set can mint VenezuelaNFT_4s
     // that reference that metadata.
-    // The VenezuelaNFTs that are minted by a Set will be listed as belonging to
+    // The VenezuelaNFT_4s that are minted by a Set will be listed as belonging to
     // the Set that minted it, as well as the Card it references.
     //
     // If the admin locks the Set, no more Cards can be added to it, but 
-    // VenezuelaNFTs can still be minted.
+    // VenezuelaNFT_4s can still be minted.
     access(all) resource Set {
 
         // Unique ID for the set
@@ -408,24 +412,24 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         // A Set can never be changed from locked to unlocked,
         // the decision to lock a Set it is final.
         // If a Set is locked, cards cannot be added, but
-        // VenezuelaNFTs can still be minted from cards
+        // VenezuelaNFT_4s can still be minted from cards
         // that exist in the Set.
         access(all) var locked: Bool
 
-        // Mapping of Card IDs that indicates the number of VenezuelaNFTs 
+        // Mapping of Card IDs that indicates the number of VenezuelaNFT_4s 
         // that have been minted for specific cards in this Set.
-        // When a VenezuelaNFT is minted, this value is stored in the VenezuelaNFT to
+        // When a VenezuelaNFT_4 is minted, this value is stored in the VenezuelaNFT_4 to
         // show its place in the Set, eg. 13 of 60.
         access(contract) var numberMintedPerCard: {UInt32: UInt64}
 
         init(name: String) {
-            self.setID = VenezuelaNFT.nextSetID
+            self.setID = VenezuelaNFT_4.nextSetID
             self.cards = []
             self.locked = false
             self.numberMintedPerCard = {}
 
             // Create a new SetData for this Set and store it in contract storage
-            VenezuelaNFT.setDatas[self.setID] = SetData(name: name)
+            VenezuelaNFT_4.setDatas[self.setID] = SetData(name: name)
         }
         // addCard adds a card to the set
         //
@@ -438,7 +442,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         //
         access(all) fun addCard(cardID: UInt32) {
             pre {
-                VenezuelaNFT.cardDatas[cardID] != nil: "Cannot add the Card to Set: Card doesn't exist."
+                VenezuelaNFT_4.cardDatas[cardID] != nil: "Cannot add the Card to Set: Card doesn't exist."
                 !self.locked: "Cannot add the card to the Set after the set has been locked."
                 self.numberMintedPerCard[cardID] == nil: "The card has already beed added to the set."
             }
@@ -446,7 +450,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             // Add the Card to the array of Cards in the set
             self.cards.append(cardID)
 
-            // Initialize the VenezuelaNFT count to zero
+            // Initialize the VenezuelaNFT_4 count to zero
             self.numberMintedPerCard[cardID] = 0
 
             emit CardAddedToSet(setID: self.setID, cardID: cardID)
@@ -476,9 +480,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
 		init(serialNumber: UInt64, cardID: UInt32, setID: UInt32, minter: Address) {
             // Increment the global Cards IDs
-            VenezuelaNFT.totalSupply = VenezuelaNFT.totalSupply + 1
+            VenezuelaNFT_4.totalSupply = VenezuelaNFT_4.totalSupply + 1
 
-            self.id = VenezuelaNFT.totalSupply
+            self.id = VenezuelaNFT_4.totalSupply
 			// Set the metadata struct
 			self.metadata = CardData(setID, cardID, serialNumber, minter)
             // Emit event
@@ -498,7 +502,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         /// and returns it to the caller so that they can own NFTs
         /// @{NonFungibleToken.Collection}
         access(all) fun createEmptyCollection(): @{NonFungibleToken.Collection} {
-            return <-VenezuelaNFT.createEmptyCollection(nftType: Type<@VenezuelaNFT.NFT>())
+            return <-VenezuelaNFT_4.createEmptyCollection(nftType: Type<@VenezuelaNFT_4.NFT>())
         }
 
 		access(all) view fun getViews(): [Type] {
@@ -522,8 +526,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 					return MetadataViews.Display(
 						name: "Card Name",
 						description: "Card Description",
-						thumbnail: MetadataViews.HTTPFile( // GOTTA CHANGE
-            				url: "https://media.discordapp.net/attachments/1075564743152107530/1149417271597473913/VenezuelaNFT_collection_image.png?width=1422&height=1422"
+						thumbnail: MetadataViews.HTTPFile( 
+            				url: "https://bafybeiceaod6tlnx36curr5fheppn43yuum42iuqodwnd4ve3hfsncagly.ipfs.dweb.link?filename=u8583739436_Create_a_logo_with_the_letter_V._This_illustrated_608e624a-bc77-4ad8-b2bd-ebda78890729_0.png"
             			)
 					)
 				case Type<MetadataViews.Traits>():
@@ -540,11 +544,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 						traits: self.resolveView(Type<MetadataViews.Traits>()) as! MetadataViews.Traits?
 					)
 				case Type<MetadataViews.NFTCollectionData>():
-					return VenezuelaNFT.resolveContractView(resourceType: Type<@VenezuelaNFT.NFT>(), viewType: Type<MetadataViews.NFTCollectionData>())
+					return VenezuelaNFT_4.resolveContractView(resourceType: Type<@VenezuelaNFT_4.NFT>(), viewType: Type<MetadataViews.NFTCollectionData>())
         		case Type<MetadataViews.ExternalURL>():
-        			return VenezuelaNFT.getCollectionAttribute(key: "website") as! MetadataViews.ExternalURL
+        			return VenezuelaNFT_4.getCollectionAttribute(key: "website") as! MetadataViews.ExternalURL
 		        case Type<MetadataViews.NFTCollectionDisplay>():
-					return VenezuelaNFT.resolveContractView(resourceType: Type<@VenezuelaNFT.NFT>(), viewType: Type<MetadataViews.NFTCollectionDisplay>())
+					return VenezuelaNFT_4.resolveContractView(resourceType: Type<@VenezuelaNFT_4.NFT>(), viewType: Type<MetadataViews.NFTCollectionDisplay>())
 				case Type<MetadataViews.Medias>():
                     let metadata = 10
 					if metadata != nil {
@@ -562,9 +566,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         		case Type<MetadataViews.Royalties>():
           			return MetadataViews.Royalties([
             			MetadataViews.Royalty(
-              				receiver: getAccount(VenezuelaNFT.account.address).capabilities.get<&FlowToken.Vault>(/public/flowTokenReceiver),
-              				cut: 0.10, // 10% royalty on secondary sales
-              				description: "The creator of the original content gets 10% of every secondary sale."
+              				receiver: getAccount(VenezuelaNFT_4.account.address).capabilities.get<&FlowToken.Vault>(/public/flowTokenReceiver),
+              				cut: 0.5, // 5% royalty on secondary sales
+              				description: "The deployer gets 5% of every secondary sale."
             			)
           			])
 				case Type<MetadataViews.Serial>():
@@ -576,11 +580,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 		}
 
 	}
-    // to allow others to deposit VenezuelaNFTs into their Collection. It also allows for reading
-    // the IDs of VenezuelaNFTs in the Collection.
+    // to allow others to deposit VenezuelaNFT_4s into their Collection. It also allows for reading
+    // the IDs of VenezuelaNFT_4s in the Collection.
     /// Defines the methods that are particular to this NFT contract collection
     ///
-    access(all) resource interface VenezuelaNFTCollectionPublic {
+    access(all) resource interface VenezuelaNFT_4CollectionPublic {
         access(all) fun deposit(token: @{NonFungibleToken.NFT})
         access(all) fun getIDs(): [UInt64]
     }
@@ -589,7 +593,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // Collection is a resource that every user who owns NFTs 
     // will store in their account to manage their NFTS
     //
-	access(all) resource Collection: NonFungibleToken.Collection, VenezuelaNFTCollectionPublic {
+	access(all) resource Collection: NonFungibleToken.Collection, VenezuelaNFT_4CollectionPublic {
         // *** Collection Variables *** //
 		access(all) var ownedNFTs: @{UInt64: {NonFungibleToken.NFT}}
         // *** Collection Constructor *** //
@@ -601,32 +605,32 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         /// Returns a list of NFT types that this receiver accepts
         access(all) view fun getSupportedNFTTypes(): {Type: Bool} {
             let supportedTypes: {Type: Bool} = {}
-            supportedTypes[Type<@VenezuelaNFT.NFT>()] = true
+            supportedTypes[Type<@VenezuelaNFT_4.NFT>()] = true
             return supportedTypes
         }
         /// Returns whether or not the given type is accepted by the collection
         /// A collection that can accept any type should just return true by default
         access(all) view fun isSupportedNFTType(type: Type): Bool {
-            return type == Type<@VenezuelaNFT.NFT>()
+            return type == Type<@VenezuelaNFT_4.NFT>()
         }
-		// Withdraw removes a VenezuelaNFTNFT from the collection and moves it to the caller(for Trading)
+		// Withdraw removes a VenezuelaNFT_4NFT from the collection and moves it to the caller(for Trading)
 		access(NonFungibleToken.Withdraw) fun withdraw(withdrawID: UInt64): @{NonFungibleToken.NFT} {
 			let token <- self.ownedNFTs.remove(key: withdrawID) 
-                ?? panic("This Collection doesn't own a VenezuelaNFTNFT by id: ".concat(withdrawID.toString()))
+                ?? panic("This Collection doesn't own a VenezuelaNFT_4NFT by id: ".concat(withdrawID.toString()))
 
 			emit Withdraw(id: token.id, from: self.owner?.address)
 
 			return <-token
 		}
-		// Deposit takes a VenezuelaNFTNFT and adds it to the collections dictionary
+		// Deposit takes a VenezuelaNFT_4NFT and adds it to the collections dictionary
 		// and adds the ID to the id array
 		access(all) fun deposit(token: @{NonFungibleToken.NFT}) {
-			let newVenezuelaNFT <- token as! @NFT
-			let id: UInt64 = newVenezuelaNFT.id
-			// Add the new VenezuelaNFTNFT to the dictionary
-            let oldVenezuelaNFT <- self.ownedNFTs[id] <- newVenezuelaNFT
-            // Destroy old VenezuelaNFT in that slot
-            destroy oldVenezuelaNFT
+			let newVenezuelaNFT_4 <- token as! @NFT
+			let id: UInt64 = newVenezuelaNFT_4.id
+			// Add the new VenezuelaNFT_4NFT to the dictionary
+            let oldVenezuelaNFT_4 <- self.ownedNFTs[id] <- newVenezuelaNFT_4
+            // Destroy old VenezuelaNFT_4 in that slot
+            destroy oldVenezuelaNFT_4
 
 			emit Deposit(id: id, to: self.owner?.address)
 		}
@@ -655,7 +659,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         /// and returns it to the caller
         /// @return A an empty collection of the same type
         access(all) fun createEmptyCollection(): @{NonFungibleToken.Collection} {
-            return <-VenezuelaNFT.createEmptyCollection(nftType: Type<@VenezuelaNFT.NFT>())
+            return <-VenezuelaNFT_4.createEmptyCollection(nftType: Type<@VenezuelaNFT_4.NFT>())
         }
 
         /// Gets a reference to an NFT in the collection so that 
@@ -664,11 +668,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         /// @param id: The ID of the wanted NFT
         /// @return A reference to the wanted NFT resource
         ///        
-/*         access(all) fun borrowVenezuelaNFT(id: UInt64): &VenezuelaNFT.NFT? {
+/*         access(all) fun borrowVenezuelaNFT_4(id: UInt64): &VenezuelaNFT_4.NFT? {
             if self.ownedNFTs[id] != nil {
                 // Create an authorized reference to allow downcasting
                 let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
-                return ref as! &VenezuelaNFT.NFT
+                return ref as! &VenezuelaNFT_4.NFT
             }
 
             return nil
@@ -676,7 +680,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 
 
 /* 		access(all) fun claim() {
-			if let storage = &VenezuelaNFT.nftStorage[self.owner!.address] as &{UInt64: NFT}? {
+			if let storage = &VenezuelaNFT_4.nftStorage[self.owner!.address] as &{UInt64: NFT}? {
 				for id in storage.keys {
 					self.deposit(token: <- storage.remove(key: id)!)
 				}
@@ -685,7 +689,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 	}
 
     // -----------------------------------------------------------------------
-    // VenezuelaNFT Administrator Resource
+    // VenezuelaNFT_4 Administrator Resource
     // -----------------------------------------------------------------------
     // Admin is a special authorization resource that 
     // allows the owner to perform important functions to modify the 
@@ -693,7 +697,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     //
     access(all) resource Administrator {
         // createLocationCard creates a new LocationCard struct 
-        // and stores it in the LocationCards dictionary in the VenezuelaNFT smart contract
+        // and stores it in the LocationCards dictionary in the VenezuelaNFT_4 smart contract
         //
         // Returns: the ID of the new Card object
         //
@@ -704,7 +708,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             generation: UInt32,
             regionalGeneration: UInt32,
             cardNarratives: {UInt32: String},
-            proposals: [LocationProposal]): UInt32 {
+            proposals: [LocationProposal],
+            ipfsCID: String,
+            imagePath: String): UInt32 {
             // Create the new Card
             var newCard = LocationCard(
                 region: region,
@@ -713,22 +719,26 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 generation: generation,
                 regionalGeneration: regionalGeneration,
                 cardNarratives: cardNarratives,
-                proposals: proposals
+                proposals: proposals,
+                image: MetadataViews.IPFSFile(
+					cid: ipfsCID,
+					path: imagePath
+				)
             )
             let newID = newCard.cardID
 
             // Increment the ID so that it isn't used again
-            VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
+            VenezuelaNFT_4.nextCardID = VenezuelaNFT_4.nextCardID + 1
             // Store it in the contract storage
             // for LocationCards
-            VenezuelaNFT.cardDatas[newID] = newCard
+            VenezuelaNFT_4.cardDatas[newID] = newCard
             // emit event
             emit CardCreated(cardID: newCard.cardID, cardType: "Location")
 
             return newID
         }
         // createCharacterCard creates a new CharacterCard struct 
-        // and stores it in the CharacterCards dictionary in the VenezuelaNFT smart contract
+        // and stores it in the CharacterCards dictionary in the VenezuelaNFT_4 smart contract
         //
         // Returns: the ID of the new Card object
         //
@@ -751,16 +761,16 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             let newID = newCard.cardID
 
             // Increment the ID so that it isn't used again
-            VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
+            VenezuelaNFT_4.nextCardID = VenezuelaNFT_4.nextCardID + 1
             // Store it in the contract storage
-            VenezuelaNFT.cardDatas[newID] = newCard
+            VenezuelaNFT_4.cardDatas[newID] = newCard
             // emit event
             emit CardCreated(cardID: newCard.cardID, cardType: "Character")
 
             return newID
         }
         // createCulturalItemCard creates a new CulturalItemCard struct 
-        // and stores it in the CulturalItemCards dictionary in the VenezuelaNFT smart contract
+        // and stores it in the CulturalItemCards dictionary in the VenezuelaNFT_4 smart contract
         //
         // Returns: the ID of the new Card object
         //
@@ -781,9 +791,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             let newID = newCard.cardID
 
             // Increment the ID so that it isn't used again
-            VenezuelaNFT.nextCardID = VenezuelaNFT.nextCardID + 1
+            VenezuelaNFT_4.nextCardID = VenezuelaNFT_4.nextCardID + 1
             // Store it in the contract storage
-            VenezuelaNFT.cardDatas[newID] = newCard
+            VenezuelaNFT_4.cardDatas[newID] = newCard
             // emit event
             emit CardCreated(cardID: newCard.cardID, cardType: "Cultural Item")
 
@@ -791,7 +801,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         }
 
         // createSet creates a new Set resource and stores it
-        // in the sets mapping in the VenezuelaNFT contract
+        // in the sets mapping in the VenezuelaNFT_4 contract
         //
         // Parameters: name: The name of the Set
         //
@@ -802,29 +812,29 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             var newSet <- create Set(name: name)
 
             // Increment the setID so that it isn't used again
-            VenezuelaNFT.nextSetID = VenezuelaNFT.nextSetID + 1
+            VenezuelaNFT_4.nextSetID = VenezuelaNFT_4.nextSetID + 1
 
             let newID = newSet.setID
 
-            emit SetCreated(setID: newSet.setID, season: VenezuelaNFT.currentSeason)
+            emit SetCreated(setID: newSet.setID, season: VenezuelaNFT_4.currentSeason)
 
             // Store it in the sets mapping field
-            VenezuelaNFT.sets[newID] <-! newSet
+            VenezuelaNFT_4.sets[newID] <-! newSet
 
             return newID
         }
         access(all) view fun borrowSet(setID: UInt32): &Set {
             pre {
-                VenezuelaNFT.sets[setID] != nil: "Cannot borrow Set: The Set doesn't exist"
+                VenezuelaNFT_4.sets[setID] != nil: "Cannot borrow Set: The Set doesn't exist"
             }
             
             // Get a reference to the Set and return it
             // use `&` to indicate the reference to the object and type
-            return (&VenezuelaNFT.sets[setID])!
+            return (&VenezuelaNFT_4.sets[setID])!
         }
     }
     // -----------------------------------------------------------------------
-    // VenezuelaNFT Receipt Resource
+    // VenezuelaNFT_4 Receipt Resource
     // -----------------------------------------------------------------------
     /// The Receipt resource is used to store the associated randomness request. By listing the
     /// RandomConsumer.RequestWrapper conformance, this resource inherits all the default implementations of the
@@ -844,9 +854,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         }
     }
     // -----------------------------------------------------------------------
-    // VenezuelaNFT private functions
+    // VenezuelaNFT_4 private functions
     // -----------------------------------------------------------------------
-    // borrowSet returns a reference to a set in the VenezuelaNFT
+    // borrowSet returns a reference to a set in the VenezuelaNFT_4
     // contract so that the admin can call methods on it
     //
     // Parameters: setID: The ID of the Set that you want to
@@ -857,12 +867,12 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     //
     access(account) view fun borrowSet(setID: UInt32): &Set {
         pre {
-            VenezuelaNFT.sets[setID] != nil: "Cannot borrow Set: The Set doesn't exist"
+            VenezuelaNFT_4.sets[setID] != nil: "Cannot borrow Set: The Set doesn't exist"
         }
             
         // Get a reference to the Set and return it
         // use `&` to indicate the reference to the object and type
-        return (&VenezuelaNFT.sets[setID])!
+        return (&VenezuelaNFT_4.sets[setID])!
     }
     /// Returns a random number between 0 and 1 using the RandomConsumer.Consumer resource contained in the contract.
     /// For the purposes of this contract, a simple modulo operation could have been used though this is not the case
@@ -874,7 +884,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         return UInt8(self.consumer.fulfillRandomInRange(request: <-request, min: 0, max: UInt64(max)))
     }
     // -----------------------------------------------------------------------
-    // VenezuelaNFT public functions
+    // VenezuelaNFT_4 public functions
     // -----------------------------------------------------------------------
 
     /// createEmptyCollection creates an empty Collection for the specified NFT type
@@ -882,12 +892,12 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) fun createEmptyCollection(nftType: Type): @{NonFungibleToken.Collection} {
         return <- create Collection()
     }
-    // buyPack mints a new VenezuelaNFT.Receipt and returns it
+    // buyPack mints a new VenezuelaNFT_4.Receipt and returns it
     // 
-    // Parameters: setID: The ID of the Set that the VenezuelaNFT references
+    // Parameters: setID: The ID of the Set that the VenezuelaNFT_4 references
     //
     // Pre-Conditions:
-    // The Set must exist in the Set and be allowed to mint new VenezuelaNFTs
+    // The Set must exist in the Set and be allowed to mint new VenezuelaNFT_4s
     //
     // Returns: A Receipt for it to be redeemed later
     // 
@@ -900,7 +910,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         let receipt <- create Receipt(setID: setID, request: <-request)
         // Get account collection reference
 
-        // Increment the count of VenezuelaNFT minted for this Card
+        // Increment the count of VenezuelaNFT_4 minted for this Card
         // set.incrementCount(cardID: cardID) 
 
         emit BoughtPack(commitBlock: receipt.getRequestBlock()!, receiptID: receipt.uuid)
@@ -915,9 +925,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) fun revealPack(receipt: @Receipt, minter: Address) {
         pre {
             receipt.request != nil: 
-            "VenezuelaNFT.revealPack: Cannot reveal the pack! The provided receipt has already been revealed."
+            "VenezuelaNFT_4.revealPack: Cannot reveal the pack! The provided receipt has already been revealed."
             receipt.getRequestBlock()! <= getCurrentBlock().height:
-            "VenezuelaNFT.revealPack: Cannot reveal the pack! The provided receipt was committed for block height ".concat(receipt.getRequestBlock()!.toString())
+            "VenezuelaNFT_4.revealPack: Cannot reveal the pack! The provided receipt was committed for block height ".concat(receipt.getRequestBlock()!.toString())
             .concat(" which is greater than the current block height of ")
             .concat(getCurrentBlock().height.toString())
             .concat(". The reveal can only happen after the committed block has passed.")
@@ -928,15 +938,15 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         let set = self.borrowSet(setID: receipt.setID)
         let recipient = getAccount(minter)
         // Get reference to recipient's account
-        let receiverRef = recipient.capabilities.borrow<&{VenezuelaNFT.VenezuelaNFTCollectionPublic}>(VenezuelaNFT.CollectionPublicPath)
+        let receiverRef = recipient.capabilities.borrow<&{VenezuelaNFT_4.VenezuelaNFT_4CollectionPublic}>(VenezuelaNFT_4.CollectionPublicPath)
             ?? panic("Cannot borrow a reference to the recipient's moment collection")
         let cardID = UInt32(self._randomNumber(request: <-receipt.popRequest(), max: set.cards.length - 1))
         // Burn the receipt
         Burner.burn(<-receipt)
-        // Gets the number of VenezuelaNFT that have been minted for this cardID
-        // to use as this VenezuelaNFT's serial number
+        // Gets the number of VenezuelaNFT_4 that have been minted for this cardID
+        // to use as this VenezuelaNFT_4's serial number
         let currentSerial = set.numberMintedPerCard[cardID]!
-        // Mint the new VenezuelaNFT
+        // Mint the new VenezuelaNFT_4
         let newNFT: @NFT <- create NFT(serialNumber: currentSerial + 1,
                                         cardID: cardID,
                                         setID: set.setID,
@@ -954,7 +964,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
             )
         // Deposit NFT into user's account
         receiverRef.deposit(token: <- newNFT)
-        // Increment the count of VenezuelaNFT minted for this Card
+        // Increment the count of VenezuelaNFT_4 minted for this Card
         set.incrementCount(cardID: cardID)
 
         // return <- newNFT
@@ -963,11 +973,11 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) fun getCollectionAttribute(key: String): AnyStruct {
 		return self.collectionInfo[key] ?? panic(key.concat(" is not an attribute in this collection."))
 	}
-    // getAllCards returns all the cards in VenezuelaNFT
+    // getAllCards returns all the cards in VenezuelaNFT_4
     //
     // Returns: An array of all the cards that have been created
     access(all) view fun getAllCards(): [AnyStruct] {
-        return VenezuelaNFT.cardDatas.values
+        return VenezuelaNFT_4.cardDatas.values
     }
     // getCardMetaData returns all the metadata associated with a specific Card
     // 
@@ -985,8 +995,8 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     access(all) view fun getContractViews(resourceType: Type?): [Type] {
         return [
             Type<MetadataViews.NFTCollectionData>(),
-            Type<MetadataViews.NFTCollectionDisplay>(),
-            Type<MetadataViews.EVMBridgedMetadata>()
+            Type<MetadataViews.NFTCollectionDisplay>()
+        //    Type<MetadataViews.EVMBridgedMetadata>()
         ]
     }
     access(all) fun resolveContractView(resourceType: Type?, viewType: Type): AnyStruct? {
@@ -995,23 +1005,23 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
                 let collectionData = MetadataViews.NFTCollectionData(
                     storagePath: self.CollectionStoragePath,
                     publicPath: self.CollectionPublicPath,
-                    publicCollection: Type<&VenezuelaNFT.Collection>(),
-                    publicLinkedType: Type<&VenezuelaNFT.Collection>(),
+                    publicCollection: Type<&VenezuelaNFT_4.Collection>(),
+                    publicLinkedType: Type<&VenezuelaNFT_4.Collection>(),
                     createEmptyCollectionFunction: (fun (): @{NonFungibleToken.Collection} {
-                        return <-VenezuelaNFT.createEmptyCollection(nftType: Type<@VenezuelaNFT.NFT>())
+                        return <-VenezuelaNFT_4.createEmptyCollection(nftType: Type<@VenezuelaNFT_4.NFT>())
                     })
                 )
                 return collectionData
             case Type<MetadataViews.NFTCollectionDisplay>():
-                let media = VenezuelaNFT.getCollectionAttribute(key: "image") as! MetadataViews.Media
+                let media = VenezuelaNFT_4.getCollectionAttribute(key: "image") as! MetadataViews.Media
                 return MetadataViews.NFTCollectionDisplay(
-                    name: "VenezuelaNFT",
-                    description: "Sell VenezuelaNFTs of any Tweet in seconds.",
-                    externalURL: MetadataViews.ExternalURL("https://VenezuelaNFT.gg/"),
+                    name: "VenezuelaNFT_4",
+                    description: "VenezuelaNFT_4s and Telegram governance.",
+                    externalURL: MetadataViews.ExternalURL("https://VenezuelaNFT_4.gg/"),
                     squareImage: media,
                     bannerImage: media,
                     socials: {
-                        "twitter": MetadataViews.ExternalURL("https://twitter.com/VenezuelaNFT")
+                        "twitter": MetadataViews.ExternalURL("https://twitter.com/VenezuelaNFT_4")
                     }
                 )
         }
@@ -1020,7 +1030,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
     // Init
 
     init() {
-        let identifier = "VenezuelaNFT_".concat(self.account.address.toString())
+        let identifier = "VenezuelaNFT_4_".concat(self.account.address.toString())
 //        self.locationCardDatas = {}
 //        self.characterCardDatas = {}
 //        self.culturalItemCardDatas = {}
@@ -1034,10 +1044,15 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
         self.collectionInfo = {}
 		self.collectionInfo["image"] = MetadataViews.Media(
             			file: MetadataViews.HTTPFile(
-            				url: "https://media.discordapp.net/attachments/1075564743152107530/1149417271597473913/VenezuelaNFT_collection_image.png?width=1422&height=1422"
+            				url: "https://bafybeiceaod6tlnx36curr5fheppn43yuum42iuqodwnd4ve3hfsncagly.ipfs.dweb.link?filename=u8583739436_Create_a_logo_with_the_letter_V._This_illustrated_608e624a-bc77-4ad8-b2bd-ebda78890729_0.png"
             			),
             			mediaType: "image/jpeg"
           			)
+        self.collectionInfo["website"] = MetadataViews.ExternalURL("https://www.Venezuela.gg/")
+        self.collectionInfo["socials"] = {"Twitter": MetadataViews.ExternalURL("https:x/Vzla.app/")}
+        self.collectionInfo["dateCreated"] = getCurrentBlock().timestamp
+        self.collectionInfo["description"] = "Venezuela Democracy app"
+        self.collectionInfo["name"] = "VenezuelaNFT"
         // Create a RandomConsumer.Consumer resource
         self.consumer <-RandomConsumer.createConsumer()
 		// Set the named paths
@@ -1051,9 +1066,9 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 		let collection <- create Collection()
 		self.account.storage.save(<- collection, to: self.CollectionStoragePath)
         // create a public capability for the collection
-	    let collectionCap = self.account.capabilities.storage.issue<&VenezuelaNFT.Collection>(self.CollectionStoragePath)
+	    let collectionCap = self.account.capabilities.storage.issue<&VenezuelaNFT_4.Collection>(self.CollectionStoragePath)
 		self.account.capabilities.publish(collectionCap, at: self.CollectionPublicPath)
-		// Create a Administrator resource and save it to VenezuelaNFT account storage
+		// Create a Administrator resource and save it to VenezuelaNFT_4 account storage
 		let administrator <- create Administrator()
 		self.account.storage.save(<- administrator, to: self.AdministratorStoragePath)
         // Emit contract init event

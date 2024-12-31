@@ -1,22 +1,39 @@
 {
 	"contracts": {
+		"Burner": {
+			"source": "./contracts/random/Burner.cdc",
+			"aliases": {
+				"testnet": "9a0766d93b6608b7"
+			}
+		},
+		"DevelopmentPoints": "./contracts/DevelopmentPoints",
+		"InfluencePoints": "./contracts/InfluencePoints",
+		"RandomBeaconHistory": {
+			"source": "./contracts/random/RandomBeaconHistory.cdc",
+			"aliases": {
+				"testnet": "8c5303eaa26202d6"
+			}
+		},
+		"RandomConsumer": {
+			"source": "./contracts/random/RandomConsumer.cdc",
+			"aliases": {
+				"testnet": "ed24dbe901028c5c"
+			}
+		},
 		"VenezuelaNFT": {
 			"source": "./contracts/VenezuelaNFT.cdc",
 			"aliases": {
 				"testnet": "826dae42290107c3"
 			}
+		},
+		"Xorshift128plus": {
+			"source": "./contracts/random/Xorshift128plus.cdc",
+			"aliases": {
+				"testnet": "ed24dbe901028c5c"
+			}
 		}
 	},
 	"dependencies": {
-		"Burner": {
-			"source": "mainnet://f233dcee88fe0abe.Burner",
-			"hash": "71af18e227984cd434a3ad00bb2f3618b76482842bae920ee55662c37c8bf331",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"mainnet": "f233dcee88fe0abe",
-				"testnet": "9a0766d93b6608b7"
-			}
-		},
 		"EVM": {
 			"source": "mainnet://e467b9dd11fa00df.EVM",
 			"hash": "5c69921fa06088b477e2758e122636b39d3d3eb5316807c206c5680d9ac74c7e",
@@ -71,23 +88,6 @@
 				"testnet": "631e88ae7f1d7c20"
 			}
 		},
-		"RandomBeaconHistory": {
-			"source": "mainnet://e467b9dd11fa00df.RandomBeaconHistory",
-			"hash": "fe7f11c46dd54446bd60d88015ffe5057d7245c4b77374e11db2adf0a8156167",
-			"aliases": {
-				"emulator": "f8d6e0586b0a20c7",
-				"mainnet": "e467b9dd11fa00df",
-				"testnet": "8c5303eaa26202d6"
-			}
-		},
-		"RandomConsumer": {
-			"source": "mainnet://45caec600164c9e6.RandomConsumer",
-			"hash": "961617e2cd8f73000ebffd9ba4b2667053135948cb009f00f4b05a9b8fc6fc27",
-			"aliases": {
-				"mainnet": "45caec600164c9e6",
-				"testnet": "ed24dbe901028c5c"
-			}
-		},
 		"ViewResolver": {
 			"source": "mainnet://1d7e57aa55817448.ViewResolver",
 			"hash": "374a1994046bac9f6228b4843cb32393ef40554df9bd9907a702d098a2987bde",
@@ -95,14 +95,6 @@
 				"emulator": "f8d6e0586b0a20c7",
 				"mainnet": "1d7e57aa55817448",
 				"testnet": "631e88ae7f1d7c20"
-			}
-		},
-		"Xorshift128plus": {
-			"source": "mainnet://45caec600164c9e6.Xorshift128plus",
-			"hash": "219161c40707967b50ff71e507ac0e5ee24d932ea8925112fe108ff2638711aa",
-			"aliases": {
-				"mainnet": "45caec600164c9e6",
-				"testnet": "ed24dbe901028c5c"
 			}
 		}
 	},
@@ -113,6 +105,13 @@
 		"testnet": "access.devnet.nodes.onflow.org:9000"
 	},
 	"accounts": {
+		"VzlaDemo": {
+			"address": "226443631cd17752",
+			"key": {
+				"type": "file",
+				"location": "VzlaDemo.pkey"
+			}
+		},
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
 			"key": {
@@ -124,15 +123,20 @@
 			"address": "179b6b1cb6755e31",
 			"key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
 		},
-		"Telegram": {
-			"address": "0x826dae42290107c3",
-			"key": "0x96376927407e9ee979f33c6f6c7d277c8f14f2e1a15bc711a90e38c23242646d"
+		"testnet-Telegram": {
+			"address": "826dae42290107c3",
+			"key": "96376927407e9ee979f33c6f6c7d277c8f14f2e1a15bc711a90e38c23242646d"
 		}
 	},
 	"deployments": {
 		"emulator": {
 			"emulator-account": [],
 			"emulator-bob": []
+		},
+		"testnet": {
+			"testnet-Telegram": [
+				"VenezuelaNFT"
+			]
 		}
 	}
 }

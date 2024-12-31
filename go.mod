@@ -1,4 +1,4 @@
-module vlza/overflow
+module vzla/overflow
 
 go 1.22.2
 

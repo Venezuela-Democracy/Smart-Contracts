@@ -2,9 +2,9 @@ import "FungibleToken"
 import "MetadataViews"
 import "FungibleTokenMetadataViews"
 
-// Token contract of Venezuela Token (VZLA)
+// Token contract of VenezuelaNFT (VZLA)
 access(all)
-contract VenezuelaIP: FungibleToken{ 
+contract VenezuelaDP: FungibleToken{ 
     
     // An entitlement for Administrator access
     access(all) entitlement AdministratorEntitlement
@@ -13,7 +13,7 @@ contract VenezuelaIP: FungibleToken{
     // An entitlement for Burner access
     access(all) entitlement BurnerEntitlement
 
-    // Total supply of Venezuela tokens in existence
+    // Total supply of VenezuelaNFTs in existence
     access(all)
     var totalSupply: UFix64
     
@@ -72,7 +72,7 @@ contract VenezuelaIP: FungibleToken{
             ]
     }
 
-    /// Get a Metadata View from VenezuelaIP
+    /// Get a Metadata View from VenezuelaDP
     ///
     /// @param view: The Type of the desired view.
     /// @return A structure representing the requested view.
@@ -87,23 +87,23 @@ contract VenezuelaIP: FungibleToken{
             case Type<FungibleTokenMetadataViews.FTDisplay>():
                 let media = MetadataViews.Media(
                     file: MetadataViews.HTTPFile(
-                        url: "https://raw.githubusercontent.com/Venezuela/assets/main/color/flow/VZLA.svg"
+                        url: "https://raw.githubusercontent.com/VenezuelaNFT/assets/main/color/flow/VZLA.svg"
                     ),
                     mediaType: "image/svgxml"
                 )
                 let medias = MetadataViews.Medias([media])
                 return FungibleTokenMetadataViews.FTDisplay(
-                    name: "Venezuela Token",
+                    name: "VenezuelaNFT",
                     symbol: "VZLA",
-                    description: "Venezuela token (VZLA) is the utility and governance token of Venezuela.",
-                    externalURL: MetadataViews.ExternalURL("https://Venezuela.io/"),
+                    description: "VenezuelaNFT (VZLA) is the utility and governance token of VenezuelaNFT.",
+                    externalURL: MetadataViews.ExternalURL("https://VenezuelaNFT.io/"),
                     logos: medias,
                     socials: {
-                        "x": MetadataViews.ExternalURL("https://x.com/VenezuelaApp")
+                        "x": MetadataViews.ExternalURL("https://x.com/VenezuelaNFTApp")
                     }
                 )
             case Type<FungibleTokenMetadataViews.FTVaultData>():
-                let vaultRef = VenezuelaIP.account.storage.borrow<auth(FungibleToken.Withdraw) &VenezuelaIP.Vault>(from: VenezuelaIP.TokenStoragePath)
+                let vaultRef = VenezuelaDP.account.storage.borrow<auth(FungibleToken.Withdraw) &VenezuelaDP.Vault>(from: VenezuelaDP.TokenStoragePath)
                     ?? panic("Could not borrow reference to the contract's Vault!")
                 return FungibleTokenMetadataViews.FTVaultData(
                     storagePath: self.TokenStoragePath,
@@ -116,7 +116,7 @@ contract VenezuelaIP: FungibleToken{
                     })
             )
             case Type<FungibleTokenMetadataViews.TotalSupply>():
-                return FungibleTokenMetadataViews.TotalSupply(totalSupply: VenezuelaIP.totalSupply)
+                return FungibleTokenMetadataViews.TotalSupply(totalSupply: VenezuelaDP.totalSupply)
         }
         return nil
     }
@@ -169,7 +169,7 @@ contract VenezuelaIP: FungibleToken{
         // been consumed and therefore can be destroyed.
         access(all)
         fun deposit(from: @{FungibleToken.Vault}): Void{ 
-            let vault <- from as! @VenezuelaIP.Vault
+            let vault <- from as! @VenezuelaDP.Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             vault.balance = 0.0
@@ -190,7 +190,7 @@ contract VenezuelaIP: FungibleToken{
         // Called when a fungible token is burned via the `Burner.burn()` method
         access(contract) fun burnCallback() {
             if self.balance > 0.0 {
-                VenezuelaIP.totalSupply = VenezuelaIP.totalSupply - self.balance
+                VenezuelaDP.totalSupply = VenezuelaDP.totalSupply - self.balance
             }
             self.balance = 0.0
         }
@@ -211,7 +211,7 @@ contract VenezuelaIP: FungibleToken{
         //         developers to know which parameter to pass to the resolveView() method.
         //
         access(all) view fun getViews(): [Type]{
-            return VenezuelaIP.getContractViews(resourceType: nil)
+            return VenezuelaDP.getContractViews(resourceType: nil)
         }
 
         // Get a Metadata View from FlowToken
@@ -220,7 +220,7 @@ contract VenezuelaIP: FungibleToken{
         // @return A structure representing the requested view.
         //
         access(all) fun resolveView(_ view: Type): AnyStruct? {
-            return VenezuelaIP.resolveContractView(resourceType: nil, viewType: view)
+            return VenezuelaDP.resolveContractView(resourceType: nil, viewType: view)
         }
     }
     
@@ -232,7 +232,7 @@ contract VenezuelaIP: FungibleToken{
     // account to be able to receive deposits of this token type.
     //
     access(all)
-    fun createEmptyVault(vaultType: Type): @VenezuelaIP.Vault { 
+    fun createEmptyVault(vaultType: Type): @VenezuelaDP.Vault { 
         return <-create Vault(balance: 0.0)
     }
     
@@ -276,14 +276,14 @@ contract VenezuelaIP: FungibleToken{
         // and returns them to the calling context.
         //
         access(MinterEntitlement)
-        fun mintTokens(amount: UFix64): @VenezuelaIP.Vault{ 
+        fun mintTokens(amount: UFix64): @VenezuelaDP.Vault{ 
             pre{ 
                 amount > 0.0:
                     "Amount minted must be greater than zero"
                 amount <= self.allowedAmount:
                     "Amount minted must be less than the allowed amount"
             }
-            VenezuelaIP.totalSupply = VenezuelaIP.totalSupply + amount
+            VenezuelaDP.totalSupply = VenezuelaDP.totalSupply + amount
             self.allowedAmount = self.allowedAmount - amount
             emit TokensMinted(amount: amount)
             return <-create Vault(balance: amount)
@@ -310,9 +310,9 @@ contract VenezuelaIP: FungibleToken{
         //
         access(BurnerEntitlement)
         fun burnTokens(from: @{FungibleToken.Vault}){ 
-            let vault <- from as! @VenezuelaIP.Vault
+            let vault <- from as! @VenezuelaDP.Vault
             let amount = vault.balance
-            VenezuelaIP.totalSupply = VenezuelaIP.totalSupply - amount
+            VenezuelaDP.totalSupply = VenezuelaDP.totalSupply - amount
             destroy vault
             emit TokensBurned(amount: amount)
         }
@@ -324,10 +324,10 @@ contract VenezuelaIP: FungibleToken{
         // 30% will minted from staking and mining
         self.totalSupply = 350_000_000.0
 
-        self.TokenStoragePath = /storage/VenezuelaIPVault
-        self.TokenPublicReceiverPath = /public/VenezuelaIPReceiver
-        self.TokenPublicBalancePath = /public/VenezuelaIPBalance
-        self.TokenMinterStoragePath = /storage/VenezuelaIPMinter
+        self.TokenStoragePath = /storage/VenezuelaDPVault
+        self.TokenPublicReceiverPath = /public/VenezuelaDPReceiver
+        self.TokenPublicBalancePath = /public/VenezuelaDPBalance
+        self.TokenMinterStoragePath = /storage/VenezuelaDPMinter
         
         // Create the Vault with the total supply of tokens and save it in storage
         let vault <- create Vault(balance: self.totalSupply)
@@ -335,15 +335,15 @@ contract VenezuelaIP: FungibleToken{
         
         // Create a public capability to the stored Vault that only exposes
         // the `deposit` method through the `Receiver` interface
-        var capability_1 = self.account.capabilities.storage.issue<&VenezuelaIP.Vault>(self.TokenStoragePath)
+        var capability_1 = self.account.capabilities.storage.issue<&VenezuelaDP.Vault>(self.TokenStoragePath)
         self.account.capabilities.publish(capability_1, at: self.TokenPublicReceiverPath)
         
         // Create a public capability to the stored Vault that only exposes
         // the `balance` field through the `Balance` interface
-        var capability_2 = self.account.capabilities.storage.issue<&VenezuelaIP.Vault>(self.TokenStoragePath)
+        var capability_2 = self.account.capabilities.storage.issue<&VenezuelaDP.Vault>(self.TokenStoragePath)
         self.account.capabilities.publish(capability_2, at: self.TokenPublicBalancePath)
         let admin <- create Administrator()
-        self.account.storage.save(<-admin, to: /storage/VenezuelaIPAdmin)
+        self.account.storage.save(<-admin, to: /storage/VenezuelaDPAdmin)
         
         // Emit an event that shows that the contract was initialized
         emit TokensInitialized(initialSupply: self.totalSupply)
