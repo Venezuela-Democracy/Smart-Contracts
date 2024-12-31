@@ -2,12 +2,12 @@ import "FungibleToken"
 import "MetadataViews"
 import "FungibleTokenMetadataViews"
 
-access(all) contract VenezuelaIP: FungibleToken {
+access(all) contract VenezuelaDP: FungibleToken {
 
     /// The event that is emitted when new tokens are minted
     access(all) event TokensMinted(amount: UFix64, type: String)
 
-    /// Total supply of VenezuelaIPs in existence
+    /// Total supply of VenezuelaDPs in existence
     access(all) var totalSupply: UFix64
 
     /// Storage and Public Paths
@@ -55,15 +55,15 @@ access(all) contract VenezuelaIP: FungibleToken {
                     storagePath: self.VaultStoragePath,
                     receiverPath: self.ReceiverPublicPath,
                     metadataPath: self.VaultPublicPath,
-                    receiverLinkedType: Type<&VenezuelaIP.Vault>(),
-                    metadataLinkedType: Type<&VenezuelaIP.Vault>(),
+                    receiverLinkedType: Type<&VenezuelaDP.Vault>(),
+                    metadataLinkedType: Type<&VenezuelaDP.Vault>(),
                     createEmptyVaultFunction: (fun(): @{FungibleToken.Vault} {
-                        return <-VenezuelaIP.createEmptyVault(vaultType: Type<@VenezuelaIP.Vault>())
+                        return <-VenezuelaDP.createEmptyVault(vaultType: Type<@VenezuelaDP.Vault>())
                     })
                 )
             case Type<FungibleTokenMetadataViews.TotalSupply>():
                 return FungibleTokenMetadataViews.TotalSupply(
-                    totalSupply: VenezuelaIP.totalSupply
+                    totalSupply: VenezuelaDP.totalSupply
                 )
         }
         return nil
@@ -94,7 +94,7 @@ access(all) contract VenezuelaIP: FungibleToken {
         /// Called when a fungible token is burned via the `Burner.burn()` method
         access(contract) fun burnCallback() {
             if self.balance > 0.0 {
-                VenezuelaIP.totalSupply = VenezuelaIP.totalSupply - self.balance
+                VenezuelaDP.totalSupply = VenezuelaDP.totalSupply - self.balance
             }
             self.balance = 0.0
         }
@@ -102,11 +102,11 @@ access(all) contract VenezuelaIP: FungibleToken {
         /// In fungible tokens, there are no specific views for specific vaults,
         /// So we can route calls to view functions to the contract views functions
         access(all) view fun getViews(): [Type] {
-            return VenezuelaIP.getContractViews(resourceType: nil)
+            return VenezuelaDP.getContractViews(resourceType: nil)
         }
 
         access(all) fun resolveView(_ view: Type): AnyStruct? {
-            return VenezuelaIP.resolveContractView(resourceType: nil, viewType: view)
+            return VenezuelaDP.resolveContractView(resourceType: nil, viewType: view)
         }
 
         /// getSupportedVaultTypes optionally returns a list of vault types that this receiver accepts
@@ -135,7 +135,7 @@ access(all) contract VenezuelaIP: FungibleToken {
         /// created Vault to the context that called so it can be deposited
         /// elsewhere.
         ///
-        access(FungibleToken.Withdraw) fun withdraw(amount: UFix64): @VenezuelaIP.Vault {
+        access(FungibleToken.Withdraw) fun withdraw(amount: UFix64): @VenezuelaDP.Vault {
             self.balance = self.balance - amount
             return <-create Vault(balance: amount)
         }
@@ -150,7 +150,7 @@ access(all) contract VenezuelaIP: FungibleToken {
         /// been consumed and therefore can be destroyed.
         ///
         access(all) fun deposit(from: @{FungibleToken.Vault}) {
-            let vault <- from as! @VenezuelaIP.Vault
+            let vault <- from as! @VenezuelaDP.Vault
             self.balance = self.balance + vault.balance
             destroy vault
         }
@@ -162,7 +162,7 @@ access(all) contract VenezuelaIP: FungibleToken {
         /// and store the returned Vault in their storage in order to allow their
         /// account to be able to receive deposits of this token type.
         ///
-        access(all) fun createEmptyVault(): @VenezuelaIP.Vault {
+        access(all) fun createEmptyVault(): @VenezuelaDP.Vault {
             return <-create Vault(balance: 0.0)
         }
     }
@@ -177,8 +177,8 @@ access(all) contract VenezuelaIP: FungibleToken {
         /// Function that mints new tokens, adds them to the total supply,
         /// and returns them to the calling context.
         ///
-        access(all) fun mintTokens(amount: UFix64): @VenezuelaIP.Vault {
-            VenezuelaIP.totalSupply = VenezuelaIP.totalSupply + amount
+        access(all) fun mintTokens(amount: UFix64): @VenezuelaDP.Vault {
+            VenezuelaDP.totalSupply = VenezuelaDP.totalSupply + amount
             let vault <-create Vault(balance: amount)
             emit TokensMinted(amount: amount, type: vault.getType().identifier)
             return <-vault
@@ -192,13 +192,13 @@ access(all) contract VenezuelaIP: FungibleToken {
     /// and store the returned Vault in their storage in order to allow their
     /// account to be able to receive deposits of this token type.
     ///
-    access(all) fun createEmptyVault(vaultType: Type): @VenezuelaIP.Vault {
+    access(all) fun createEmptyVault(vaultType: Type): @VenezuelaDP.Vault {
         return <- create Vault(balance: 0.0)
     }
 
     init() {
         self.totalSupply = 0.0
-        let identifier = "VenezuelaIP_".concat(self.account.address.toString())
+        let identifier = "VenezuelaDP_".concat(self.account.address.toString())
 
         self.VaultStoragePath = StoragePath(identifier: identifier)!
         self.VaultPublicPath = PublicPath(identifier: identifier)!
@@ -214,9 +214,9 @@ access(all) contract VenezuelaIP: FungibleToken {
         // the `deposit` method and getAcceptedTypes method through the `Receiver` interface
         // and the `balance` method through the `Balance` interface
         //
-        let VenezuelaIPCap = self.account.capabilities.storage.issue<&VenezuelaIP.Vault>(self.VaultStoragePath)
-        self.account.capabilities.publish(VenezuelaIPCap, at: self.VaultPublicPath)
-        let receiverCap = self.account.capabilities.storage.issue<&VenezuelaIP.Vault>(self.VaultStoragePath)
+        let VenezuelaDPCap = self.account.capabilities.storage.issue<&VenezuelaDP.Vault>(self.VaultStoragePath)
+        self.account.capabilities.publish(VenezuelaDPCap, at: self.VaultPublicPath)
+        let receiverCap = self.account.capabilities.storage.issue<&VenezuelaDP.Vault>(self.VaultStoragePath)
         self.account.capabilities.publish(receiverCap, at: self.ReceiverPublicPath)
 
         self.account.storage.save(<-vault, to: self.VaultStoragePath)
