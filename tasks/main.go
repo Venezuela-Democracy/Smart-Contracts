@@ -8,9 +8,10 @@ import (
 )
 
 func main() {
-	// Comienza el programa overflow
+	// Comienza el programa overflow"
 	o := Overflow(
 		WithGlobalPrintOptions(),
+		WithNetwork("testnet"),
 	)
 	fmt.Println("Testing Vzla Democracy cadence contracts")
 	//
@@ -19,7 +20,7 @@ func main() {
 	color.Red("Admin should be able to upload metadata to the contract")
 	// upload_metadata
 	o.Tx("admin/create_locationCard",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("region", "Merida"),
 		WithArg("name", "University of Los Andes"),
 		WithArg("type", "Educational"),
@@ -30,12 +31,12 @@ func main() {
 		WithArg("proposal_1_effect", "10"),
 		WithArg("proposal_1_duration", "7.0"),
 		WithArg("proposal_1_adoptionRequirement", "30"),
-	)
+	).Print()
 	// Script to get card metadata
-	o.Script("get_card_metadata", WithArg("cardID", "0"))
+	o.Script("get_card_metadata", WithArg("cardID", "0")).Print()
 	// Admin create characterCard
 	o.Tx("admin/create_characterCard",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("name", "Andrés Bello"),
 		WithArg("characterTypes", `["Educational", "Cultural"]`),
 		WithArg("influencePointsGeneration", "20"),
@@ -44,59 +45,59 @@ func main() {
 		WithArg("developmentEffect", `{"Educational": 50}`),
 		WithArg("bonusEffect", `{"Educational": 50}`),
 		WithArg("cardNarratives", `{70: "Bello's legacy defines regional identity", 50: "Bello's ideas inspire local development"}`),
-	)
+	).Print()
 	// Script to get card metadata
-	o.Script("get_card_metadata", WithArg("cardID", "1"))
+	o.Script("get_card_metadata", WithArg("cardID", "1")).Print()
 	o.Tx("admin/create_itemCard",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("name", "Arepa"),
 		WithArg("votingEffect", `{"Gastronomic": 2}`),
 		WithArg("specialEffect", `{"Gastronomic": 20}`),
 		WithArg("type", "Gastronomic"),
 		WithArg("influencePointsGeneration", "10"),
 		WithArg("cardNarratives", `{90: "The arepa crowns itself as the region’s undisputed symbol", 70: "The arepa defines local gastronomic identity"}`),
-	)
+	).Print()
 	// Script to get card metadata
-	o.Script("get_card_metadata", WithArg("cardID", "2"))
+	o.Script("get_card_metadata", WithArg("cardID", "2")).Print()
 	color.Red("Admin should be able to create a set")
 	// Incrementa el contador
 	o.Tx("admin/create_set",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("setName", "Base Locations"),
-	)
+	).Print()
 	color.Red("Admin should be able to add cards to a set")
 	// create_season
 	o.Tx("admin/add_cards_to_set",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("setID", "0"),
 		WithArg("cards", "[0, 1, 2]"),
-	)
+	).Print()
 	// Script to get all cards
-	o.Script("get_all_cards")
+	o.Script("get_all_cards").Print()
 	color.Red("User should be able to buy a Pack")
 
-	o.Tx("buy_pack",
-		WithSigner("account"),
-		WithArg("setID", "0"),
-	)
+	/* 	o.Tx("buy_pack",
+	   		WithSigner("Telegram"),
+	   		WithArg("setID", "0"),
+	   	)
 
-	color.Red("User should be able to open a Pack")
+	   	color.Red("User should be able to open a Pack")
 
-	o.Tx("reveal_pack",
-		WithSigner("account"),
-	)
-	color.Red("User should be able to buy a second Pack")
-	o.Tx("buy_pack",
-		WithSigner("account"),
-		WithArg("setID", "0"),
-	)
-	o.Tx("reveal_pack",
-		WithSigner("account"),
-	)
+	   	o.Tx("reveal_pack",
+	   		WithSigner("Telegram"),
+	   	)
+	   	color.Red("User should be able to buy a second Pack")
+	   	o.Tx("buy_pack",
+	   		WithSigner("Telegram"),
+	   		WithArg("setID", "0"),
+	   	)
+	   	o.Tx("reveal_pack",
+	   		WithSigner("Telegram"),
+	   	) */
 
 	// create_season
 	/* 	o.Tx("admin/start_new_season",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("", ""),
 		WithArg("", ""),
 		WithArg("", ""),

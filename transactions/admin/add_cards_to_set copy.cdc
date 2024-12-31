@@ -7,7 +7,7 @@ import VenezuelaNFT from "../../contracts/VenezuelaNFT.cdc"
 // setID: the ID of the set to which multiple cards are added
 // cards: an array of card IDs being added to the set
 
-transaction() {
+transaction(setID: UInt32, cards: [UInt32]) {
 
     let Administrator: &VenezuelaNFT.Administrator
     
@@ -18,9 +18,9 @@ transaction() {
     execute {
 
         // borrow a reference to the set to be added to
-        let setRef = self.Administrator.borrowSet(setID: 0)
+        let setRef = self.Administrator.borrowSet(setID: setID)
 
         // Add the specified card IDs
-        let returned = setRef.addCards(cardIDs: [0, 1, 2])
+        let returned = setRef.addCards(cardIDs: cards)
     }
 }

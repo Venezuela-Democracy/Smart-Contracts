@@ -63,7 +63,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 	access(all) let CollectionStoragePath: StoragePath
 	access(all) let CollectionPublicPath: PublicPath
 	access(all) let CollectionPrivatePath: PrivatePath
-	access(all) let AdminStoragePath: StoragePath
+	access(all) let AdministratorStoragePath: StoragePath
     /// The canonical path for common Receipt storage
     access(all) let ReceiptStoragePath: StoragePath
     // -----------------------------------------------------------------------
@@ -1044,7 +1044,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 		self.CollectionStoragePath = StoragePath(identifier: identifier)!
 		self.CollectionPublicPath = PublicPath(identifier: identifier)!
 		self.CollectionPrivatePath = PrivatePath(identifier: identifier)!
-		self.AdminStoragePath = StoragePath(identifier: identifier.concat("Administrator"))!
+		self.AdministratorStoragePath = StoragePath(identifier: identifier.concat("Administrator"))!
 		self.ReceiptStoragePath = StoragePath(identifier: identifier.concat("ReceiptStorage"))!
 
 		// Create a Collection resource and save it to storage
@@ -1055,7 +1055,7 @@ contract VenezuelaNFT: NonFungibleToken, ViewResolver {
 		self.account.capabilities.publish(collectionCap, at: self.CollectionPublicPath)
 		// Create a Administrator resource and save it to VenezuelaNFT account storage
 		let administrator <- create Administrator()
-		self.account.storage.save(<- administrator, to: self.AdminStoragePath)
+		self.account.storage.save(<- administrator, to: self.AdministratorStoragePath)
         // Emit contract init event
 		emit ContractInitialized()
 

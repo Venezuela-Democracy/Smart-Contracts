@@ -1,6 +1,11 @@
 {
 	"contracts": {
-		"VenezuelaNFT": "./contracts/VenezuelaNFT.cdc"
+		"VenezuelaNFT": {
+			"source": "./contracts/VenezuelaNFT.cdc",
+			"aliases": {
+				"testnet": "826dae42290107c3"
+			}
+		}
 	},
 	"dependencies": {
 		"Burner": {
@@ -118,15 +123,15 @@
 		"emulator-bob": {
 			"address": "179b6b1cb6755e31",
 			"key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
+		},
+		"Telegram": {
+			"address": "0x826dae42290107c3",
+			"key": "0x96376927407e9ee979f33c6f6c7d277c8f14f2e1a15bc711a90e38c23242646d"
 		}
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-account": [
-				"VenezuelaNFT",
-				"RandomConsumer",
-				"Xorshift128plus"
-			],
+			"emulator-account": [],
 			"emulator-bob": []
 		}
 	}
