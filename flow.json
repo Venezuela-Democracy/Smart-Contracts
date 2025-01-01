@@ -130,7 +130,13 @@
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-account": [],
+			"emulator-account": [
+				"Burner",
+				"Xorshift128plus",
+				"RandomBeaconHistory",
+				"RandomConsumer",
+				"VenezuelaNFT"
+			],
 			"emulator-bob": []
 		},
 		"testnet": {

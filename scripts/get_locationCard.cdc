@@ -8,5 +8,5 @@ import VenezuelaNFT_4 from "../contracts/VenezuelaNFT.cdc"
 
 access(all) fun main(cardID: UInt32): AnyStruct? {
 
-    return VenezuelaNFT_4.getCardMetaData(cardID: cardID)
+    return VenezuelaNFT_4.getLocationMetaData(cardID: cardID)
 }

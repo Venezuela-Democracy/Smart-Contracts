@@ -8,5 +8,5 @@ import VenezuelaNFT_4 from "../contracts/VenezuelaNFT.cdc"
 
 access(all) fun main(): [AnyStruct] {
 
-    return VenezuelaNFT_4.getAllCards()
+    return VenezuelaNFT_4.
 }

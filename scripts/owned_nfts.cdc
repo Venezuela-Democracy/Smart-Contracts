@@ -1,4 +1,4 @@
-import VenezuelaNFT_4 from "VenezuelaNFT"
+import VenezuelaNFT_4 from "../contracts/VenezuelaNFT.cdc"
 import MetadataViews from "MetadataViews"
 
 access(all) fun main(account: Address): [AnyStruct]?  {

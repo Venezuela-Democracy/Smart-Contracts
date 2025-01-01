@@ -13,7 +13,7 @@ transaction {
             ?? panic("No Receipt found in storage at path=".concat(VenezuelaNFT_4.ReceiptStoragePath.toString()))
 
         // Reveal by redeeming my receipt - fingers crossed!
-        VenezuelaNFT_4.revealPack(receipt: <- receipt, minter: signer.address)
+        VenezuelaNFT_4.revealPack(receipt: <- receipt, minter: signer.address, emptyDict: {})
 
     }
 }
