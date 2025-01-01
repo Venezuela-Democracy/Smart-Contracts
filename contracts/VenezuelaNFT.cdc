@@ -15,12 +15,9 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
 
     // A struct containing all the information related to the contract
 	access(self) let collectionInfo: {String: AnyStruct}
-    // Variable size dictionary of LocationCard structs
-//    access(self) var locationCardDatas: {UInt32: LocationCard}
-    // Variable size dictionary of CharacterCard structs
-//    access(self) var characterCardDatas: {UInt32: CharacterCard}
-    // Variable size dictionary of CulturalItemCard structs
-//    access(self) var culturalItemCardDatas: {UInt32: CulturalItemCard}
+
+    access(self) var cardDatas: {UInt32: AnyStruct}
+
     // Variable size dictionary of Cards structs
     access(self) var locationsData: {UInt32: LocationCard}
     // Variable size dictionary of Cards structs
@@ -78,40 +75,13 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
     // actual stored values, but an instance (or object) of one of these Types
     // can be created by this contract that contains stored values.
     // -----------------------------------------------------------------------
+
+    // Enum for card types
     access(all) enum CardType: UInt8 {
         access(all) case location
         access(all) case character
         access(all) case culturalItem
     }
-    // Card is a Struct that holds metadata associated 
-    // with a specific VenezuelaNFT_4 Card
-    // VenezuelaNFT_4s will all reference a single Card as the owner of
-    // its metadata. The Cards are publicly accessible, so anyone can
-    // read the metadata associated with a specific Card ID
-    //
-/*     access(all) struct Card {
-        // The unique ID for the Card
-        access(all) let cardID: UInt32
-        // Stores all the metadata about the Card as a string mapping
-        access(all) let metadata: {String: String}
-
-        init(metadata: {String: String}) {
-            pre {
-                metadata.length != 0: "New Card metadata cannot be empty"
-            }
-            self.cardID = VenezuelaNFT_4.nextCardID
-            self.metadata = metadata
-        }
-        /// This function is intended to backfill the Card on blockchain with a more detailed
-        /// description of the Card. The benefit of having the description is that anyone would
-        /// be able to know the story of the Card directly from Flow
-        access(contract) fun updateTagline(tagline: String): UInt32 {
-            self.metadata["Tagline"] = tagline
-
-            // VenezuelaNFT_4.cardsDatas[self.CardID] = self
-            return self.cardID
-        }
-    } */
 
     // Struct to store a LocationCard available proposals
     // citizens vote on proposals and the card's effects activate
@@ -143,7 +113,7 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
     //    
     access(all) struct LocationCard {
         // Card Type 
-        access(all) let cardType: CardType
+        access(all) let cardType: Type
         // The unique ID for the Card
         access(all) let cardID: UInt32
         // The card's name
@@ -183,7 +153,7 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
                 regionalGeneration > 0: "Location regional generation cannot be zero or less"
                 cardNarratives != nil: "Card's narratives can't be empty"
             }
-            self.cardType = CardType.location
+            self.cardType = self.getType()
             self.cardID = VenezuelaNFT_4.nextCardID
             self.region = region
             self.name = name
@@ -422,7 +392,7 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
         // Array of cards that are a part of this set.
         // When a Card is added to the set, its ID gets appended here.
         // The ID does not get removed from this array when a Card is retired.
-        access(contract) var cards: {UInt32: CardType}
+        access(contract) var cards: {UInt32: Type}
 
         // Indicates if the Set is currently locked.
         // When a Set is created, it is unlocked 
@@ -459,7 +429,7 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
         // The Set needs to be not locked
         // The card can't have already been added to the Set
         //
-        access(all) fun addCard(cardID: UInt32, cardType: CardType) {
+        access(all) fun addCard(cardID: UInt32, cardType: Type) {
             pre {
                 !self.locked: "Cannot add the card to the Set after the set has been locked."
                 self.numberMintedPerCard[cardID] == nil: "The card has already beed added to the set."
@@ -474,7 +444,7 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
             emit CardAddedToSet(setID: self.setID, cardID: cardID)
         }
         // Function to return a card's type
-        access(all) fun getCardType(cardID: UInt32): CardType {
+        access(all) fun getCardType(cardID: UInt32): Type {
             return self.cards[cardID]!
         }
         // addCards adds multiple Cards to the Set
@@ -499,7 +469,7 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
         // CardId in relation to Metadata
 		access(all) let id: UInt64
         // CardType to filter metadata
-        access(all) let cardType: CardType
+        access(all) let cardType: Type
         // SetId
         access(all) let setId: UInt32
 		// SerialNumber
@@ -507,12 +477,37 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
         // access(all) let metadata: CardData
         access(all) let orignalMinter: Address
 
+        // Return the Type of this Card
+        // Could be Location, Character or CulturalItem
         access(all)
-        fun get_metadata(): AnyStruct {
-            return {"":""}
+        fun getCardType(): Type {
+            return self.cardType
+        }
+        // Return the card as its specific struct
+        // based on its card type
+        
+        access(all) 
+        fun get_LocationCard(): VenezuelaNFT_4.LocationCard? {
+            return VenezuelaNFT_4.getLocationMetaData(cardID: UInt32(self.id))
+        }
+        access(all) 
+        fun get_CharacterCard(): VenezuelaNFT_4.CharacterCard? {
+            return VenezuelaNFT_4.getCharcaterMetaData(cardID: UInt32(self.id))
+        }
+        access(all) 
+        fun get_CulturalItemCard(): VenezuelaNFT_4.CulturalItemCard? {
+            return VenezuelaNFT_4.getItemMetaData(cardID: UInt32(self.id))
         }
 
-		init(cardType: CardType, serialNumber: UInt64, cardID: UInt32, setID: UInt32, minter: Address) {
+		init(
+            cardType: Type,
+            serialNumber: UInt64,
+            cardID: UInt32,
+            setID: UInt32,
+            minter: Address,
+            
+            
+            ) {
             // Increment the global Cards IDs
             VenezuelaNFT_4.totalSupply = VenezuelaNFT_4.totalSupply + 1
 
@@ -545,8 +540,6 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
 		}
 
 		access(all) fun resolveView(_ view: Type): AnyStruct? {
-			let metadata = self.get_metadata()
-
 			switch view {
 				case Type<MetadataViews.Display>():
 					return MetadataViews.Display(
@@ -971,7 +964,7 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
         let cardType = set.getCardType(cardID: cardID)
         // Get card's metadata
        // let cardMetadata
-        switch cardType {
+/*         switch cardType {
             case CardType.location:
                 let cardMetadata = self.getLocationMetaData(cardID: cardID)!
                 let cardName = cardMetadata.name
@@ -979,12 +972,12 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
                 let cardMetadata = self.getCharcaterMetaData(cardID: cardID)
             case CardType.culturalItem:
                 let cardMetadata = self.getItemMetaData(cardID: cardID)
-        }
+        } */
         // Gets the number of VenezuelaNFT_4 that have been minted for this cardID
         // to use as this VenezuelaNFT_4's serial number
         let currentSerial = set.numberMintedPerCard[cardID]!
         // Mint the new VenezuelaNFT_4
-        let newNFT: @NFT <- create NFT(cardType: CardType.location,
+        let newNFT: @NFT <- create NFT(cardType: cardType,
                                         serialNumber: currentSerial + 1,
                                         cardID: cardID,
                                         setID: set.setID,
@@ -1077,9 +1070,7 @@ contract VenezuelaNFT_4: NonFungibleToken, ViewResolver {
 
     init() {
         let identifier = "VenezuelaNFT_4_".concat(self.account.address.toString())
-//        self.locationCardDatas = {}
-//        self.characterCardDatas = {}
-//        self.culturalItemCardDatas = {}
+        self.cardDatas = {}
         self.locationsData = {}
         self.charactersData = {}
         self.locationsData = {}
