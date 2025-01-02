@@ -1,7 +1,7 @@
-import VenezuelaNFT_9 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_13 from "../../contracts/VenezuelaNFT.cdc"
 
 // This transaction creates a new LocationCard struct 
-// and stores it in the VenezuelaNFT_9 smart contract
+// and stores it in the VenezuelaNFT_13 smart contract
 
 // Parameters:
 //
@@ -15,23 +15,26 @@ import VenezuelaNFT_9 from "../../contracts/VenezuelaNFT.cdc"
 
 transaction(
     name: String,
-    characterTypes: [String],
+    description: String,
     influencePointsGeneration: UInt32,
+    characterTypes: [String],
     launchCost: UInt32,
     effectCostReduction: {String: UInt32},
     developmentEffect: {String: UInt32},
     bonusEffect: {String: UInt32}?,
-    cardNarratives: {UInt32: String}) {
+    cardNarratives: {UInt32: String},
+    image: String,
+    ipfsCID: String) {
 
-    let Administrator: &VenezuelaNFT_9.Administrator
-    let presidentEffects: VenezuelaNFT_9.PresidentEffects
+    let Administrator: &VenezuelaNFT_13.Administrator
+    let presidentEffects: VenezuelaNFT_13.PresidentEffects
     let currentCardId: UInt32
     
     prepare(deployer: auth(BorrowValue) &Account) {
-        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_9.Administrator>(from: VenezuelaNFT_9.AdministratorStoragePath)!
-        self.currentCardId = VenezuelaNFT_9.nextCardID
+        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_13.Administrator>(from: VenezuelaNFT_13.AdministratorStoragePath)!
+        self.currentCardId = VenezuelaNFT_13.nextCardID
 
-        self.presidentEffects = VenezuelaNFT_9.PresidentEffects(
+        self.presidentEffects = VenezuelaNFT_13.PresidentEffects(
             effectCostReduction: effectCostReduction,
             developmentEffect: developmentEffect,
             bonusEffect: bonusEffect
@@ -42,11 +45,14 @@ transaction(
     execute {
         let newCardID = self.Administrator.createCharacterCard(
             name: name,
+            description: description,
             characterTypes: characterTypes,
             influencePointsGeneration: influencePointsGeneration,
             launchCost: launchCost,
             presidentEffects: self.presidentEffects,
-            cardNarratives: cardNarratives)
+            cardNarratives: cardNarratives,   
+            image: image,
+            ipfsCID: ipfsCID)
     }
     post {
            

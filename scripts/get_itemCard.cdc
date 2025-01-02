@@ -1,12 +1,12 @@
-import VenezuelaNFT_9 from "../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_13 from "../contracts/VenezuelaNFT.cdc"
 
 // This script returns an array of all the plays 
 // that have ever been created for Top Shot
 
 // Returns: [AnyStruct]
-// array of all plays created for VenezuelaNFT_9
+// array of all plays created for VenezuelaNFT_13
 
-access(all) fun main(cardID: UInt32): VenezuelaNFT_9.CulturalItemCard {
+access(all) fun main(cardID: UInt32): VenezuelaNFT_13.CulturalItemCard {
 
-    return VenezuelaNFT_9.getItemMetaData(cardID: cardID)!
+    return VenezuelaNFT_13.getItemMetaData(cardID: cardID)!
 }
