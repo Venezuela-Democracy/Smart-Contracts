@@ -1,4 +1,4 @@
-import VenezuelaNFT_7 from "../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_9 from "../contracts/VenezuelaNFT.cdc"
 import MetadataViews from "MetadataViews"
 
 access(all) fun main(account: Address): [AnyStruct]?  {
@@ -8,7 +8,7 @@ access(all) fun main(account: Address): [AnyStruct]?  {
     var nft: AnyStruct = nil
 
         
-    let cap = account.capabilities.borrow<&VenezuelaNFT_7.Collection>(VenezuelaNFT_7.CollectionPublicPath)!
+    let cap = account.capabilities.borrow<&VenezuelaNFT_9.Collection>(VenezuelaNFT_9.CollectionPublicPath)!
     log(cap)
 
     let ids = cap.getIDs()

@@ -1,4 +1,4 @@
-import VenezuelaNFT_7 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_9 from "../../contracts/VenezuelaNFT.cdc"
 
 // This transaction adds multiple cards to a set
 		
@@ -9,10 +9,10 @@ import VenezuelaNFT_7 from "../../contracts/VenezuelaNFT.cdc"
 
 transaction(setID: UInt32, cards: [UInt32]) {
 
-    let Administrator: &VenezuelaNFT_7.Administrator
+    let Administrator: &VenezuelaNFT_9.Administrator
     
     prepare(deployer: auth(BorrowValue) &Account) {
-        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_7.Administrator>(from: VenezuelaNFT_7.AdministratorStoragePath)!
+        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_9.Administrator>(from: VenezuelaNFT_9.AdministratorStoragePath)!
     }
 
     execute {
@@ -21,6 +21,6 @@ transaction(setID: UInt32, cards: [UInt32]) {
         let setRef = self.Administrator.borrowSet(setID: setID)
 
         // Add the specified card IDs
-        let returned = setRef.addCards(cardIDs: cards, cardTypes: [Type<VenezuelaNFT_7.LocationCard>(), Type<VenezuelaNFT_7.LocationCard>()])
+        let returned = setRef.addCards(cardIDs: cards, cardTypes: [Type<VenezuelaNFT_9.LocationCard>(), Type<VenezuelaNFT_9.LocationCard>()])
     }
 }

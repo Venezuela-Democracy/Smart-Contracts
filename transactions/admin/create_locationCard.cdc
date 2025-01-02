@@ -1,7 +1,7 @@
-import VenezuelaNFT_7 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_9 from "../../contracts/VenezuelaNFT.cdc"
 
 // This transaction creates a new LocationCard struct 
-// and stores it in the VenezuelaNFT_7 smart contract
+// and stores it in the VenezuelaNFT_9 smart contract
 
 // Parameters:
 //
@@ -14,8 +14,9 @@ import VenezuelaNFT_7 from "../../contracts/VenezuelaNFT.cdc"
 // transaction string, but want to use transaction arguments soon
 
 transaction(
-    name: String,
     region: String,
+    name: String,
+    description: String,
     type: String,
     generation: UInt32,
     regionalGeneration: UInt32,
@@ -27,15 +28,15 @@ transaction(
     ipfsCID: String,
     imagePath: String
 ) {
-    let Administrator: &VenezuelaNFT_7.Administrator
-    let locationProposals: [VenezuelaNFT_7.LocationProposal]
+    let Administrator: &VenezuelaNFT_9.Administrator
+    let locationProposals: [VenezuelaNFT_9.LocationProposal]
     let currentCardId: UInt32
     
     prepare(deployer: auth(BorrowValue) &Account) {
-        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_7.Administrator>(from: VenezuelaNFT_7.AdministratorStoragePath)!
-        self.currentCardId = VenezuelaNFT_7.nextCardID
+        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_9.Administrator>(from: VenezuelaNFT_9.AdministratorStoragePath)!
+        self.currentCardId = VenezuelaNFT_9.nextCardID
         self.locationProposals = []
-        let locationStruct = VenezuelaNFT_7.LocationProposal(
+        let locationStruct = VenezuelaNFT_9.LocationProposal(
             proposalName: proposal_1_name,
             effect: proposal_1_effect,
             duration: proposal_1_duration,
@@ -48,6 +49,7 @@ transaction(
         let newCardID = self.Administrator.createLocationCard(
             region: region,
             name: name,
+            description: description,
             type: type,
             generation: generation,
             regionalGeneration: regionalGeneration,

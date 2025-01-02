@@ -1,7 +1,7 @@
-import VenezuelaNFT_7 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_9 from "../../contracts/VenezuelaNFT.cdc"
 
 // This transaction creates a new LocationCard struct 
-// and stores it in the VenezuelaNFT_7 smart contract
+// and stores it in the VenezuelaNFT_9 smart contract
 
 // Parameters:
 //
@@ -23,15 +23,15 @@ transaction(
     bonusEffect: {String: UInt32}?,
     cardNarratives: {UInt32: String}) {
 
-    let Administrator: &VenezuelaNFT_7.Administrator
-    let presidentEffects: VenezuelaNFT_7.PresidentEffects
+    let Administrator: &VenezuelaNFT_9.Administrator
+    let presidentEffects: VenezuelaNFT_9.PresidentEffects
     let currentCardId: UInt32
     
     prepare(deployer: auth(BorrowValue) &Account) {
-        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_7.Administrator>(from: VenezuelaNFT_7.AdministratorStoragePath)!
-        self.currentCardId = VenezuelaNFT_7.nextCardID
+        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_9.Administrator>(from: VenezuelaNFT_9.AdministratorStoragePath)!
+        self.currentCardId = VenezuelaNFT_9.nextCardID
 
-        self.presidentEffects = VenezuelaNFT_7.PresidentEffects(
+        self.presidentEffects = VenezuelaNFT_9.PresidentEffects(
             effectCostReduction: effectCostReduction,
             developmentEffect: developmentEffect,
             bonusEffect: bonusEffect

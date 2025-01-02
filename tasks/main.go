@@ -19,10 +19,11 @@ func main() {
 	//
 	color.Red("Admin should be able to upload metadata to the contract")
 	// upload_metadata
-	o.Tx("admin/create_locationCard",
+	/* 	o.Tx("admin/create_locationCard",
 		WithSigner("Telegram"),
 		WithArg("region", "Merida"),
 		WithArg("name", "University of Los Andes"),
+		WithArg("description", "The University of Los Andes (Universidad de Los Andes, ULA) is a prestigious and historic institution nestled in the Andean mountain range of Venezuela, in the vibrant city of Mérida. Established in 1810, it is one of the oldest and most renowned universities in Latin America, with a rich legacy of academic excellence, innovation, and cultural significance. Set against the backdrop of stunning mountainous landscapes, ULA is not just a place of higher learning but a symbol of intellectual pursuit, contributing profoundly to Venezuela's educational, scientific, and cultural development."),
 		WithArg("type", "Educational"),
 		WithArg("generation", "15"),
 		WithArg("regionalGeneration", "100"),
@@ -33,12 +34,13 @@ func main() {
 		WithArg("proposal_1_adoptionRequirement", "30"),
 		WithArg("ipfsCID", "Qmdk2fvqTmTeuTHWrGQo4MqgXpB1qHFSaE9PrVd8cdczCf"),
 		WithArg("imagePath", "https://bafybeicoyjl7hlvfbcxvxxli45wl2v2wqoe5aqfp4lpheb4vsd2izojrx4.ipfs.dweb.link?filename=waseemkhan_10131_Lagos-Brazilians_built_schools_Realistic_pic_w_485d45ba-5cab-4bc7-b33e-627c0de38e32.png"),
-	).Print()
+	).Print() */
 
-	o.Tx("admin/create_locationCard",
+	/* 	o.Tx("admin/create_locationCard",
 		WithSigner("Telegram"),
 		WithArg("region", "Bolivar"),
-		WithArg("name", "Angela Falls"),
+		WithArg("name", "Angel Falls"),
+		WithArg("description", "Angel Falls, the world's highest uninterrupted waterfall, is a breathtaking natural wonder located deep within the heart of Venezuela's Canaima National Park in the Gran Sabana region. Cascading from a towering height of 3,212 feet (979 meters), with an awe-inspiring free-fall of 2,648 feet (807 meters), Angel Falls is a magnificent sight to behold, its water streaming like liquid silver as it plunges from the flat-topped Auyán Tepui, one of the park's majestic tepui formations."),
 		WithArg("type", "Cultural"),
 		WithArg("generation", "15"),
 		WithArg("regionalGeneration", "100"),
@@ -49,7 +51,7 @@ func main() {
 		WithArg("proposal_1_adoptionRequirement", "30"),
 		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
 		WithArg("imagePath", "https://bafybeihe3r7nwgutoxzjj2eewwj5uml23zmwhhjfac6b5677sxxv7wosaa.ipfs.dweb.link?filename=image%204.jpg"),
-	).Print()
+	).Print() */
 
 	// Script to get LocationCard metadata
 	// o.Script("get_locationCard", WithArg("cardID", "0")).Print()
@@ -82,17 +84,17 @@ func main() {
 
 	color.Red("Admin should be able to create a set")
 	// Incrementa el contador
-	o.Tx("admin/create_set",
-		WithSigner("Telegram"),
-		WithArg("setName", "Base Locations"),
-	).Print()
-	color.Red("Admin should be able to add cards to a set")
-	// create_season
-	o.Tx("admin/add_cards_to_set",
-		WithSigner("Telegram"),
-		WithArg("setID", "0"),
-		WithArg("cards", "[0, 1]"),
-	).Print()
+	/* 	o.Tx("admin/create_set",
+	   		WithSigner("Telegram"),
+	   		WithArg("setName", "Base Locations"),
+	   	).Print()
+	   	color.Red("Admin should be able to add cards to a set")
+	   	// create_season
+	   	o.Tx("admin/add_cards_to_set",
+	   		WithSigner("Telegram"),
+	   		WithArg("setID", "0"),
+	   		WithArg("cards", "[0, 1]"),
+	   	).Print() */
 	// Script to get all cards
 
 	color.Red("User should be able to buy a Pack")
