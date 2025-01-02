@@ -24,6 +24,8 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
     access(self) var charactersData: {UInt32: CharacterCard}    
     // Variable size dictionary of Cards structs
     access(self) var culturalItemsData: {UInt32: CulturalItemCard}    
+    // Variable size dictionary of cardType structs
+    access(self) var cardTypes: {UInt32: Type}
     // Variable size dictionary of SetData structs
     access(self) var setDatas: {UInt32: SetData}
     // Variable size dictionary of Set resources
@@ -583,7 +585,8 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
 						description: self.description,
 						thumbnail: MetadataViews.HTTPFile( 
             				url: self.img
-            			)
+            			),
+                        
 					)
 				case Type<MetadataViews.Traits>():
                     let traits = self.getTraits()
@@ -643,6 +646,7 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
     access(all) resource interface VenezuelaNFT_9CollectionPublic {
         access(all) fun deposit(token: @{NonFungibleToken.NFT})
         access(all) fun getIDs(): [UInt64]
+    //    access(all) fun getCardType(): Type
     }
 
 
@@ -718,19 +722,10 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
             return <-VenezuelaNFT_9.createEmptyCollection(nftType: Type<@VenezuelaNFT_9.NFT>())
         }
 
-        /// Gets a reference to an NFT in the collection so that 
-        /// the caller can read its metadata and call its methods
-        ///
-        /// @param id: The ID of the wanted NFT
-        /// @return A reference to the wanted NFT resource
-        ///        
-/*         access(all) fun borrowVenezuelaNFT_9(id: UInt64): &VenezuelaNFT_9.NFT? {
-            if self.ownedNFTs[id] != nil {
-                // Create an authorized reference to allow downcasting
-                let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
-                return ref as! &VenezuelaNFT_9.NFT
-            }
-
+        // Get cardType
+/*         access(all) fun getCardType(cardId: UInt64): AnyStruct {
+            let ref = self.borrowNFT(cardId)!
+            let cardType = ref.
             return nil
         } */
 
@@ -788,6 +783,9 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
             VenezuelaNFT_9.locationsData[newID] = newCard
             // Increment the ID so that it isn't used again
             VenezuelaNFT_9.nextCardID = VenezuelaNFT_9.nextCardID + 1
+            // Store it in the contract storage
+            // for card types
+            VenezuelaNFT_9.cardTypes[newID] = Type<VenezuelaNFT_9.LocationCard>()
 
             // emit event
             emit CardCreated(cardID: newCard.cardID, cardType: "Location")
@@ -1059,11 +1057,24 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
     access(all) fun getCollectionAttribute(key: String): AnyStruct {
 		return self.collectionInfo[key] ?? panic(key.concat(" is not an attribute in this collection."))
 	}
-    // getAllCards returns all the cards in VenezuelaNFT_9
+
     //
-    // Returns: An array of all the cards that have been created
+    // Returns: An array of all the locations that have been created
     access(all) view fun getAllLocationCards(): [LocationCard] {
         return VenezuelaNFT_9.locationsData.values
+    }
+    // Returns: An array of all the characters that have been created
+    access(all) view fun getAllCharacterCards(): [CharacterCard] {
+        return VenezuelaNFT_9.charactersData.values
+    }
+    // Returns: An array of all the items that have been created
+    access(all) view fun getAllItemsCards(): [CulturalItemCard] {
+        return VenezuelaNFT_9.culturalItemsData.values
+    }
+    // Returns: Type of the card associated with this id
+    access(all) view fun getCardType(cardID: UInt32): Type {
+
+        return self.cardTypes[cardID]!
     }
     // getCardMetaData returns all the metadata associated with a specific Card
     // 
@@ -1128,6 +1139,7 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
         self.charactersData = {}
         self.locationsData = {}
         self.culturalItemsData = {}
+        self.cardTypes = {}
         self.setDatas = {}
         self.sets <- {}
         self.totalSupply = 0

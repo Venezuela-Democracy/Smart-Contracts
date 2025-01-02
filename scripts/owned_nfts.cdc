@@ -15,6 +15,7 @@ access(all) fun main(account: Address): [AnyStruct]?  {
 
     for id in ids {
         let resolver = cap.borrowViewResolver(id: id)!
+        let cardType = cap.getCardType()
         let displayView: MetadataViews.Display = MetadataViews.getDisplay(resolver)!
         let serialView = MetadataViews.getSerial(resolver)!
         let traits = MetadataViews.getTraits(resolver)
