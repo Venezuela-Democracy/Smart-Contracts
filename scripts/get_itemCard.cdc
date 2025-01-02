@@ -6,7 +6,7 @@ import VenezuelaNFT_9 from "../contracts/VenezuelaNFT.cdc"
 // Returns: [AnyStruct]
 // array of all plays created for VenezuelaNFT_9
 
-access(all) fun main(cardID: UInt32): VenezuelaNFT_9.LocationCard {
+access(all) fun main(cardID: UInt32): VenezuelaNFT_9.CulturalItemCard {
 
-    return VenezuelaNFT_9.getLocationMetaData(cardID: cardID)!
+    return VenezuelaNFT_9.getItemMetaData(cardID: cardID)!
 }

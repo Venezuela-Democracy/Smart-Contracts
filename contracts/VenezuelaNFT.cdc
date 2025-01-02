@@ -140,8 +140,8 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
         access(all) let ipfsCID: String
 
         init(
-            region: String,
             name: String,
+            region: String,
             description: String,
             type: String,
             generation: UInt32,
@@ -597,9 +597,9 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
 							[
 								MetadataViews.Media(
 									file: MetadataViews.HTTPFile(
-										url: "metadata.embededHTML"
+										url: self.img
 									),
-									mediaType: "html"
+									mediaType: "jpg"
 								)
 							]
 						)
@@ -743,8 +743,8 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
         // Returns: the ID of the new Card object
         //
         access(all) fun createLocationCard(
-            region: String,
             name: String,
+            region: String,
             description: String,
             type: String,
             generation: UInt32,
@@ -755,8 +755,8 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
             imagePath: String): UInt32 {
             // Create the new Card
             var newCard = LocationCard(
-                region: region,
                 name: name,
+                region: region,
                 description: description,
                 type: type,
                 generation: generation,

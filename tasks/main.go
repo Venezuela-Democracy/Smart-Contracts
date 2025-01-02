@@ -21,8 +21,8 @@ func main() {
 	// upload_metadata
 	/* 	o.Tx("admin/create_locationCard",
 		WithSigner("Telegram"),
-		WithArg("region", "Merida"),
 		WithArg("name", "University of Los Andes"),
+		WithArg("region", "Merida"),
 		WithArg("description", "The University of Los Andes (Universidad de Los Andes, ULA) is a prestigious and historic institution nestled in the Andean mountain range of Venezuela, in the vibrant city of Mérida. Established in 1810, it is one of the oldest and most renowned universities in Latin America, with a rich legacy of academic excellence, innovation, and cultural significance. Set against the backdrop of stunning mountainous landscapes, ULA is not just a place of higher learning but a symbol of intellectual pursuit, contributing profoundly to Venezuela's educational, scientific, and cultural development."),
 		WithArg("type", "Educational"),
 		WithArg("generation", "15"),
@@ -38,8 +38,8 @@ func main() {
 
 	/* 	o.Tx("admin/create_locationCard",
 		WithSigner("Telegram"),
-		WithArg("region", "Bolivar"),
 		WithArg("name", "Angel Falls"),
+		WithArg("region", "Bolivar"),
 		WithArg("description", "Angel Falls, the world's highest uninterrupted waterfall, is a breathtaking natural wonder located deep within the heart of Venezuela's Canaima National Park in the Gran Sabana region. Cascading from a towering height of 3,212 feet (979 meters), with an awe-inspiring free-fall of 2,648 feet (807 meters), Angel Falls is a magnificent sight to behold, its water streaming like liquid silver as it plunges from the flat-topped Auyán Tepui, one of the park's majestic tepui formations."),
 		WithArg("type", "Cultural"),
 		WithArg("generation", "15"),
@@ -108,6 +108,9 @@ func main() {
 
 	o.Tx("reveal_pack",
 		WithSigner("Telegram"),
+	).Print()
+	o.Script("owned_nfts",
+		WithArg("account", "Telegram"),
 	).Print()
 	/*
 		color.Red("User should be able to buy a second Pack")

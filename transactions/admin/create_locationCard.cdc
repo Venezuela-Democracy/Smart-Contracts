@@ -14,8 +14,8 @@ import VenezuelaNFT_9 from "../../contracts/VenezuelaNFT.cdc"
 // transaction string, but want to use transaction arguments soon
 
 transaction(
-    region: String,
     name: String,
+    region: String,
     description: String,
     type: String,
     generation: UInt32,
@@ -47,8 +47,8 @@ transaction(
 
     execute {
         let newCardID = self.Administrator.createLocationCard(
-            region: region,
             name: name,
+            region: region,
             description: description,
             type: type,
             generation: generation,
