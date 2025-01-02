@@ -52,7 +52,7 @@ func main() {
 	).Print()
 
 	// Script to get LocationCard metadata
-	o.Script("get_locationCard", WithArg("cardID", "0")).Print()
+	// o.Script("get_locationCard", WithArg("cardID", "0")).Print()
 	// Admin create characterCard
 	/* 	o.Tx("admin/create_characterCard",
 	   		WithSigner("Telegram"),

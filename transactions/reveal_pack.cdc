@@ -1,4 +1,4 @@
-import VenezuelaNFT_5 from "../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_7 from "../contracts/VenezuelaNFT.cdc"
 
 
 /// Retrieves the saved Receipt and redeems it to reveal the coin toss result, depositing winnings with any luck
@@ -6,14 +6,14 @@ import VenezuelaNFT_5 from "../contracts/VenezuelaNFT.cdc"
 transaction {
 
     prepare(signer: auth(BorrowValue, LoadValue) &Account) {
-        let receiverRef = signer.capabilities.borrow<&{VenezuelaNFT_5.VenezuelaNFT_5CollectionPublic}>(VenezuelaNFT_5.CollectionPublicPath)
+        let receiverRef = signer.capabilities.borrow<&{VenezuelaNFT_7.VenezuelaNFT_7CollectionPublic}>(VenezuelaNFT_7.CollectionPublicPath)
             ?? panic("Cannot borrow a reference to the recipient's moment collection")
         // Load my receipt from storage
-        let receipt <- signer.storage.load<@VenezuelaNFT_5.Receipt>(from: VenezuelaNFT_5.ReceiptStoragePath)
-            ?? panic("No Receipt found in storage at path=".concat(VenezuelaNFT_5.ReceiptStoragePath.toString()))
+        let receipt <- signer.storage.load<@VenezuelaNFT_7.Receipt>(from: VenezuelaNFT_7.ReceiptStoragePath)
+            ?? panic("No Receipt found in storage at path=".concat(VenezuelaNFT_7.ReceiptStoragePath.toString()))
 
         // Reveal by redeeming my receipt - fingers crossed!
-        VenezuelaNFT_5.revealPack(receipt: <- receipt, minter: signer.address, emptyDict: {})
+        VenezuelaNFT_7.revealPack(receipt: <- receipt, minter: signer.address, emptyDict: {})
 
     }
 }
