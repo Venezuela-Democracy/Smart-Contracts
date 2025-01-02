@@ -32,8 +32,8 @@ func main() {
 		WithArg("proposal_1_effect", "10"),
 		WithArg("proposal_1_duration", "7.0"),
 		WithArg("proposal_1_adoptionRequirement", "30"),
-		WithArg("ipfsCID", "Qmdk2fvqTmTeuTHWrGQo4MqgXpB1qHFSaE9PrVd8cdczCf"),
-		WithArg("imagePath", "https://bafybeicoyjl7hlvfbcxvxxli45wl2v2wqoe5aqfp4lpheb4vsd2izojrx4.ipfs.dweb.link?filename=waseemkhan_10131_Lagos-Brazilians_built_schools_Realistic_pic_w_485d45ba-5cab-4bc7-b33e-627c0de38e32.png"),
+		WithArg("ipfsCID", "Qmc2rHqzmHxxswAZDYHTLiosiaaqnPmFSSBtsBEWbM6MS1"),
+		WithArg("imagePath", "https://bafybeiglorbajdtbqtqngzfvz3cpn6a3j7qzkn5knxjai76ksm5sxv43qi.ipfs.dweb.link?filename=waseemkhan_10131_Lagos-Brazilians_built_schools_Realistic_pic_w_485d45ba-5cab-4bc7-b33e-627c0de38e32.jpeg"),
 	).Print() */
 
 	/* 	o.Tx("admin/create_locationCard",
@@ -99,16 +99,17 @@ func main() {
 
 	color.Red("User should be able to buy a Pack")
 
-	o.Tx("buy_pack",
-		WithSigner("Telegram"),
-		WithArg("setID", "0"),
-	).Print()
+	/* 	o.Tx("buy_pack",
+	   		WithSigner("Telegram"),
+	   		WithArg("setID", "0"),
+	   	).Print()
 
-	color.Red("User should be able to open a Pack")
+	   	color.Red("User should be able to open a Pack")
 
-	o.Tx("reveal_pack",
-		WithSigner("Telegram"),
-	).Print()
+	   	o.Tx("reveal_pack",
+	   		WithSigner("Telegram"),
+	   	).Print() */
+
 	o.Script("owned_nfts",
 		WithArg("account", "Telegram"),
 	).Print()

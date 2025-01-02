@@ -490,6 +490,7 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
         access(all) let serial: UInt64
         // access(all) let metadata: CardData
         access(all) let orignalMinter: Address
+        
 
         // Return the Type of this Card
         // Could be Location, Character or CulturalItem
@@ -510,6 +511,19 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
         access(all) 
         fun get_CulturalItemCard(): VenezuelaNFT_9.CulturalItemCard {
             return VenezuelaNFT_9.getItemMetaData(cardID: UInt32(self.id))!
+        }
+        access(all)
+        fun getTraits(): {String: AnyStruct} {
+            let metadata: {String: AnyStruct} = {"name": self.name}
+
+            metadata["cardType"] = self.cardType
+            metadata["influence_generation"] = self.influence_generation
+            metadata["setId"] = self.setId
+            metadata["orignalMinter"] = self.orignalMinter
+            metadata["metadataId"] = self.id
+            metadata["cardId"] = self.uuid
+
+            return metadata
         }
 
 		init(
@@ -572,7 +586,8 @@ contract VenezuelaNFT_9: NonFungibleToken, ViewResolver {
             			)
 					)
 				case Type<MetadataViews.Traits>():
-					return MetadataViews.dictToTraits(dict: {"String": 2}, excludedNames: nil)
+                    let traits = self.getTraits()
+					return MetadataViews.dictToTraits(dict: traits, excludedNames: nil)
 				case Type<MetadataViews.NFTView>():
 					return MetadataViews.NFTView(
 						id: self.id,

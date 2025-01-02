@@ -17,11 +17,13 @@ access(all) fun main(account: Address): [AnyStruct]?  {
         let resolver = cap.borrowViewResolver(id: id)!
         let displayView: MetadataViews.Display = MetadataViews.getDisplay(resolver)!
         let serialView = MetadataViews.getSerial(resolver)!
+        let traits = MetadataViews.getTraits(resolver)
 
         nft = {
         "nftId": id,
         "serial": serialView,
-        "display": displayView
+        "display": displayView,
+        "traits": traits
         }
         
         answer.append(nft
