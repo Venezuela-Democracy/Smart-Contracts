@@ -7,23 +7,20 @@ import (
 	"github.com/fatih/color"
 )
 
-func main() {
+func testnet() {
 	// Comienza el programa overflow"
 	o := Overflow(
 		WithGlobalPrintOptions(),
+		WithNetwork("testnet"),
 	)
 	fmt.Println("Testing Vzla Democracy cadence contracts")
 	//
 	///// Probando CADENCE en Overflow /////
 	//
-	// Setup
-	o.Tx("/setup",
-		WithSigner("bob"),
-	)
 	color.Red("Admin should be able to upload metadata to the contract")
 	// Admin create characterCard
 	o.Tx("admin/create_characterCard",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("name", "Andrés Bello"),
 		WithArg("description", "Andrés Bello (1781–1865) was an intellectual titan whose influence on Latin American thought remains profound. A polymath and visionary, Bello was a poet, philosopher, educator, linguist, and statesman. Born in Caracas, Venezuela, he was a leading figure in the cultural and intellectual renaissance of Latin America in the 19th century. His work bridged the Enlightenment ideals of Europe with the social and political realities of the Americas, making him one of the most prominent intellectuals of his time."),
 		WithArg("influencePointsGeneration", "20"),
@@ -36,9 +33,10 @@ func main() {
 		WithArg("image", "https://historiahoy.com.ar/wp-content/uploads/2020/10/0000089139-1-762x1024.jpg"),
 		WithArg("ipfsCID", "Andrés Bello"),
 	).Print()
-
+	// Script to get card metadata
+	o.Script("get_card_metadata", WithArg("cardID", "1")).Print()
 	o.Tx("admin/create_itemCard",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("name", "Arepa"),
 		WithArg("description", "Venezuelan arepas are a mouthwatering celebration of flavor and tradition, offering a delightful experience with every bite. These golden, slightly crispy pockets of cornmeal are soft on the inside, their delicate texture providing the perfect contrast to the crisp, golden crust. Versatile and deeply satisfying, arepas can be filled with a myriad of ingredients, making them the ideal canvas for both savory and sweet creations."),
 		WithArg("influencePointsGeneration", "10"),
@@ -51,7 +49,7 @@ func main() {
 	).Print()
 	// upload_metadata
 	o.Tx("admin/create_locationCard",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("name", "University of Los Andes"),
 		WithArg("region", "Merida"),
 		WithArg("description", "The University of Los Andes (Universidad de Los Andes, ULA) is a prestigious and historic institution nestled in the Andean mountain range of Venezuela, in the vibrant city of Mérida. Established in 1810, it is one of the oldest and most renowned universities in Latin America, with a rich legacy of academic excellence, innovation, and cultural significance. Set against the backdrop of stunning mountainous landscapes, ULA is not just a place of higher learning but a symbol of intellectual pursuit, contributing profoundly to Venezuela's educational, scientific, and cultural development."),
@@ -68,7 +66,7 @@ func main() {
 	).Print()
 
 	o.Tx("admin/create_locationCard",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("name", "Angel Falls"),
 		WithArg("region", "Bolivar"),
 		WithArg("description", "Angel Falls, the world's highest uninterrupted waterfall, is a breathtaking natural wonder located deep within the heart of Venezuela's Canaima National Park in the Gran Sabana region. Cascading from a towering height of 3,212 feet (979 meters), with an awe-inspiring free-fall of 2,648 feet (807 meters), Angel Falls is a magnificent sight to behold, its water streaming like liquid silver as it plunges from the flat-topped Auyán Tepui, one of the park's majestic tepui formations."),
@@ -92,13 +90,13 @@ func main() {
 	color.Red("Admin should be able to create a set")
 	// Incrementa el contador
 	o.Tx("admin/create_set",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("setName", "Base Locations"),
 	).Print()
 	color.Red("Admin should be able to add cards to a set")
 	// create_season
 	o.Tx("admin/add_cards_to_set",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("setID", "0"),
 		WithArg("cards", "[0, 1, 2, 3]"),
 	).Print()
@@ -107,64 +105,34 @@ func main() {
 	color.Red("User should be able to buy a Pack")
 
 	o.Tx("buy_pack",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("setID", "0"),
 	).Print()
 
 	color.Red("User should be able to open a Pack")
 
 	o.Tx("reveal_pack",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 	).Print()
 
 	o.Script("owned_nfts",
-		WithArg("account", "account"),
+		WithArg("account", "Telegram"),
 	).Print()
 
 	// o.Script("get_all_cards").Print()
 
 	color.Red("User should be able to buy a second Pack")
 	o.Tx("buy_pack",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("setID", "0"),
 	)
 	o.Tx("reveal_pack",
-		WithSigner("account"),
-	)
-	// STOREFRONT
-	color.Red("User should be able to sell an NFT")
-	o.Tx("/Storefront/setup",
-		WithSigner("bob"),
-	)
-	o.Tx("/Storefront/setup",
-		WithSigner("account"),
-	)
-	listingResourceID, error := o.Tx("/Storefront/sell_item",
-		WithSigner("account"),
-		WithArg("saleItemID", "1"),
-		WithArg("saleItemPrice", "10.0"),
-		WithArg("customID", "0"),
-		WithArg("commissionAmount", "0.5"),
-		WithArg("marketplacesAddress", "[]"),
-	).GetIdFromEvent("ListingAvailable", "listingResourceID")
-	fmt.Print(error)
-	fmt.Print(listingResourceID)
-
-	o.Script("/Storefront/get_ids",
-		WithArg("account", "account"),
-	)
-
-	color.Red("Bob should be able to buy an NFT")
-	o.Tx("/Storefront/buy_item",
-		WithSigner("bob"),
-		WithArg("listingResourceID", listingResourceID),
-		WithArg("storefrontAddress", "account"),
-		WithArg("commissionRecipient", "account"),
+		WithSigner("Telegram"),
 	)
 
 	// create_season
 	/* 	o.Tx("admin/start_new_season",
-		WithSigner("account"),
+		WithSigner("Telegram"),
 		WithArg("", ""),
 		WithArg("", ""),
 		WithArg("", ""),

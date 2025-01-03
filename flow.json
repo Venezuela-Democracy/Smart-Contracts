@@ -56,6 +56,13 @@
 				"testnet": "631e88ae7f1d7c20"
 			}
 		},
+		"NFTStorefront": {
+			"source": "testnet://94b06cfca1d8a476.NFTStorefront",
+			"hash": "580d44f2e49f4b01979ff8db81c0245df52372e8f0b17072c5348af8f6d3de7d",
+			"aliases": {
+				"testnet": "94b06cfca1d8a476"
+			}
+		},
 		"NonFungibleToken": {
 			"source": "testnet://631e88ae7f1d7c20.NonFungibleToken",
 			"hash": "ac40c5a3ec05884ae48cb52ebf680deebb21e8a0143cd7d9b1dc88b0f107e088",
@@ -133,7 +140,8 @@
 			"emulator-account": [
 				"VenezuelaNFT",
 				"RandomConsumer",
-				"Xorshift128plus"
+				"Xorshift128plus",
+				"NFTStorefront"
 			],
 			"emulator-bob": []
 		},

@@ -500,10 +500,10 @@ contract VenezuelaNFT_13: NonFungibleToken, ViewResolver {
     //
     /// The resource that represents a VenezulaNFT
 	access(all) resource NFT: NonFungibleToken.NFT {
-        // Card Id in relation to Metadata
-		access(all) let id: UInt64
         // NFT id in relation to all NFTs
-		access(all) let nftID: UInt64
+		access(all) let id: UInt64
+        // Card Id in relation to Metadata
+		access(all) let cardID: UInt64
         access(all) let name: String
         access(all) let description: String
         access(all) let img: String
@@ -548,7 +548,7 @@ contract VenezuelaNFT_13: NonFungibleToken, ViewResolver {
             metadata["setId"] = self.setId
             metadata["orignalMinter"] = self.orignalMinter
             metadata["cardId"] = self.id
-            metadata["nftId"] = self.uuid
+            metadata["cardID"] = self.uuid
 
             return metadata
         }
@@ -569,8 +569,8 @@ contract VenezuelaNFT_13: NonFungibleToken, ViewResolver {
             // Increment the global Cards IDs
             VenezuelaNFT_13.totalSupply = VenezuelaNFT_13.totalSupply + 1
 
-            self.id = UInt64(cardID)
-            self.nftID = VenezuelaNFT_13.totalSupply
+            self.id = VenezuelaNFT_13.totalSupply 
+            self.cardID = UInt64(cardID)
             self.name = cardName
             self.description = cardDescription
             self.img = cardImg
