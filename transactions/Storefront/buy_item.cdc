@@ -4,7 +4,7 @@ import "NonFungibleToken"
 import "MetadataViews"
 import "NFTStorefront"
 
-import VenezuelaNFT_13 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_14 from "../../contracts/VenezuelaNFT.cdc"
 
 /// Transaction facilitates the purcahse of listed NFT. It takes the storefront address, listing resource that need to be
 /// purchased & a address that will takeaway the commission.
@@ -15,7 +15,7 @@ import VenezuelaNFT_13 from "../../contracts/VenezuelaNFT.cdc"
 transaction(listingResourceID: UInt64, storefrontAddress: Address, commissionRecipient: Address?) {
 
     let paymentVault: @{FungibleToken.Vault}
-    let VenezuelaNFT_13Receiver: &{NonFungibleToken.Receiver}
+    let VenezuelaNFT_14Receiver: &{NonFungibleToken.Receiver}
     let storefront: &{NFTStorefront.StorefrontPublic}
     let listing: &{NFTStorefront.ListingPublic}
     var commissionRecipientCap: Capability<&{FungibleToken.Receiver}>?
@@ -38,9 +38,9 @@ transaction(listingResourceID: UInt64, storefrontAddress: Address, commissionRec
         self.paymentVault <- mainVault.withdraw(amount: price)
 
         // Access the buyer's NFT collection to store the purchased NFT.
-        let collectionData = VenezuelaNFT_13.resolveContractView(resourceType: nil, viewType: Type<MetadataViews.NFTCollectionData>()) as! MetadataViews.NFTCollectionData?
+        let collectionData = VenezuelaNFT_14.resolveContractView(resourceType: nil, viewType: Type<MetadataViews.NFTCollectionData>()) as! MetadataViews.NFTCollectionData?
             ?? panic("ViewResolver does not resolve NFTCollectionData view")
-        self.VenezuelaNFT_13Receiver = acct.capabilities.borrow<&{NonFungibleToken.Receiver}>(collectionData.publicPath)
+        self.VenezuelaNFT_14Receiver = acct.capabilities.borrow<&{NonFungibleToken.Receiver}>(collectionData.publicPath)
             ?? panic("Cannot borrow NFT collection receiver from account")
 
         // Fetch the commission amt.
@@ -66,6 +66,6 @@ transaction(listingResourceID: UInt64, storefrontAddress: Address, commissionRec
             payment: <-self.paymentVault,
         )
         // Deposit the NFT in the buyer's collection.
-        self.VenezuelaNFT_13Receiver.deposit(token: <-item)
+        self.VenezuelaNFT_14Receiver.deposit(token: <-item)
     }
 }
