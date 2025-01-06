@@ -15,12 +15,11 @@ transaction(setID: UInt32) {
         
         // Check that I don't already have a receiptStorage
         if signer.storage.type(at: VenezuelaNFT_13.ReceiptStoragePath) == nil {
-		let storage <- VenezuelaNFT_13.createEmptyStorage()
-		signer.storage.save(<- storage, to: VenezuelaNFT_13.ReceiptStoragePath)
+            let storage <- VenezuelaNFT_13.createEmptyStorage()
+            signer.storage.save(<- storage, to: VenezuelaNFT_13.ReceiptStoragePath)
         }
 
         // Save that receipt to my storage
-        // Note: production systems would consider handling path collisions
         storageRef.deposit(receipt: <- receipt)
     }
 }

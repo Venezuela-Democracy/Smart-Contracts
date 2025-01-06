@@ -35,7 +35,7 @@ func main() {
 		WithArg("cardNarratives", `{70: "Bello's legacy defines regional identity", 50: "Bello's ideas inspire local development"}`),
 		WithArg("image", "https://historiahoy.com.ar/wp-content/uploads/2020/10/0000089139-1-762x1024.jpg"),
 		WithArg("ipfsCID", "Andrés Bello"),
-	).Print()
+	)
 
 	o.Tx("admin/create_itemCard",
 		WithSigner("account"),
@@ -48,7 +48,7 @@ func main() {
 		WithArg("cardNarratives", `{90: "The arepa crowns itself as the region’s undisputed symbol", 70: "The arepa defines local gastronomic identity"}`),
 		WithArg("image", "https://imag.bonviveur.com/arepas-venezolanas-caseras-rellenas.jpg"),
 		WithArg("ipfsCID", "Arepa"),
-	).Print()
+	)
 	// upload_metadata
 	o.Tx("admin/create_locationCard",
 		WithSigner("account"),
@@ -65,7 +65,7 @@ func main() {
 		WithArg("proposal_1_adoptionRequirement", "30"),
 		WithArg("ipfsCID", "Qmc2rHqzmHxxswAZDYHTLiosiaaqnPmFSSBtsBEWbM6MS1"),
 		WithArg("imagePath", "https://bafybeiglorbajdtbqtqngzfvz3cpn6a3j7qzkn5knxjai76ksm5sxv43qi.ipfs.dweb.link?filename=waseemkhan_10131_Lagos-Brazilians_built_schools_Realistic_pic_w_485d45ba-5cab-4bc7-b33e-627c0de38e32.jpeg"),
-	).Print()
+	)
 
 	o.Tx("admin/create_locationCard",
 		WithSigner("account"),
@@ -82,55 +82,62 @@ func main() {
 		WithArg("proposal_1_adoptionRequirement", "30"),
 		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
 		WithArg("imagePath", "https://bafybeihe3r7nwgutoxzjj2eewwj5uml23zmwhhjfac6b5677sxxv7wosaa.ipfs.dweb.link?filename=image%204.jpg"),
-	).Print()
+	)
 
 	// Script to get LocationCard metadata
-	// o.Script("get_locationCard", WithArg("cardID", "0")).Print()
+	// o.Script("get_locationCard", WithArg("cardID", "0"))
 	// Script to get card metadata
-	// o.Script("get_card_metadata", WithArg("cardID", "2")).Print()
+	// o.Script("get_card_metadata", WithArg("cardID", "2"))
 
 	color.Red("Admin should be able to create a set")
 	// Incrementa el contador
 	o.Tx("admin/create_set",
 		WithSigner("account"),
 		WithArg("setName", "Base Locations"),
-	).Print()
+	)
 	color.Red("Admin should be able to add cards to a set")
 	// create_season
 	o.Tx("admin/add_cards_to_set",
 		WithSigner("account"),
 		WithArg("setID", "0"),
 		WithArg("cards", "[0, 1, 2, 3]"),
-	).Print()
+	)
 	// Script to get all cards
 
 	color.Red("User should be able to buy a Pack")
 
-	o.Tx("buy_pack",
+	o.Tx("buy_multiple_packs",
 		WithSigner("account"),
 		WithArg("setID", "0"),
-	).Print()
-
-	color.Red("User should be able to open a Pack")
-
-	o.Tx("reveal_pack",
+		WithArg("amount", "2"),
+	)
+	/* 	o.Tx("buy_pack",
 		WithSigner("account"),
-	).Print()
+		WithArg("setID", "0"),
+	) */
 
+	color.Red("User should be able to open MULTIPLE Pack")
+	/* 	o.Tx("reveal_pack",
+		WithSigner("account"),
+	) */
+	o.Tx("reveal_multiple_packs",
+		WithSigner("account"),
+		WithArg("amount", 1),
+	)
 	o.Script("owned_nfts",
 		WithArg("account", "account"),
-	).Print()
-
-	// o.Script("get_all_cards").Print()
-
-	color.Red("User should be able to buy a second Pack")
-	o.Tx("buy_pack",
-		WithSigner("account"),
-		WithArg("setID", "0"),
 	)
-	o.Tx("reveal_pack",
-		WithSigner("account"),
-	)
+
+	// o.Script("get_all_cards")
+
+	/* 	color.Red("User should be able to buy a second Pack")
+	   	o.Tx("buy_pack",
+	   		WithSigner("account"),
+	   		WithArg("setID", "0"),
+	   	)
+	   	o.Tx("reveal_pack",
+	   		WithSigner("account"),
+	   	) */
 	// STOREFRONT
 	color.Red("User should be able to sell an NFT")
 	o.Tx("/Storefront/setup",

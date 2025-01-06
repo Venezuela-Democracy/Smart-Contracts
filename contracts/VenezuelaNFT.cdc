@@ -59,6 +59,8 @@ contract VenezuelaNFT_13: NonFungibleToken, ViewResolver {
     access(all) event SetCreated(setID: UInt32, season: UInt32)
     access(all) event CardAddedToSet(setID: UInt32, cardID: UInt32)
 	access(all) event BoughtPack(commitBlock: UInt64, receiptID: UInt64)
+    access(all) event ReceiptDeposit(id: UInt64, to: Address?)
+    access(all) event ReceiptWithdraw(id: UInt64, from: Address?)
     access(all) event PackRevealed(nftID: UInt64, cardID: UInt32, setID: UInt32, serialNumber: UInt64, recipient: Address, commitBlock: UInt64, receiptID: UInt64)
     // -----------------------------------------------------------------------
     // VenezuelaNFT_13 account paths
@@ -948,20 +950,19 @@ contract VenezuelaNFT_13: NonFungibleToken, ViewResolver {
 
 		// Deposit takes a Receipt and adds it to the storage list
 		access(all) fun deposit(receipt: @Receipt) {
+            let id = receipt.uuid
             self.receipts.append(<- receipt)
-/* 			let newVenezuelaNFT_13 <- token as! @NFT
-			// Add the new VenezuelaNFT_13NFT to the dictionary
-            let oldVenezuelaNFT_13 <- self.ownedNFTs[id] <- newVenezuelaNFT_13
-            // Destroy old VenezuelaNFT_13 in that slot
-            destroy oldVenezuelaNFT_13
 
-			emit Deposit(id: id, to: self.owner?.address) */
+            // Emit event
+			emit ReceiptDeposit(id: id, to: self.owner?.address) 
 		}
 		// Withdraw removes the oldest Receipt from the list and moves it to the caller(to reveal)
 		access(all) fun withdraw(): @Receipt {
 			let receipt <- self.receipts.removeFirst()
-
-			return <- receipt
+            let id = receipt.uuid
+			
+            emit ReceiptWithdraw(id: id, from: self.owner?.address)
+            return <- receipt
 		}
 
     }
