@@ -8,7 +8,7 @@ transaction(setID: UInt32) {
     prepare(signer: auth(BorrowValue, SaveValue) &Account) {
         // get ref to ReceiptStorage
         let storageRef = signer.storage.borrow<&VenezuelaNFT_13.ReceiptStorage>(from: VenezuelaNFT_13.ReceiptStoragePath)
-            ?? panic("Cannot borrow a reference to the recipient's VenezuelaNFT collection")
+            ?? panic("Cannot borrow a reference to the recipient's VenezuelaNFT ReceiptStorage")
         
         // Commit my bet and get a receipt
         let receipt <- VenezuelaNFT_13.buyPack(setID: setID)
