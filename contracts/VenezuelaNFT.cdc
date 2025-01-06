@@ -934,6 +934,37 @@ contract VenezuelaNFT_13: NonFungibleToken, ViewResolver {
             return (&VenezuelaNFT_13.sets[setID])!
         }
     }
+
+    // -----------------------------------------------------------------------
+    // VenezuelaNFT_13 Receipts Storage Resource
+    // -----------------------------------------------------------------------
+    access(all) resource ReceiptStorage {
+		// List of Receipts 
+		access(all) var receipts: @[Receipt]    
+
+        init () {
+            self.receipts <- []
+        }
+
+		// Deposit takes a Receipt and adds it to the storage list
+		access(all) fun deposit(receipt: @Receipt) {
+            self.receipts.append(<- receipt)
+/* 			let newVenezuelaNFT_13 <- token as! @NFT
+			// Add the new VenezuelaNFT_13NFT to the dictionary
+            let oldVenezuelaNFT_13 <- self.ownedNFTs[id] <- newVenezuelaNFT_13
+            // Destroy old VenezuelaNFT_13 in that slot
+            destroy oldVenezuelaNFT_13
+
+			emit Deposit(id: id, to: self.owner?.address) */
+		}
+		// Withdraw removes the oldest Receipt from the list and moves it to the caller(to reveal)
+		access(all) fun withdraw(): @Receipt {
+			let receipt <- self.receipts.removeFirst()
+
+			return <- receipt
+		}
+
+    }
     // -----------------------------------------------------------------------
     // VenezuelaNFT_13 Receipt Resource
     // -----------------------------------------------------------------------
@@ -992,6 +1023,11 @@ contract VenezuelaNFT_13: NonFungibleToken, ViewResolver {
     /// and returns it to the caller so that they can own NFTs
     access(all) fun createEmptyCollection(nftType: Type): @{NonFungibleToken.Collection} {
         return <- create Collection()
+    }
+    /// createEmptyStorage creates an empty ReceiptStorage 
+    /// and returns it to the caller
+    access(all) fun createEmptyStorage(): @ReceiptStorage {
+        return <- create ReceiptStorage()
     }
     // buyPack mints a new VenezuelaNFT_13.Receipt and returns it
     // 
@@ -1254,6 +1290,9 @@ contract VenezuelaNFT_13: NonFungibleToken, ViewResolver {
 		// Create a Administrator resource and save it to VenezuelaNFT_13 account storage
 		let administrator <- create Administrator()
 		self.account.storage.save(<- administrator, to: self.AdministratorStoragePath)
+		// Create a ReceiptStorage resource and save it to VenezuelaNFT_13 account storage
+		let storage <- create ReceiptStorage()
+		self.account.storage.save(<- storage, to: self.ReceiptStoragePath)
         // Emit contract init event
 		emit ContractInitialized()
 
