@@ -7,7 +7,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func testnet() {
+func main() {
 	// Comienza el programa overflow"
 	o := Overflow(
 		WithGlobalPrintOptions(),

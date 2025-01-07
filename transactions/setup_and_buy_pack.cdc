@@ -26,16 +26,19 @@ transaction(setID: UInt32) {
         // create a public capability for the collection
         let collectionCap = signer.capabilities.storage.issue<&VenezuelaNFT_14.Collection>(collectionData.storagePath)
         signer.capabilities.publish(collectionCap, at: collectionData.publicPath)
-        // Commit my bet and get a receipt
+        // get ref to ReceiptStorage
+        let storageRef = signer.storage.borrow<&VenezuelaNFT_14.ReceiptStorage>(from: VenezuelaNFT_14.ReceiptStoragePath)
+            ?? panic("Cannot borrow a reference to the recipient's VenezuelaNFT ReceiptStorage")
+        // Buy pack and get a receipt
         let receipt <- VenezuelaNFT_14.buyPack(setID: setID)
         
-        // Check that I don't already have a receipt stored
-        if signer.storage.type(at: VenezuelaNFT_14.ReceiptStoragePath) != nil {
-            panic("Storage collision at path=".concat(VenezuelaNFT_14.ReceiptStoragePath.toString()).concat(" a Receipt is already stored!"))
+        // Check that I don't already have a receiptStorage
+        if signer.storage.type(at: VenezuelaNFT_14.ReceiptStoragePath) == nil {
+            let storage <- VenezuelaNFT_14.createEmptyStorage()
+            signer.storage.save(<- storage, to: VenezuelaNFT_14.ReceiptStoragePath)
         }
 
         // Save that receipt to my storage
-        // Note: production systems would consider handling path collisions
-        signer.storage.save(<-receipt, to: VenezuelaNFT_14.ReceiptStoragePath)
+        storageRef.deposit(receipt: <- receipt)
     }
 }
