@@ -13,7 +13,9 @@ access(all) fun main(account: Address): [AnyStruct]?  {
 
     let ids = cap.getIDs()
 
+
     for id in ids {
+        let nftRef = cap.borrowVenezuelaNFT(id: id)!
         let resolver = cap.borrowViewResolver(id: id)!
         let displayView: MetadataViews.Display = MetadataViews.getDisplay(resolver)!
         let serialView = MetadataViews.getSerial(resolver)!
@@ -25,7 +27,8 @@ access(all) fun main(account: Address): [AnyStruct]?  {
         "serial": serialView,
         "display": displayView,
         "traits": traits,
-        "type": cardType
+        "type": cardType,
+        "cardID": nftRef.cardID
         }
         
         answer.append(nft

@@ -738,7 +738,16 @@ contract VenezuelaNFT_14: NonFungibleToken, ViewResolver {
 		access(all) view fun borrowNFT(_ id: UInt64): &{NonFungibleToken.NFT}? {
 			return &self.ownedNFTs[id]
 		}
+		// BorrowNFT gets a reference to an NFT in the collection
+        access(all) fun borrowVenezuelaNFT(id: UInt64): &VenezuelaNFT_14.NFT? {
+            if self.ownedNFTs[id] != nil {
+                // Create an authorized reference to allow downcasting
+                let ref = (&self.ownedNFTs[id] as  &{NonFungibleToken.NFT}?)!
+                return ref as! &VenezuelaNFT_14.NFT
+            }
 
+            return nil
+        }
 		access(all) view fun borrowViewResolver(id: UInt64): &{ViewResolver.Resolver}? {
             if let nft = &self.ownedNFTs[id] as &{NonFungibleToken.NFT}? {
                 return nft as &{ViewResolver.Resolver}
