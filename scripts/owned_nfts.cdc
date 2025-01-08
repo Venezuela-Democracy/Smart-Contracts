@@ -24,12 +24,12 @@ access(all) fun main(account: Address): [AnyStruct]?  {
         let cardType = VenezuelaNFT_14.getCardType(cardID: UInt32(id))
 
         nft = {
-        "nftId": nftRef.id,
-        "serial": serialView,
+        "cardMetadataID": nftRef.cardID,
         "display": displayView,
+        "nftID": nftRef.id,
+        "serial": serialView,
         "traits": traits,
-        "type": cardType,
-        "cardID": nftRef.cardID
+        "type": cardType
         }
         
         answer.append(nft

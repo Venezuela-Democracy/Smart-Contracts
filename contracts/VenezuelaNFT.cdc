@@ -549,8 +549,8 @@ contract VenezuelaNFT_14: NonFungibleToken, ViewResolver {
             metadata["influence_generation"] = self.influence_generation
             metadata["setId"] = self.setId
             metadata["orignalMinter"] = self.orignalMinter
-            metadata["cardID"] = self.id
-            metadata["nftID"] = self.uuid
+            metadata["cardMetadataID"] = self.id
+            metadata["nftUUID"] = self.uuid
 
             return metadata
         }
