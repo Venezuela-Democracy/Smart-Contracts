@@ -1,16 +1,16 @@
-import VenezuelaNFT_14 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_15 from "../../contracts/VenezuelaNFT.cdc"
 
 // This transaction is for the admin to create a new set resource
-// and store it in the VenezuelaNFT_14 smart contract
+// and store it in the VenezuelaNFT_15 smart contract
 
 transaction(setName: String) {
 
-    let Administrator: &VenezuelaNFT_14.Administrator
+    let Administrator: &VenezuelaNFT_15.Administrator
     let currentSetId: UInt32
     
     prepare(deployer: auth(BorrowValue) &Account) {
-        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_14.Administrator>(from: VenezuelaNFT_14.AdministratorStoragePath)!
-        self.currentSetId = VenezuelaNFT_14.nextSetID
+        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_15.Administrator>(from: VenezuelaNFT_15.AdministratorStoragePath)!
+        self.currentSetId = VenezuelaNFT_15.nextSetID
     }
 
     execute {

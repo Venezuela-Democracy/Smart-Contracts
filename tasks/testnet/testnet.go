@@ -33,8 +33,20 @@ func main() {
 		WithArg("image", "https://historiahoy.com.ar/wp-content/uploads/2020/10/0000089139-1-762x1024.jpg"),
 		WithArg("ipfsCID", "Andrés Bello"),
 	).Print()
-	// Script to get card metadata
-	o.Script("get_card_metadata", WithArg("cardID", "1")).Print()
+	o.Tx("admin/create_characterCard",
+		WithSigner("Telegram"),
+		WithArg("name", "Rómulo Gallegos"),
+		WithArg("description", "Rómulo Gallegos (1884–1969) was a Venezuelan novelist, politician, and one of the most significant figures in Latin American literature. He is best known for his works that explore the cultural and social dynamics of Venezuela, especially through the lens of the country's rural and political life."),
+		WithArg("influencePointsGeneration", "15"),
+		WithArg("characterTypes", `["Political", "Cultural"]`),
+		WithArg("launchCost", "700"),
+		WithArg("effectCostReduction", `{"Cultural": 35}`),
+		WithArg("developmentEffect", `{"Cultural": 55}`),
+		WithArg("bonusEffect", `{"Cultural": 55}`),
+		WithArg("cardNarratives", `{70: "Gallego' legacy defines regional literature identity", 50: "Gallegos' literature influence generations to come"}`),
+		WithArg("image", "https://historiahoy.com.ar/wp-content/uploads/2020/10/0000089139-1-762x1024.jpg"),
+		WithArg("ipfsCID", "Rómulo Gallegos"),
+	).Print()
 	o.Tx("admin/create_itemCard",
 		WithSigner("Telegram"),
 		WithArg("name", "Arepa"),
@@ -46,6 +58,18 @@ func main() {
 		WithArg("cardNarratives", `{90: "The arepa crowns itself as the region’s undisputed symbol", 70: "The arepa defines local gastronomic identity"}`),
 		WithArg("image", "https://imag.bonviveur.com/arepas-venezolanas-caseras-rellenas.jpg"),
 		WithArg("ipfsCID", "Arepa"),
+	).Print()
+	o.Tx("admin/create_itemCard",
+		WithSigner("Telegram"),
+		WithArg("name", "Empanada"),
+		WithArg("description", "Venezuelan empanadas are a golden, crispy delight that perfectly marry the rich flavors of the country's diverse ingredients. Imagine a thin, slightly crunchy exterior that crackles when you take your first bite, revealing a warm, flavorful filling inside. The dough, subtly seasoned and slightly sweet, forms a delicate shell that is both light and hearty at the same time."),
+		WithArg("influencePointsGeneration", "10"),
+		WithArg("votingEffect", `{"Gastronomic": 2}`),
+		WithArg("specialEffect", `{"Gastronomic": 15}`),
+		WithArg("type", "Gastronomic"),
+		WithArg("cardNarratives", `{90: "The empanada crowns itself as the region’s undisputed symbol", 70: "The empanada defines local gastronomic identity"}`),
+		WithArg("image", "https://www.comedera.com/wp-content/uploads/sites/9/2020/03/empanadas-venezolanas.jpg"),
+		WithArg("ipfsCID", "Empanadas"),
 	).Print()
 	// upload_metadata
 	o.Tx("admin/create_locationCard",
@@ -79,7 +103,7 @@ func main() {
 		WithArg("proposal_1_duration", "7.0"),
 		WithArg("proposal_1_adoptionRequirement", "30"),
 		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
-		WithArg("imagePath", "https://bafybeihe3r7nwgutoxzjj2eewwj5uml23zmwhhjfac6b5677sxxv7wosaa.ipfs.dweb.link?filename=image%204.jpg"),
+		WithArg("imagePath", "https://i.postimg.cc/4dWyc409/temp-Imagel5-Fd1-N.avif"),
 	).Print()
 
 	// Script to get LocationCard metadata

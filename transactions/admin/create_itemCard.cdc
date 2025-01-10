@@ -1,7 +1,7 @@
-import VenezuelaNFT_14 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_15 from "../../contracts/VenezuelaNFT.cdc"
 
 // This transaction creates a new CulturalItemCard struct 
-// and stores it in the VenezuelaNFT_14 smart contract
+// and stores it in the VenezuelaNFT_15 smart contract
 
 
 
@@ -17,15 +17,15 @@ transaction(
     ipfsCID: String
     ) {
 
-    let Administrator: &VenezuelaNFT_14.Administrator
-    let culturalItemEffects: VenezuelaNFT_14.CulturalItemEffects
+    let Administrator: &VenezuelaNFT_15.Administrator
+    let culturalItemEffects: VenezuelaNFT_15.CulturalItemEffects
     let currentCardId: UInt32
     
     prepare(deployer: auth(BorrowValue) &Account) {
-        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_14.Administrator>(from: VenezuelaNFT_14.AdministratorStoragePath)!
-        self.currentCardId = VenezuelaNFT_14.nextCardID
+        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_15.Administrator>(from: VenezuelaNFT_15.AdministratorStoragePath)!
+        self.currentCardId = VenezuelaNFT_15.nextCardID
 
-        self.culturalItemEffects = VenezuelaNFT_14.CulturalItemEffects(
+        self.culturalItemEffects = VenezuelaNFT_15.CulturalItemEffects(
             votingEffect: votingEffect,
             specialEffect: specialEffect
         )

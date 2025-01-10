@@ -8,7 +8,7 @@
 				"testnet": "826dae42290107c3"
 			}
 		},
-		"VenezuelaNFT_14": "./contracts/VenezuelaNFT.cdc"
+		"VenezuelaNFT_15": "./contracts/VenezuelaNFT.cdc"
 	},
 	"dependencies": {
 		"Burner": {
@@ -148,7 +148,7 @@
 		"testnet": {
 			"testnet-Telegram": [
 				"VenezuelaNFT",
-				"VenezuelaNFT_14"
+				"VenezuelaNFT_15"
 			]
 		}
 	}
