@@ -1054,6 +1054,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
     // buyPack mints a new VenezuelaNFT_16.Receipt and returns it
     // 
     // Parameters: setID: The ID of the Set that the VenezuelaNFT_16 references
+    //             payment: 1.0 Flow
     //
     // Pre-Conditions:
     // The Set must exist in the Set and be allowed to mint new VenezuelaNFT_16s
@@ -1069,6 +1070,23 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         let receipt <- create Receipt(setID: setID, request: <-request)
         // Get contract's Vault
 		let VenezuelaTreasury = getAccount(VenezuelaNFT_16.account.address).capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)!
+        // Deposit the Flow into the account
+        VenezuelaTreasury.deposit(from: <- payment)
+        
+        emit BoughtPack(commitBlock: receipt.getRequestBlock()!, receiptID: receipt.uuid)
+
+        return <- receipt
+    }
+    // Same as buyPackFlow but with Influence Points
+    access(all) fun buyPackIP(setID: UInt32, payment: @{FungibleToken.Vault}): @Receipt {
+        pre {
+            payment.balance == 1.0: "Payment is not 1 Flow"
+        }
+
+        let request <- self.consumer.requestRandomness()
+        let receipt <- create Receipt(setID: setID, request: <-request)
+        // Get contract's Vault
+		let VenezuelaTreasury = getAccount(VenezuelaNFT_16.account.address).capabilities.borrow<&{FungibleToken.Receiver}>(/public/VenezuelaIPReceiver)!
         // Deposit the Flow into the account
         VenezuelaTreasury.deposit(from: <- payment)
         
