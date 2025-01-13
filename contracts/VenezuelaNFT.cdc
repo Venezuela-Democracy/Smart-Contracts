@@ -1060,7 +1060,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
     //
     // Returns: A Receipt for it to be redeemed later
     // 
-    access(all) fun buyPackFlow(setID: UInt32, payment: @FlowToken.Vault): @Receipt {
+    access(all) fun buyPackFlow(setID: UInt32, payment: @{FungibleToken.Vault}): @Receipt {
         pre {
             payment.balance == 1.0: "Payment is not 1 Flow"
         }
