@@ -1,7 +1,7 @@
-import VenezuelaNFT_15 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_16 from "../../contracts/VenezuelaNFT.cdc"
 
 // This transaction creates a new LocationCard struct 
-// and stores it in the VenezuelaNFT_15 smart contract
+// and stores it in the VenezuelaNFT_16 smart contract
 
 // Parameters:
 //
@@ -28,15 +28,15 @@ transaction(
     ipfsCID: String,
     imagePath: String
 ) {
-    let Administrator: &VenezuelaNFT_15.Administrator
-    let locationProposals: [VenezuelaNFT_15.LocationProposal]
+    let Administrator: &VenezuelaNFT_16.Administrator
+    let locationProposals: [VenezuelaNFT_16.LocationProposal]
     let currentCardId: UInt32
     
     prepare(deployer: auth(BorrowValue) &Account) {
-        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_15.Administrator>(from: VenezuelaNFT_15.AdministratorStoragePath)!
-        self.currentCardId = VenezuelaNFT_15.nextCardID
+        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_16.Administrator>(from: VenezuelaNFT_16.AdministratorStoragePath)!
+        self.currentCardId = VenezuelaNFT_16.nextCardID
         self.locationProposals = []
-        let locationStruct = VenezuelaNFT_15.LocationProposal(
+        let locationStruct = VenezuelaNFT_16.LocationProposal(
             proposalName: proposal_1_name,
             effect: proposal_1_effect,
             duration: proposal_1_duration,

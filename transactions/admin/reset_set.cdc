@@ -1,22 +1,23 @@
 import VenezuelaNFT_16 from "../../contracts/VenezuelaNFT.cdc"
 
-// This transaction is for the admin to create a new set resource
-// and store it in the VenezuelaNFT_16 smart contract
+// This transaction resets a set to add cards again
 
-transaction(setName: String) {
+transaction(setID: UInt32) {
 
     let Administrator: &VenezuelaNFT_16.Administrator
-    let currentSetId: UInt32
+    let setRef: &VenezuelaNFT_16.Set
     
     prepare(deployer: auth(BorrowValue) &Account) {
         self.Administrator = deployer.storage.borrow<&VenezuelaNFT_16.Administrator>(from: VenezuelaNFT_16.AdministratorStoragePath)!
-        self.currentSetId = VenezuelaNFT_16.nextSetID
+
+        // borrow a reference to the set to be added to
+        self.setRef = self.Administrator.borrowSet(setID: setID)
+        
     }
 
     execute {
-        let newCardID = self.Administrator.createSet(name: setName)
-    }
-    post {
-           
+
+        // Add the specified card IDs
+        let returned = self.setRef.resetSet()
     }
 }

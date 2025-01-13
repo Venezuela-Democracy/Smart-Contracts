@@ -47,6 +47,34 @@ func main() {
 		WithArg("image", "https://historiahoy.com.ar/wp-content/uploads/2020/10/0000089139-1-762x1024.jpg"),
 		WithArg("ipfsCID", "Rómulo Gallegos"),
 	).Print()
+	o.Tx("admin/create_characterCard",
+		WithSigner("Telegram"),
+		WithArg("name", "Edmundo González"),
+		WithArg("description", "Edmundo González Urrutia was a notable Venezuelan intellectual, journalist, and politician who played a significant role in the country’s political and social spheres during the 20th century. While he did not serve as president of Venezuela, his influence in Venezuelan politics, especially in the mid-20th century, was substantial. Here is a summary of his life and influence"),
+		WithArg("influencePointsGeneration", "25"),
+		WithArg("characterTypes", `["Political"]`),
+		WithArg("launchCost", "900"),
+		WithArg("effectCostReduction", `{"Political": 35}`),
+		WithArg("developmentEffect", `{"Political": 55}`),
+		WithArg("bonusEffect", `{"Political": 55}`),
+		WithArg("cardNarratives", `{70: "Edmundo becomes the President-elect of Venezuela", 50: "Edmundo becomes the leading figure in the Venezuelan political scene"}`),
+		WithArg("image", "https://cdn.discordapp.com/attachments/1317233245548449852/1327300055173959791/IMG_3479.jpeg?ex=67829001&is=67813e81&hm=0dd7a4aca93586bc4e87ee826da13000d8b91ace3ddbbdb9a868b0aeda3a30c7&"),
+		WithArg("ipfsCID", "Edmundo Gonzales"),
+	).Print()
+	o.Tx("admin/create_characterCard",
+		WithSigner("Telegram"),
+		WithArg("name", "Maria Corina Machado"),
+		WithArg("description", "María Corina Machado is one of the most prominent and controversial figures in contemporary Venezuelan politics. A former congresswoman, opposition leader, and outspoken advocate for democracy and human rights, her influence in Venezuela’s political scene has been significant, particularly in the context of the country's ongoing crisis under the rule of Nicolás Maduro. Her career reflects her deep commitment to challenging authoritarianism and advocating for Venezuela’s democratic future"),
+		WithArg("influencePointsGeneration", "50"),
+		WithArg("characterTypes", `["Political"]`),
+		WithArg("launchCost", "100"),
+		WithArg("effectCostReduction", `{"Political": 45}`),
+		WithArg("developmentEffect", `{"Political": 55}`),
+		WithArg("bonusEffect", `{"Political": 55}`),
+		WithArg("cardNarratives", `{70: "Maria Corina becomes a prominent opposition figures", 50: "Maria Corina becomes the leading figure in the Venezuelan political scene"}`),
+		WithArg("image", "https://cdn0.celebritax.com/sites/default/files/styles/watermark_100/public/1736449128-maria-corina-machado-une-manifestacion-caracas-venezuela.jpg"),
+		WithArg("ipfsCID", "Maria Corina"),
+	).Print()
 	o.Tx("admin/create_itemCard",
 		WithSigner("Telegram"),
 		WithArg("name", "Arepa"),
@@ -86,7 +114,7 @@ func main() {
 		WithArg("proposal_1_duration", "7.0"),
 		WithArg("proposal_1_adoptionRequirement", "30"),
 		WithArg("ipfsCID", "Qmc2rHqzmHxxswAZDYHTLiosiaaqnPmFSSBtsBEWbM6MS1"),
-		WithArg("imagePath", "https://bafybeiglorbajdtbqtqngzfvz3cpn6a3j7qzkn5knxjai76ksm5sxv43qi.ipfs.dweb.link?filename=waseemkhan_10131_Lagos-Brazilians_built_schools_Realistic_pic_w_485d45ba-5cab-4bc7-b33e-627c0de38e32.jpeg"),
+		WithArg("imagePath", "https://media.discordapp.net/attachments/1317230997888172123/1327300768482463849/waseemkhan_10131_Lagos-Brazilians_built_schools_Realistic_pic_w_485d45ba-5cab-4bc7-b33e-627c0de38e32.png?ex=678290ab&is=67813f2b&hm=833bfa95af8c37c2a97eff5f93eb101a4e0e99fcf32e0c8942b0d7e0ddd7b213&=&format=webp&quality=lossless&width=490&height=875"),
 	).Print()
 
 	o.Tx("admin/create_locationCard",
@@ -103,7 +131,7 @@ func main() {
 		WithArg("proposal_1_duration", "7.0"),
 		WithArg("proposal_1_adoptionRequirement", "30"),
 		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
-		WithArg("imagePath", "https://i.postimg.cc/4dWyc409/temp-Imagel5-Fd1-N.avif"),
+		WithArg("imagePath", "https://media.discordapp.net/attachments/1317230997888172123/1317523250196250675/loudrich_ultra_HD_image_of_venezuela_angel_fall_waterfall_birds_adce49d3-a61f-4d3e-b532-f16413aaab29.png?ex=6781ee65&is=67809ce5&hm=ed54e96cf4699c279e94ecfce1c62a4c99a030dfc39022d4f0d02a0ebf56eed1&=&format=webp&quality=lossless&width=1372&height=1372"),
 	).Print()
 
 	// Script to get LocationCard metadata
@@ -122,8 +150,14 @@ func main() {
 	o.Tx("admin/add_cards_to_set",
 		WithSigner("Telegram"),
 		WithArg("setID", "0"),
-		WithArg("cards", "[0, 1, 2, 3]"),
+		WithArg("cards", "[0, 1, 2, 3, 4, 5, 6, 7]"),
 	).Print()
+
+	/* 	o.Tx("admin/add_card_to_set",
+		WithSigner("Telegram"),
+		WithArg("setID", "0"),
+		WithArg("cardID", "7"),
+	).Print() */
 	// Script to get all cards
 
 	color.Red("User should be able to buy a Pack")
@@ -139,20 +173,20 @@ func main() {
 		WithSigner("Telegram"),
 	).Print()
 
-	o.Script("owned_nfts",
+	/* 	o.Script("owned_nfts",
 		WithArg("account", "Telegram"),
-	).Print()
+	).Print() */
 
 	// o.Script("get_all_cards").Print()
 
 	color.Red("User should be able to buy a second Pack")
-	o.Tx("buy_pack",
-		WithSigner("Telegram"),
-		WithArg("setID", "0"),
-	)
-	o.Tx("reveal_pack",
-		WithSigner("Telegram"),
-	)
+	/* 	o.Tx("buy_pack",
+	   		WithSigner("Telegram"),
+	   		WithArg("setID", "0"),
+	   	)
+	   	o.Tx("reveal_pack",
+	   		WithSigner("Telegram"),
+	   	) */
 
 	// create_season
 	/* 	o.Tx("admin/start_new_season",
@@ -161,4 +195,10 @@ func main() {
 		WithArg("", ""),
 		WithArg("", ""),
 	) */
+
+	// RESET SET
+	/* 	o.Tx("admin/reset_set",
+		WithSigner("Telegram"),
+		WithArg("setID", "0"),
+	).Print() */
 }
