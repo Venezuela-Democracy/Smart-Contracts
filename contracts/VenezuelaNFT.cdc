@@ -428,7 +428,10 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         // Array of cards that are a part of this set.
         // When a Card is added to the set, its ID gets appended here.
         // The ID does not get removed from this array when a Card is retired.
-        access(contract) var cards: {UInt32: Type}
+        // Cards are categorized by rarity
+        access(contract) var cards: {String: {UInt32: Type}}
+        // access(contract) var cards: {UInt32: Type}
+
 
         // Indicates if the Set is currently locked.
         // When a Set is created, it is unlocked 
@@ -450,6 +453,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         init(name: String) {
             self.setID = VenezuelaNFT_16.nextSetID
             self.cards = {}
+            self.cards["Common"] = {}
             self.locked = false
             self.numberMintedPerCard = {}
 
@@ -465,38 +469,52 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         // The Set needs to be not locked
         // The card can't have already been added to the Set
         //
-        access(all) fun addCard(cardID: UInt32, cardType: Type) {
+        access(all) fun addCard(cardStruct: {UInt32: Type}, cardRarity: String) {
             pre {
                 !self.locked: "Cannot add the card to the Set after the set has been locked."
-                self.numberMintedPerCard[cardID] == nil: "The card has already beed added to the set."
+                self.numberMintedPerCard[cardStruct.keys[0]] == nil: "The card has already beed added to the set."
             }
 
             // Add the Card to the array of Cards in the set
-            self.cards[cardID] = cardType
+            self.cards[cardRarity] = cardStruct
 
             // Initialize the VenezuelaNFT_16 count to zero
-            self.numberMintedPerCard[cardID] = 0
+            self.numberMintedPerCard[cardStruct.keys[0]] = 0
 
-            emit CardAddedToSet(setID: self.setID, cardID: cardID)
+            emit CardAddedToSet(setID: self.setID, cardID: cardStruct.keys[0])
         }
         // Function to return a card's type
-        access(all) fun getCardType(cardID: UInt32): Type {
-            return self.cards[cardID]!
+        access(all) fun getCardType(cardID: UInt32, rarity: String): Type {
+            return self.cards[rarity]![cardID]!
         }
         // addCards adds multiple Cards to the Set
         //
         // Parameters: cardIDs: The IDs of the Cards that are being added
         //                      as an array
         //
-        access(all) fun addCards(cardIDs: [UInt32], cardTypes: [Type]) {
-            for i in  cardIDs{
-                self.addCard(cardID: i, cardType: cardTypes[i])
+        access(all) fun addCards(cardStructs: [{ UInt32: Type }], rarity: String) {
+            for i in  cardStructs{
+                self.addCard(cardStruct: i, cardRarity: rarity)
             }
         }
         // Function to increase mint count of a Card
         access(all) fun incrementCount(cardID: UInt32) {
             let currentCount = self.numberMintedPerCard[cardID]!
             self.numberMintedPerCard[cardID] = currentCount + 1
+        }
+        // Function to determine a card's rarity at mint
+        access(all) fun determineRarity(randomNumber: UInt64): String {
+            if randomNumber < 10 {
+                return "Legendary"
+            } else if randomNumber < 100 {
+                return "Epic"
+            } else if randomNumber < 1000 {
+                return "Rare"
+            } else if randomNumber < 5500 {
+                return "Uncommon"
+            }
+
+            return "Common"
         }
         // Function to reset set
 /*         access(all) fun resetSet() {
@@ -1034,8 +1052,8 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
     /// within any range without a risk of bias.
     ///
     access(self) 
-    fun _randomNumber(request: @RandomConsumer.Request, max: Int): UInt8 {
-        return UInt8(self.consumer.fulfillRandomInRange(request: <-request, min: 0, max: UInt64(max)))
+    fun _randomNumber(request: @RandomConsumer.Request, max: Int): UInt64 {
+        return self.consumer.fulfillRandomInRange(request: <-request, min: 0, max: UInt64(max))
     }
     // -----------------------------------------------------------------------
     // VenezuelaNFT_16 public functions
@@ -1118,14 +1136,15 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         // Get reference to recipient's account
         let receiverRef = recipient.capabilities.borrow<&{VenezuelaNFT_16.VenezuelaNFT_16CollectionPublic}>(VenezuelaNFT_16.CollectionPublicPath)
             ?? panic("Cannot borrow a reference to the recipient's moment collection")
+
+        // Determine the card's rarity randomly 
+        let cardRarity = set.determineRarity(randomNumber: self._randomNumber(request: <-receipt.popRequest(), max: 100))
         // Get a randomly picked card ID    
-        // THERE'S AN ERROR IN THIS LOGIC
-        //////
         let cardID = UInt32(self._randomNumber(request: <-receipt.popRequest(), max: set.cards.length - 1))
         // Burn the receipt
         Burner.burn(<-receipt) 
         // get card's type
-        let cardType = set.getCardType(cardID: cardID)
+        let cardType = set.getCardType(cardID: cardID, rarity: cardRarity)
         // Get card's metadata
        // let cardMetadata
         switch cardType {

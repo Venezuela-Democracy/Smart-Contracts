@@ -1,7 +1,8 @@
 import VenezuelaNFT_16 from "../contracts/VenezuelaNFT.cdc"
 import NonFungibleToken from "NonFungibleToken"
 import MetadataViews from "MetadataViews"
-
+import "FlowToken"
+import "FungibleToken"
 // This transaction is what a citizen would use to mint a single new moment
 // and deposit it in their collection
 
@@ -15,6 +16,13 @@ transaction(setID: UInt32) {
         if signer.storage.borrow<&VenezuelaNFT_16.Collection>(from: collectionData.storagePath) != nil {
             return
         }
+
+                // Get a reference to the signer's stored vault
+        let vaultRef = signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)
+            ?? panic("The signer does not store a FlowToken Vault object at the path "
+                    .concat("/storage/flowTokenVault. ")
+                    .concat("The signer must initialize their account with this vault first!"))
+        
         // Create a new empty collection
         let collection <- VenezuelaNFT_16.createEmptyCollection(nftType: Type<@VenezuelaNFT_16.NFT>())
 
@@ -30,7 +38,7 @@ transaction(setID: UInt32) {
         let storageRef = signer.storage.borrow<&VenezuelaNFT_16.ReceiptStorage>(from: VenezuelaNFT_16.ReceiptStoragePath)
             ?? panic("Cannot borrow a reference to the recipient's VenezuelaNFT ReceiptStorage")
         // Buy pack and get a receipt
-        let receipt <- VenezuelaNFT_16.buyPack(setID: setID)
+        let receipt <- VenezuelaNFT_16.buyPackFlow(setID: setID, payment: <- vaultRef.withdraw(amount: 1.0))
         
         // Check that I don't already have a receiptStorage
         if signer.storage.type(at: VenezuelaNFT_16.ReceiptStoragePath) == nil {
