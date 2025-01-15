@@ -454,6 +454,10 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
             self.setID = VenezuelaNFT_16.nextSetID
             self.cards = {}
             self.cards["Common"] = {}
+            self.cards["Uncommon"] = {}
+            self.cards["Rare"] = {}
+            self.cards["Epic"] = {}
+            self.cards["Legendary"] = {}
             self.locked = false
             self.numberMintedPerCard = {}
 
@@ -487,14 +491,31 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         access(all) fun getCardType(cardID: UInt32, rarity: String): Type {
             return self.cards[rarity]![cardID]!
         }
+        // Function to return a card's type
+        access(all) fun getCardRarity(cardID: UInt32): String {
+            if self.cards["Common"]![cardID] != nil {
+                return "Common"
+            } else if self.cards["Uncommon"]![cardID] != nil {
+                return "Uncommon"
+            } else if self.cards["Rare"]![cardID] != nil {
+                return "Rare"
+            } else if self.cards["Epic"]![cardID] != nil {
+                return "Epic"
+            } else if self.cards["Legendary"]![cardID] != nil {
+                return "Legendary"
+            }
+            return "This card is not in the set"
+        }
         // addCards adds multiple Cards to the Set
         //
         // Parameters: cardIDs: The IDs of the Cards that are being added
         //                      as an array
         //
-        access(all) fun addCards(cardStructs: [{ UInt32: Type }], rarity: String) {
+        access(all) fun addCards(cardStructs: [{ UInt32: Type }], rarities: [String]) {
+            var counter = 0
             for i in  cardStructs{
-                self.addCard(cardStruct: i, cardRarity: rarity)
+                self.addCard(cardStruct: i, cardRarity: rarities[counter])
+                counter = counter + 1
             }
         }
         // Function to increase mint count of a Card
