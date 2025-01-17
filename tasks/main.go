@@ -205,9 +205,7 @@ func main() {
 	) */
 
 	color.Red("User should be able to open MULTIPLE Pack")
-	/* 	o.Tx("reveal_pack",
-		WithSigner("account"),
-	) */
+
 	o.Tx("reveal_multiple_packs",
 		WithSigner("account"),
 		WithArg("amount", 7),

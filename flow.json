@@ -1,7 +1,7 @@
 {
 	"contracts": {
-		"DevelopmentPoints": "./contracts/DevelopmentPoints",
-		"InfluencePoints": "./contracts/InfluencePoints",
+		"DevelopmentPoints": "./contracts/DevelopmentPoints.cdc",
+		"InfluencePoint": "./contracts/InfluencePoint.cdc",
 		"VenezuelaNFT": {
 			"source": "./contracts/VenezuelaNFT.cdc",
 			"aliases": {
@@ -141,7 +141,8 @@
 				"VenezuelaNFT",
 				"RandomConsumer",
 				"Xorshift128plus",
-				"NFTStorefront"
+				"NFTStorefront",
+				"InfluencePoint"
 			],
 			"emulator-bob": []
 		},

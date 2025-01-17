@@ -186,25 +186,30 @@ func main() {
 	).Print()
 	color.Red("Admin should be able to add cards to a set")
 	// Add cards to Set
-	o.Tx("admin/add_cards_to_set",
+	/* 	o.Tx("admin/add_cards_to_set",
 		WithSigner("Telegram"),
 		WithArg("setID", "0"),
 		WithArg("cards", "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"),
 		WithArg("cardRarities", `["Legendary", "Common", "Uncommon", "Epic", "Rare", "Common", "Uncommon", "Rare", "Legendary", "Epic"]`),
+	).Print() */
+
+	color.Red("User should be able to buy MULTIPLE Packs")
+
+	o.Tx("buy_multiple_packs",
+		WithSigner("Telegram"),
+		WithArg("setID", "0"),
+		WithArg("amount", "10"),
 	).Print()
 
-	color.Red("User should be able to buy a Pack")
+	color.Red("User should be able to open MULTIPLE Pack")
 
-	/* 	o.Tx("buy_pack",
-	   		WithSigner("Telegram"),
-	   		WithArg("setID", "0"),
-	   	).Print()
-
-	   	color.Red("User should be able to open a Pack")
-
-	   	o.Tx("reveal_pack",
-	   		WithSigner("Telegram"),
-	   	).Print() */
+	o.Tx("reveal_multiple_packs",
+		WithSigner("Telegram"),
+		WithArg("amount", 7),
+	).Print()
+	o.Script("owned_nfts",
+		WithArg("account", "Telegram"),
+	).Print()
 
 	/* 	o.Script("owned_nfts",
 		WithArg("account", "Telegram"),
