@@ -1,4 +1,4 @@
-import VenezuelaNFT_16 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_17 from "../../contracts/VenezuelaNFT.cdc"
 
 // This transaction adds multiple cards to a set
 		
@@ -9,20 +9,20 @@ import VenezuelaNFT_16 from "../../contracts/VenezuelaNFT.cdc"
 
 transaction(setID: UInt32, cards: [UInt32], cardRarities: [String]) {
 
-    let Administrator: &VenezuelaNFT_16.Administrator
+    let Administrator: &VenezuelaNFT_17.Administrator
     let cardTypes: [Type]
-    let setRef: &VenezuelaNFT_16.Set
+    let setRef: &VenezuelaNFT_17.Set
     var cardStructs: [{ UInt32: Type}]
     
     prepare(deployer: auth(BorrowValue) &Account) {
-        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_16.Administrator>(from: VenezuelaNFT_16.AdministratorStoragePath)!
+        self.Administrator = deployer.storage.borrow<&VenezuelaNFT_17.Administrator>(from: VenezuelaNFT_17.AdministratorStoragePath)!
         // borrow a reference to the set to be added to
         self.setRef = self.Administrator.borrowSet(setID: setID)
         self.cardStructs = []
         self.cardTypes = []
 
         for id in cards {
-            let type = VenezuelaNFT_16.getCardType(cardID: id)
+            let type = VenezuelaNFT_17.getCardType(cardID: id)
             self.cardStructs.append({id : type})
         }
     }
