@@ -199,6 +199,10 @@ func main() {
 		WithArg("setID", "0"),
 		WithArg("amount", "10"),
 	)
+	// Get owned PACKS
+	o.Script("get_owned_packs",
+		WithArg("account", "account"),
+	)
 	/* 	o.Tx("buy_pack",
 		WithSigner("account"),
 		WithArg("setID", "0"),

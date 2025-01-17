@@ -68,10 +68,10 @@ contract VenezuelaNFT_17: NonFungibleToken, ViewResolver {
     // -----------------------------------------------------------------------
 	access(all) let CollectionStoragePath: StoragePath
 	access(all) let CollectionPublicPath: PublicPath
-	access(all) let CollectionPrivatePath: PrivatePath
 	access(all) let AdministratorStoragePath: StoragePath
     /// The canonical path for common Receipt storage
     access(all) let ReceiptStoragePath: StoragePath
+	access(all) let ReceiptStoragePublic: PublicPath
     // -----------------------------------------------------------------------
     // VenezuelaNFT_17 contract-level Composite Type definitions
     // -----------------------------------------------------------------------
@@ -347,28 +347,6 @@ contract VenezuelaNFT_17: NonFungibleToken, ViewResolver {
             self.ipfsCID = ipfsCID
         }
     }
-
-    // Metadata struct for each Card
-    // this is created and used at the time of minting/revealing
-/*     access(all) struct CardData {
-        // The ID of the Set that the Card comes from
-        access(all) let setID: UInt32
-        // Card Name
-
-        // The ID of the Card that the Card references
-        access(all) let cardID: UInt32
-        // Address of the original minter
-        access(all) let minter: Address
-        // The place in the edition that this Card was minted
-        access(all) let serialNumber: UInt64
-
-        init(_ setID: UInt32,_ cardID: UInt32,_ serialNumber: UInt64,_ minter: Address) {
-            self.setID = setID
-            self.cardID = cardID
-            self.serialNumber = serialNumber
-            self.minter = minter
-        }
-    } */
 
     // A Set is a grouping of Cards that make up a related group of collectibles
     // like sets of baseball or Magic cards. 
@@ -1010,6 +988,7 @@ contract VenezuelaNFT_17: NonFungibleToken, ViewResolver {
     // -----------------------------------------------------------------------
     // VenezuelaNFT_17 Receipts Storage Resource
     // -----------------------------------------------------------------------
+
     access(all) resource ReceiptStorage {
 		// List of Receipts 
 		access(all) var receipts: @[Receipt]    
@@ -1034,7 +1013,11 @@ contract VenezuelaNFT_17: NonFungibleToken, ViewResolver {
             emit ReceiptWithdraw(id: id, from: self.owner?.address)
             return <- receipt
 		}
+        // Get number of packs in storage
+        access(all) fun getBalance(): Int {
 
+            return self.receipts.length
+        }
     }
     // -----------------------------------------------------------------------
     // VenezuelaNFT_17 Receipt Resource
@@ -1366,7 +1349,6 @@ contract VenezuelaNFT_17: NonFungibleToken, ViewResolver {
     // Init
 
     init() {
-        let identifier = "VenezuelaNFT_17_".concat(self.account.address.toString())
         self.cardDatas = {}
         self.locationsData = {}
         self.charactersData = {}
@@ -1394,11 +1376,13 @@ contract VenezuelaNFT_17: NonFungibleToken, ViewResolver {
         // Create a RandomConsumer.Consumer resource
         self.consumer <-RandomConsumer.createConsumer()
 		// Set the named paths
+        let identifier = "VenezuelaNFT_17_".concat(self.account.address.toString())
 		self.CollectionStoragePath = StoragePath(identifier: identifier)!
 		self.CollectionPublicPath = PublicPath(identifier: identifier)!
-		self.CollectionPrivatePath = PrivatePath(identifier: identifier)!
+		// self.CollectionPrivatePath = PrivatePath(identifier: identifier)!
 		self.AdministratorStoragePath = StoragePath(identifier: identifier.concat("Administrator"))!
 		self.ReceiptStoragePath = StoragePath(identifier: identifier.concat("ReceiptStorage"))!
+		self.ReceiptStoragePublic = PublicPath(identifier: identifier.concat("ReceiptStorage"))!
 
 		// Create a Collection resource and save it to storage
 		let collection <- create Collection()
@@ -1412,6 +1396,9 @@ contract VenezuelaNFT_17: NonFungibleToken, ViewResolver {
 		// Create a ReceiptStorage resource and save it to VenezuelaNFT_17 account storage
 		let storage <- create ReceiptStorage()
 		self.account.storage.save(<- storage, to: self.ReceiptStoragePath)
+        // create a public capability for the storage
+	    let storageCap = self.account.capabilities.storage.issue<&VenezuelaNFT_17.ReceiptStorage>(self.ReceiptStoragePath)
+		self.account.capabilities.publish(storageCap, at: self.ReceiptStoragePublic)
         // Emit contract init event
 		emit ContractInitialized()
 
