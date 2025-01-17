@@ -4,6 +4,7 @@ import "NonFungibleToken"
 import "MetadataViews"
 import "ViewResolver"
 import "RandomConsumer"
+import "Xorshift128plus"
 import "Burner"
 
 access(all)
@@ -422,7 +423,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         // When a Card is added to the set, its ID gets appended here.
         // The ID does not get removed from this array when a Card is retired.
         // Cards are categorized by rarity
-        access(contract) var cards: {String: {UInt32: Type}}
+        access(contract) var cards: {String: [{UInt32: Type}]}
         // access(contract) var cards: {UInt32: Type}
 
 
@@ -446,11 +447,11 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         init(name: String) {
             self.setID = VenezuelaNFT_16.nextSetID
             self.cards = {}
-            self.cards["Common"] = {}
-            self.cards["Uncommon"] = {}
-            self.cards["Rare"] = {}
-            self.cards["Epic"] = {}
-            self.cards["Legendary"] = {}
+            self.cards["Common"] = []
+            self.cards["Uncommon"] = []
+            self.cards["Rare"] = []
+            self.cards["Epic"] = []
+            self.cards["Legendary"] = []
             self.locked = false
             self.numberMintedPerCard = {}
 
@@ -473,7 +474,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
             }
 
             // Add the Card to the array of Cards in the set
-            self.cards[cardRarity] = cardStruct
+            self.cards[cardRarity]?.append(cardStruct)!
 
             // Initialize the VenezuelaNFT_16 count to zero
             self.numberMintedPerCard[cardStruct.keys[0]] = 0
@@ -481,8 +482,16 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
             emit CardAddedToSet(setID: self.setID, cardID: cardStruct.keys[0])
         }
         // Function to return a card's type
-        access(all) fun getCardType(cardID: UInt32, rarity: String): Type {
-            return self.cards[rarity]![cardID]!
+        access(all) fun getCardType(cardSlot: UInt32, rarity: String): Type {
+            let cards = self.cards[rarity]!
+            let card = cards[cardSlot]
+            return card.values[0]
+        }
+        // Function to return a card's type
+        access(all) fun getCardID(cardSlot: UInt32, rarity: String): UInt32 {
+            let cards = self.cards[rarity]!
+            let card = cards[cardSlot]
+            return card.keys[0]
         }
         // Function to return a card's type
         access(all) fun getCardRarity(cardID: UInt32): String {
@@ -530,6 +539,9 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
 
             return "Common"
         }
+        access(all) fun getCardsWithRarity(rarity: String): [{UInt32: Type}] {
+            return self.cards[rarity]!
+        }
         // Function to reset set
 /*         access(all) fun resetSet() {
             self.cards = {}
@@ -548,6 +560,8 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         access(all) let ipfsCID: String
         // Card Type to filter metadata
         access(all) let cardType: Type
+        // Card rarity
+        access(all) let rarity: String
         // Influence Points generation
         access(all) let influence_generation: UFix64
         // SetId
@@ -594,6 +608,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
 		init(
             cardName: String, 
             cardDescription: String,
+            rarity: String,
             cardImg: String,
             ipfsCID: String,
             cardType: Type,
@@ -610,6 +625,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
             self.id = VenezuelaNFT_16.totalSupply 
             self.cardID = UInt64(cardID)
             self.name = cardName
+            self.rarity = rarity
             self.description = cardDescription
             self.img = cardImg
             self.ipfsCID = ipfsCID
@@ -1150,17 +1166,45 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         // Get reference to recipient's account
         let receiverRef = recipient.capabilities.borrow<&{VenezuelaNFT_16.VenezuelaNFT_16CollectionPublic}>(VenezuelaNFT_16.CollectionPublicPath)
             ?? panic("Cannot borrow a reference to the recipient's moment collection")
+        // fulfill the request with a PRG to generate multiple random numbers from
+        let prg = self.consumer.fulfillWithPRG(request: <-receipt.popRequest())
+        let prgRef = &prg as &Xorshift128plus.PRG
+        // Declare the rarity var
+        var rarity = ""
+        var cardID: UInt32 = 0
+        var cardSlot: UInt32 = 0
 
-        // Determine the card's rarity randomly 
-        let cardRarity = set.determineRarity(randomNumber: self._randomNumber(request: <-receipt.popRequest(), max: 100))
-        // Get a randomly picked card ID    
-        let cardID = UInt32(self._randomNumber(request: <-receipt.popRequest(), max: set.cards.length - 1))
+
+        var count = 0
+
+        while count < 2 {
+
+            if rarity == "" {
+                // Determine the card's rarity randomly 
+                let randomIDIndex = RandomConsumer.getNumberInRange(prg: prgRef, min: 0, max: 10000)
+                // Get the name of the rarity
+                rarity = set.determineRarity(randomNumber: randomIDIndex)
+
+                count = count + 1
+
+            } else {
+                // Get all cards with that rarity
+                let possibleCards = set.getCardsWithRarity(rarity: rarity)
+                // Get a card picked at random among the possible cards
+                cardSlot = UInt32(RandomConsumer.getNumberInRange(prg: prgRef, min: 0, max: UInt64(possibleCards.length)))
+
+                count = count + 1
+            }
+        }
+
         // Burn the receipt
         Burner.burn(<-receipt) 
         // get card's type
-        let cardType = set.getCardType(cardID: cardID, rarity: cardRarity)
+        let cardType = set.getCardType(cardSlot: cardSlot, rarity: rarity)
+        // get card's type
+        cardID = set.getCardID(cardSlot: cardSlot, rarity: rarity)
+        emptyDict["rarity"] = rarity   
         // Get card's metadata
-       // let cardMetadata
         switch cardType {
             case Type<VenezuelaNFT_16.LocationCard>():
                 let cardMetadata = self.getLocationMetaData(cardID: cardID)!
@@ -1200,6 +1244,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
         // Mint the new VenezuelaNFT_16
         let newNFT: @NFT <- create NFT(cardName: emptyDict["cardName"]!,
                                         cardDescription: emptyDict["description"]!,
+                                        rarity: emptyDict["rarity"]!,
                                         cardImg: emptyDict["img"]!,
                                         ipfsCID: emptyDict["ipfsCID"]!,
                                         cardType: cardType,

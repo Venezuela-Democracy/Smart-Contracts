@@ -50,7 +50,36 @@ func main() {
 		WithArg("cardNarratives", `{70: "Gallego' legacy defines regional literature identity", 50: "Gallegos' literature influence generations to come"}`),
 		WithArg("image", "https://historiahoy.com.ar/wp-content/uploads/2020/10/0000089139-1-762x1024.jpg"),
 		WithArg("ipfsCID", "Rómulo Gallegos"),
-	).Print()
+	)
+	// Admin create CharacterCard
+	o.Tx("admin/create_characterCard",
+		WithSigner("account"),
+		WithArg("name", "Edmundo González"),
+		WithArg("description", "Edmundo González Urrutia was a notable Venezuelan intellectual, journalist, and politician who played a significant role in the country’s political and social spheres during the 20th century. While he did not serve as president of Venezuela, his influence in Venezuelan politics, especially in the mid-20th century, was substantial. Here is a summary of his life and influence"),
+		WithArg("influencePointsGeneration", "25"),
+		WithArg("characterTypes", `["Political"]`),
+		WithArg("launchCost", "900"),
+		WithArg("effectCostReduction", `{"Political": 35}`),
+		WithArg("developmentEffect", `{"Political": 55}`),
+		WithArg("bonusEffect", `{"Political": 55}`),
+		WithArg("cardNarratives", `{70: "Edmundo becomes the President-elect of Venezuela", 50: "Edmundo becomes the leading figure in the Venezuelan political scene"}`),
+		WithArg("image", "https://cdn.discordapp.com/attachments/1317233245548449852/1327300055173959791/IMG_3479.jpeg?ex=67829001&is=67813e81&hm=0dd7a4aca93586bc4e87ee826da13000d8b91ace3ddbbdb9a868b0aeda3a30c7&"),
+		WithArg("ipfsCID", "Edmundo Gonzales"),
+	)
+	o.Tx("admin/create_characterCard",
+		WithSigner("account"),
+		WithArg("name", "Maria Corina Machado"),
+		WithArg("description", "María Corina Machado is one of the most prominent and controversial figures in contemporary Venezuelan politics. A former congresswoman, opposition leader, and outspoken advocate for democracy and human rights, her influence in Venezuela’s political scene has been significant, particularly in the context of the country's ongoing crisis under the rule of Nicolás Maduro. Her career reflects her deep commitment to challenging authoritarianism and advocating for Venezuela’s democratic future"),
+		WithArg("influencePointsGeneration", "50"),
+		WithArg("characterTypes", `["Political"]`),
+		WithArg("launchCost", "100"),
+		WithArg("effectCostReduction", `{"Political": 45}`),
+		WithArg("developmentEffect", `{"Political": 55}`),
+		WithArg("bonusEffect", `{"Political": 55}`),
+		WithArg("cardNarratives", `{70: "Maria Corina becomes a prominent opposition figures", 50: "Maria Corina becomes the leading figure in the Venezuelan political scene"}`),
+		WithArg("image", "https://cdn0.celebritax.com/sites/default/files/styles/watermark_100/public/1736449128-maria-corina-machado-une-manifestacion-caracas-venezuela.jpg"),
+		WithArg("ipfsCID", "Maria Corina"),
+	)
 	// Admin create CulturalItemCard
 	o.Tx("admin/create_itemCard",
 		WithSigner("account"),
@@ -63,6 +92,19 @@ func main() {
 		WithArg("cardNarratives", `{90: "The arepa crowns itself as the region’s undisputed symbol", 70: "The arepa defines local gastronomic identity"}`),
 		WithArg("image", "https://imag.bonviveur.com/arepas-venezolanas-caseras-rellenas.jpg"),
 		WithArg("ipfsCID", "Arepa"),
+	)
+	// Admin create CulturalItemCard
+	o.Tx("admin/create_itemCard",
+		WithSigner("account"),
+		WithArg("name", "Empanada"),
+		WithArg("description", "Venezuelan empanadas are a golden, crispy delight that perfectly marry the rich flavors of the country's diverse ingredients. Imagine a thin, slightly crunchy exterior that crackles when you take your first bite, revealing a warm, flavorful filling inside. The dough, subtly seasoned and slightly sweet, forms a delicate shell that is both light and hearty at the same time."),
+		WithArg("influencePointsGeneration", "10"),
+		WithArg("votingEffect", `{"Gastronomic": 2}`),
+		WithArg("specialEffect", `{"Gastronomic": 15}`),
+		WithArg("bonusType", "Gastronomic"),
+		WithArg("cardNarratives", `{90: "The empanada crowns itself as the region’s undisputed symbol", 70: "The empanada defines local gastronomic identity"}`),
+		WithArg("image", "https://www.comedera.com/wp-content/uploads/sites/9/2020/03/empanadas-venezolanas.jpg"),
+		WithArg("ipfsCID", "Empanadas"),
 	)
 	// Admin create LocationCard
 	o.Tx("admin/create_locationCard",
@@ -115,8 +157,8 @@ func main() {
 	o.Tx("admin/add_cards_to_set",
 		WithSigner("account"),
 		WithArg("setID", "0"),
-		WithArg("cards", "[0, 1, 2, 3, 4]"),
-		WithArg("cardRarities", `["Common", "Uncommon", "Rare", "Epic", "Lengendary"]`),
+		WithArg("cards", "[0, 1, 2, 3, 4, 5, 6, 7]"),
+		WithArg("cardRarities", `["Common", "Common", "Uncommon", "Epic", "Rare", "Legendary", "Uncommon", "Rare"]`),
 	)
 	// Script to get all cards
 
