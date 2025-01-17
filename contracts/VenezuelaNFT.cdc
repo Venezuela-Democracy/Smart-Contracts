@@ -601,6 +601,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
             metadata["orignalMinter"] = self.orignalMinter
             metadata["cardMetadataID"] = self.id
             metadata["nftUUID"] = self.uuid
+            metadata["rarity"] = self.rarity
 
             return metadata
         }
@@ -1191,7 +1192,7 @@ contract VenezuelaNFT_16: NonFungibleToken, ViewResolver {
                 // Get all cards with that rarity
                 let possibleCards = set.getCardsWithRarity(rarity: rarity)
                 // Get a card picked at random among the possible cards
-                cardSlot = UInt32(RandomConsumer.getNumberInRange(prg: prgRef, min: 0, max: UInt64(possibleCards.length)))
+                cardSlot = UInt32(RandomConsumer.getNumberInRange(prg: prgRef, min: 0, max: UInt64(possibleCards.length - 1)))
 
                 count = count + 1
             }

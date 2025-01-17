@@ -13,7 +13,7 @@ transaction(amount: Int) {
 
         var counter = 0
         
-        while counter <= amount {
+        while counter < amount {
             // Load my receipt from storage
             let receipt <- storageRef.withdraw()
 

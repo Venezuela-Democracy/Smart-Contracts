@@ -80,6 +80,20 @@ func main() {
 		WithArg("image", "https://cdn0.celebritax.com/sites/default/files/styles/watermark_100/public/1736449128-maria-corina-machado-une-manifestacion-caracas-venezuela.jpg"),
 		WithArg("ipfsCID", "Maria Corina"),
 	)
+	o.Tx("admin/create_characterCard",
+		WithSigner("account"),
+		WithArg("name", "Arturo Uslar Pietri"),
+		WithArg("description", "María Corina Machado is one of the most prominent and controversial figures in contemporary Venezuelan politics. A former congresswoman, opposition leader, and outspoken advocate for democracy and human rights, her influence in Venezuela’s political scene has been significant, particularly in the context of the country's ongoing crisis under the rule of Nicolás Maduro. Her career reflects her deep commitment to challenging authoritarianism and advocating for Venezuela’s democratic future"),
+		WithArg("influencePointsGeneration", "50"),
+		WithArg("characterTypes", `["Political"]`),
+		WithArg("launchCost", "100"),
+		WithArg("effectCostReduction", `{"Political": 45}`),
+		WithArg("developmentEffect", `{"Political": 55}`),
+		WithArg("bonusEffect", `{"Political": 55}`),
+		WithArg("cardNarratives", `{70: "Maria Corina becomes a prominent opposition figures", 50: "Maria Corina becomes the leading figure in the Venezuelan political scene"}`),
+		WithArg("image", "https://cdn0.celebritax.com/sites/default/files/styles/watermark_100/public/1736449128-maria-corina-machado-une-manifestacion-caracas-venezuela.jpg"),
+		WithArg("ipfsCID", "Maria Corina"),
+	)
 	// Admin create CulturalItemCard
 	o.Tx("admin/create_itemCard",
 		WithSigner("account"),
@@ -140,7 +154,23 @@ func main() {
 		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
 		WithArg("imagePath", "https://bafybeihe3r7nwgutoxzjj2eewwj5uml23zmwhhjfac6b5677sxxv7wosaa.ipfs.dweb.link?filename=image%204.jpg"),
 	)
-
+	// Admin create LocationCard
+	o.Tx("admin/create_locationCard",
+		WithSigner("account"),
+		WithArg("name", "Caracas"),
+		WithArg("region", "Distrito Capital"),
+		WithArg("description", "Angel Falls, the world's highest uninterrupted waterfall, is a breathtaking natural wonder located deep within the heart of Venezuela's Canaima National Park in the Gran Sabana region. Cascading from a towering height of 3,212 feet (979 meters), with an awe-inspiring free-fall of 2,648 feet (807 meters), Angel Falls is a magnificent sight to behold, its water streaming like liquid silver as it plunges from the flat-topped Auyán Tepui, one of the park's majestic tepui formations."),
+		WithArg("bonusType", "Cultural"),
+		WithArg("influencePointsGeneration", "15"),
+		WithArg("regionalGeneration", "100"),
+		WithArg("cardNarratives", `{80: "Angela Falls consolidates as Bolivar's cultural heart"}`),
+		WithArg("proposal_1_name", "Tourist Program"),
+		WithArg("proposal_1_effect", "10"),
+		WithArg("proposal_1_duration", "7.0"),
+		WithArg("proposal_1_adoptionRequirement", "30"),
+		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
+		WithArg("imagePath", "https://bafybeihe3r7nwgutoxzjj2eewwj5uml23zmwhhjfac6b5677sxxv7wosaa.ipfs.dweb.link?filename=image%204.jpg"),
+	)
 	// Script to get LocationCard metadata
 	// o.Script("get_locationCard", WithArg("cardID", "0"))
 	// Script to get card metadata
@@ -157,8 +187,8 @@ func main() {
 	o.Tx("admin/add_cards_to_set",
 		WithSigner("account"),
 		WithArg("setID", "0"),
-		WithArg("cards", "[0, 1, 2, 3, 4, 5, 6, 7]"),
-		WithArg("cardRarities", `["Common", "Common", "Uncommon", "Epic", "Rare", "Legendary", "Uncommon", "Rare"]`),
+		WithArg("cards", "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"),
+		WithArg("cardRarities", `["Legendary", "Common", "Uncommon", "Epic", "Rare", "Common", "Uncommon", "Rare", "Legendary", "Epic"]`),
 	)
 	// Script to get all cards
 
@@ -167,7 +197,7 @@ func main() {
 	o.Tx("buy_multiple_packs",
 		WithSigner("account"),
 		WithArg("setID", "0"),
-		WithArg("amount", "2"),
+		WithArg("amount", "10"),
 	)
 	/* 	o.Tx("buy_pack",
 		WithSigner("account"),
@@ -180,7 +210,7 @@ func main() {
 	) */
 	o.Tx("reveal_multiple_packs",
 		WithSigner("account"),
-		WithArg("amount", 1),
+		WithArg("amount", 7),
 	)
 	o.Script("owned_nfts",
 		WithArg("account", "account"),
