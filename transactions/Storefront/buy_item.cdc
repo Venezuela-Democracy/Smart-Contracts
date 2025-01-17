@@ -10,7 +10,7 @@ import VenezuelaNFT_16 from "../../contracts/VenezuelaNFT.cdc"
 /// purchased & a address that will takeaway the commission.
 ///
 /// Buyer of the listing (,i.e. underling NFT) would authorize and sign the transaction and if purchase happens then
-/// transacted NFT would store in buyer's collection.
+/// transacted NFT would store in buyer's collection. 
 ///
 transaction(listingResourceID: UInt64, storefrontAddress: Address, commissionRecipient: Address?) {
 

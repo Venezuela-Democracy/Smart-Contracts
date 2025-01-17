@@ -11,7 +11,7 @@ transaction(
     influencePointsGeneration: UInt32,
     votingEffect: {String: UInt32},
     specialEffect: {String: UInt32},
-    type: String,
+    bonusType: String,
     cardNarratives: {UInt32: String},
     image: String,
     ipfsCID: String
@@ -36,7 +36,7 @@ transaction(
         let newCardID = self.Administrator.createCulturalItemCard(
             name: name,
             description: description,
-            type: type,
+            bonusType: bonusType,
             influencePointsGeneration: influencePointsGeneration,
             cardNarratives: cardNarratives,
             specialEffects: self.culturalItemEffects,
