@@ -29,6 +29,9 @@ transaction(setID: UInt32, amount: Int) {
         if signer.storage.type(at: VenezuelaNFT_18.ReceiptStoragePath) == nil {
             let storage <- VenezuelaNFT_18.createEmptyStorage()
             signer.storage.save(<- storage, to: VenezuelaNFT_18.ReceiptStoragePath)
+            // create a public capability for the storage
+            let storageCap = signer.capabilities.storage.issue<&VenezuelaNFT_18.ReceiptStorage>(VenezuelaNFT_18.ReceiptStoragePath)
+            signer.capabilities.publish(storageCap, at: VenezuelaNFT_18.ReceiptStoragePublic)
         }
 
         // Get a reference to the signer's stored vault
