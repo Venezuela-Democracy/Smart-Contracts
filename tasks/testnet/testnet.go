@@ -154,21 +154,21 @@ func main() {
 	   		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
 	   		WithArg("imagePath", "https://bafybeihe3r7nwgutoxzjj2eewwj5uml23zmwhhjfac6b5677sxxv7wosaa.ipfs.dweb.link?filename=image%204.jpg"),
 	   	).Print()
-	o.Tx("admin/create_characterCard",
-		WithSigner("Telegram"),
-		WithArg("name", "Arturo Uslar Pietri"),
-		WithArg("description", "María Corina Machado is one of the most prominent and controversial figures in contemporary Venezuelan politics. A former congresswoman, opposition leader, and outspoken advocate for democracy and human rights, her influence in Venezuela’s political scene has been significant, particularly in the context of the country's ongoing crisis under the rule of Nicolás Maduro. Her career reflects her deep commitment to challenging authoritarianism and advocating for Venezuela’s democratic future"),
-		WithArg("influencePointsGeneration", "50"),
-		WithArg("characterTypes", `["Political"]`),
-		WithArg("launchCost", "100"),
-		WithArg("effectCostReduction", `{"Political": 45}`),
-		WithArg("developmentEffect", `{"Political": 55}`),
-		WithArg("bonusEffect", `{"Political": 55}`),
-		WithArg("cardNarratives", `{70: "Maria Corina becomes a prominent opposition figures", 50: "Maria Corina becomes the leading figure in the Venezuelan political scene"}`),
-		WithArg("image", "https://cdn0.celebritax.com/sites/default/files/styles/watermark_100/public/1736449128-maria-corina-machado-une-manifestacion-caracas-venezuela.jpg"),
-		WithArg("ipfsCID", "Maria Corina"),
-	).Print()
-	*/
+	   	o.Tx("admin/create_characterCard",
+	   		WithSigner("Telegram"),
+	   		WithArg("name", "Arturo Uslar Pietri"),
+	   		WithArg("description", "María Corina Machado is one of the most prominent and controversial figures in contemporary Venezuelan politics. A former congresswoman, opposition leader, and outspoken advocate for democracy and human rights, her influence in Venezuela’s political scene has been significant, particularly in the context of the country's ongoing crisis under the rule of Nicolás Maduro. Her career reflects her deep commitment to challenging authoritarianism and advocating for Venezuela’s democratic future"),
+	   		WithArg("influencePointsGeneration", "50"),
+	   		WithArg("characterTypes", `["Political"]`),
+	   		WithArg("launchCost", "100"),
+	   		WithArg("effectCostReduction", `{"Political": 45}`),
+	   		WithArg("developmentEffect", `{"Political": 55}`),
+	   		WithArg("bonusEffect", `{"Political": 55}`),
+	   		WithArg("cardNarratives", `{70: "Maria Corina becomes a prominent opposition figures", 50: "Maria Corina becomes the leading figure in the Venezuelan political scene"}`),
+	   		WithArg("image", "https://cdn0.celebritax.com/sites/default/files/styles/watermark_100/public/1736449128-maria-corina-machado-une-manifestacion-caracas-venezuela.jpg"),
+	   		WithArg("ipfsCID", "Maria Corina"),
+	   	).Print() */
+
 	// Script to get LocationCard metadata
 	// o.Script("get_locationCard", WithArg("cardID", "0")).Print()
 	// Script to get card metadata
@@ -177,21 +177,21 @@ func main() {
 	color.Red("Admin should be able to create a set")
 	// Create set
 	/* 	o.Tx("admin/create_set",
-		WithSigner("Telegram"),
-		WithArg("setName", "Base Cards"),
-	).Print() */
-	color.Red("Get card TYPE")
-	o.Script("get_cardType",
-		WithArg("cardID", 9),
-	).Print()
-	color.Red("Admin should be able to add cards to a set")
-	// Add cards to Set
-	/* 	o.Tx("admin/add_cards_to_set",
-		WithSigner("Telegram"),
-		WithArg("setID", "0"),
-		WithArg("cards", "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"),
-		WithArg("cardRarities", `["Legendary", "Common", "Uncommon", "Epic", "Rare", "Common", "Uncommon", "Rare", "Legendary", "Epic"]`),
-	).Print() */
+	   		WithSigner("Telegram"),
+	   		WithArg("setName", "Base Cards"),
+	   	).Print()
+	   	color.Red("Get card TYPE")
+	   	o.Script("get_cardType",
+	   		WithArg("cardID", 9),
+	   	).Print()
+	   	color.Red("Admin should be able to add cards to a set")
+	   	// Add cards to Set
+	   	o.Tx("admin/add_cards_to_set",
+	   		WithSigner("Telegram"),
+	   		WithArg("setID", "0"),
+	   		WithArg("cards", "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"),
+	   		WithArg("cardRarities", `["Legendary", "Common", "Uncommon", "Epic", "Rare", "Common", "Uncommon", "Rare", "Legendary", "Epic"]`),
+	   	).Print() */
 
 	color.Red("User should be able to buy MULTIPLE Packs")
 
@@ -200,12 +200,14 @@ func main() {
 		WithArg("setID", "0"),
 		WithArg("amount", "10"),
 	).Print()
-
+	o.Script("get_owned_packs",
+		WithArg("account", "Telegram"),
+	).Print()
 	color.Red("User should be able to open MULTIPLE Pack")
 
 	o.Tx("reveal_multiple_packs",
 		WithSigner("Telegram"),
-		WithArg("amount", 7),
+		WithArg("amount", 10),
 	).Print()
 	o.Script("owned_nfts",
 		WithArg("account", "Telegram"),
@@ -217,26 +219,4 @@ func main() {
 
 	// o.Script("get_all_cards").Print()
 
-	color.Red("User should be able to buy a second Pack")
-	/* 	o.Tx("buy_pack",
-	   		WithSigner("Telegram"),
-	   		WithArg("setID", "0"),
-	   	)
-	   	o.Tx("reveal_pack",
-	   		WithSigner("Telegram"),
-	   	) */
-
-	// create_season
-	/* 	o.Tx("admin/start_new_season",
-		WithSigner("Telegram"),
-		WithArg("", ""),
-		WithArg("", ""),
-		WithArg("", ""),
-	) */
-
-	// RESET SET
-	/* 	o.Tx("admin/reset_set",
-		WithSigner("Telegram"),
-		WithArg("setID", "0"),
-	).Print() */
 }

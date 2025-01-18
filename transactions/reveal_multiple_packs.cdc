@@ -1,4 +1,4 @@
-import VenezuelaNFT_17 from "../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_18 from "../contracts/VenezuelaNFT.cdc"
 
 
 /// Retrieves the saved Receipt and redeems it to reveal the cards
@@ -7,7 +7,7 @@ transaction(amount: Int) {
 
     prepare(signer: auth(BorrowValue, LoadValue) &Account) {
         // get ref to ReceiptStorage
-        let storageRef = signer.storage.borrow<&VenezuelaNFT_17.ReceiptStorage>(from: VenezuelaNFT_17.ReceiptStoragePath)
+        let storageRef = signer.storage.borrow<&VenezuelaNFT_18.ReceiptStorage>(from: VenezuelaNFT_18.ReceiptStoragePath)
             ?? panic("Cannot borrow a reference to the recipient's VenezuelaNFT ReceiptStorage")
 
 
@@ -18,7 +18,7 @@ transaction(amount: Int) {
             let receipt <- storageRef.withdraw()
 
             // Reveal by redeeming my receipt - fingers crossed!
-            VenezuelaNFT_17.revealPack(receipt: <- receipt, minter: signer.address, emptyDict: {})
+            VenezuelaNFT_18.revealPack(receipt: <- receipt, minter: signer.address, emptyDict: {})
 
             counter = counter + 1
         }

@@ -3,7 +3,7 @@ import "FungibleToken"
 import "NonFungibleToken"
 import "MetadataViews"
 import "NFTStorefront"
-import VenezuelaNFT_17 from "../../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_18 from "../../contracts/VenezuelaNFT.cdc"
 
 /// Transaction used to facilitate the creation of the listing under the signer's owned storefront resource.
 /// It accepts the certain details from the signer,i.e. - 
@@ -35,7 +35,7 @@ transaction(
         self.saleCuts = []
         self.marketplacesCapability = []
 
-        let collectionData = VenezuelaNFT_17.resolveContractView(resourceType: nil, viewType: Type<MetadataViews.NFTCollectionData>()) as! MetadataViews.NFTCollectionData?
+        let collectionData = VenezuelaNFT_18.resolveContractView(resourceType: nil, viewType: Type<MetadataViews.NFTCollectionData>()) as! MetadataViews.NFTCollectionData?
             ?? panic("ViewResolver does not resolve NFTCollectionData view")
 
         // Receiver for the sale cut.
@@ -94,7 +94,7 @@ transaction(
         // Create listing
         let listingID = self.storefront.createListing(
             nftProviderCapability: self.VenezuelaNFTProvider,
-            nftType: Type<@VenezuelaNFT_17.NFT>(),
+            nftType: Type<@VenezuelaNFT_18.NFT>(),
             nftID: saleItemID,
             salePaymentVaultType: Type<@FlowToken.Vault>(),
             saleCuts: self.saleCuts,
