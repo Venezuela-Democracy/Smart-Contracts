@@ -1,4 +1,4 @@
-import VenezuelaNFT_18 from "../contracts/VenezuelaNFT.cdc"
+import VenezuelaNFT_19 from "../contracts/VenezuelaNFT.cdc"
 import "FlowToken"
 import "FungibleToken"
 
@@ -8,9 +8,9 @@ import "FungibleToken"
 transaction(setID: UInt32) {
 
     prepare(signer: auth(BorrowValue, SaveValue) &Account) {
-        if signer.storage.type(at: VenezuelaNFT_18.ReceiptStoragePath) == nil {
-            let storage <- VenezuelaNFT_18.createEmptyStorage()
-            signer.storage.save(<- storage, to: VenezuelaNFT_18.ReceiptStoragePath)
+        if signer.storage.type(at: VenezuelaNFT_19.ReceiptStoragePath) == nil {
+            let storage <- VenezuelaNFT_19.createEmptyStorage()
+            signer.storage.save(<- storage, to: VenezuelaNFT_19.ReceiptStoragePath)
         }
         // Get a reference to the signer's stored vault
         let vaultRef = signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)
@@ -20,11 +20,11 @@ transaction(setID: UInt32) {
 
 
         // get ref to ReceiptStorage
-        let storageRef = signer.storage.borrow<&VenezuelaNFT_18.ReceiptStorage>(from: VenezuelaNFT_18.ReceiptStoragePath)
+        let storageRef = signer.storage.borrow<&VenezuelaNFT_19.ReceiptStorage>(from: VenezuelaNFT_19.ReceiptStoragePath)
             ?? panic("Cannot borrow a reference to the recipient's VenezuelaNFT ReceiptStorage")
         
         // Commit my bet and get a receipt
-        let receipt <- VenezuelaNFT_18.buyPackFlow(setID: setID, payment: <- vaultRef.withdraw(amount: 1.0))
+        let receipt <- VenezuelaNFT_19.buyPackFlow(setID: setID, payment: <- vaultRef.withdraw(amount: 1.0))
 
         // Save that receipt to my storage
         storageRef.deposit(receipt: <- receipt)

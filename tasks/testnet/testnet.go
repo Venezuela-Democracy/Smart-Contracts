@@ -74,7 +74,7 @@ func main() {
 	   		WithArg("developmentEffect", `{"Political": 55}`),
 	   		WithArg("bonusEffect", `{"Political": 55}`),
 	   		WithArg("cardNarratives", `{70: "Maria Corina becomes a prominent opposition figures", 50: "Maria Corina becomes the leading figure in the Venezuelan political scene"}`),
-	   		WithArg("image", "https://cdn0.celebritax.com/sites/default/files/styles/watermark_100/public/1736449128-maria-corina-machado-une-manifestacion-caracas-venezuela.jpg"),
+	   		WithArg("image", "https://cdn.discordapp.com/attachments/1317233245548449852/1329998582903869542/image_47.jpg?ex=678c6134&is=678b0fb4&hm=c2708b45bcd292ecb4ddd82a871c852dc733b091a7892d553c8abd82e93190f7&"),
 	   		WithArg("ipfsCID", "Maria Corina"),
 	   	).Print()
 	   	// Admin create CulturalItemCard
@@ -118,7 +118,7 @@ func main() {
 	   		WithArg("proposal_1_duration", "7.0"),
 	   		WithArg("proposal_1_adoptionRequirement", "30"),
 	   		WithArg("ipfsCID", "Qmc2rHqzmHxxswAZDYHTLiosiaaqnPmFSSBtsBEWbM6MS1"),
-	   		WithArg("imagePath", "https://bafybeiglorbajdtbqtqngzfvz3cpn6a3j7qzkn5knxjai76ksm5sxv43qi.ipfs.dweb.link?filename=waseemkhan_10131_Lagos-Brazilians_built_schools_Realistic_pic_w_485d45ba-5cab-4bc7-b33e-627c0de38e32.jpeg"),
+	   		WithArg("imagePath", "https://media.discordapp.net/attachments/1317230997888172123/1327300768482463849/waseemkhan_10131_Lagos-Brazilians_built_schools_Realistic_pic_w_485d45ba-5cab-4bc7-b33e-627c0de38e32.png?ex=678bcb2b&is=678a79ab&hm=3e9bcd80de2635f4622f30b1d77d33cec803361a1132d8b970aee49a17d076e3&=&format=webp&quality=lossless&width=767&height=1372"),
 	   	).Print()
 	   	// Admin create LocationCard
 	   	o.Tx("admin/create_locationCard",
@@ -135,14 +135,14 @@ func main() {
 	   		WithArg("proposal_1_duration", "7.0"),
 	   		WithArg("proposal_1_adoptionRequirement", "30"),
 	   		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
-	   		WithArg("imagePath", "https://bafybeihe3r7nwgutoxzjj2eewwj5uml23zmwhhjfac6b5677sxxv7wosaa.ipfs.dweb.link?filename=image%204.jpg"),
+	   		WithArg("imagePath", "https://cdn.discordapp.com/attachments/1317230997888172123/1317523250196250675/loudrich_ultra_HD_image_of_venezuela_angel_fall_waterfall_birds_adce49d3-a61f-4d3e-b532-f16413aaab29.png?ex=678bd1a5&is=678a8025&hm=93dfade199e1537a8d09b8d757b7b926d5982be5d53b38459ae4fca5ad8b4bae&"),
 	   	).Print()
 	   	// Admin create LocationCard
 	   	o.Tx("admin/create_locationCard",
 	   		WithSigner("Telegram"),
 	   		WithArg("name", "Caracas"),
 	   		WithArg("region", "Distrito Capital"),
-	   		WithArg("description", "Angel Falls, the world's highest uninterrupted waterfall, is a breathtaking natural wonder located deep within the heart of Venezuela's Canaima National Park in the Gran Sabana region. Cascading from a towering height of 3,212 feet (979 meters), with an awe-inspiring free-fall of 2,648 feet (807 meters), Angel Falls is a magnificent sight to behold, its water streaming like liquid silver as it plunges from the flat-topped Auyán Tepui, one of the park's majestic tepui formations."),
+	   		WithArg("description", "Caracas, the world's highest uninterrupted waterfall, is a breathtaking natural wonder located deep within the heart of Venezuela's Canaima National Park in the Gran Sabana region. Cascading from a towering height of 3,212 feet (979 meters), with an awe-inspiring free-fall of 2,648 feet (807 meters), Angel Falls is a magnificent sight to behold, its water streaming like liquid silver as it plunges from the flat-topped Auyán Tepui, one of the park's majestic tepui formations."),
 	   		WithArg("bonusType", "Cultural"),
 	   		WithArg("influencePointsGeneration", "15"),
 	   		WithArg("regionalGeneration", "100"),
@@ -152,7 +152,7 @@ func main() {
 	   		WithArg("proposal_1_duration", "7.0"),
 	   		WithArg("proposal_1_adoptionRequirement", "30"),
 	   		WithArg("ipfsCID", "QmTe6PUp7MrFto3XYBdaDcvawYrEYAm2FSzX7uSNchQ71p"),
-	   		WithArg("imagePath", "https://bafybeihe3r7nwgutoxzjj2eewwj5uml23zmwhhjfac6b5677sxxv7wosaa.ipfs.dweb.link?filename=image%204.jpg"),
+	   		WithArg("imagePath", "https://cdn.discordapp.com/attachments/1317230997888172123/1325157889391984741/empirikill_A_view_of_the_city_of_Caracas_-_Venezuela_with_the_v_a222ce53-493d-4d9f-bd22-c40785d915d6.png?ex=678be875&is=678a96f5&hm=211dee168b44c0a85d9b85360d3b76fc5b785333947b0f566e719e1337618d27&"),
 	   	).Print()
 	   	o.Tx("admin/create_characterCard",
 	   		WithSigner("Telegram"),
@@ -165,7 +165,7 @@ func main() {
 	   		WithArg("developmentEffect", `{"Political": 55}`),
 	   		WithArg("bonusEffect", `{"Political": 55}`),
 	   		WithArg("cardNarratives", `{70: "Maria Corina becomes a prominent opposition figures", 50: "Maria Corina becomes the leading figure in the Venezuelan political scene"}`),
-	   		WithArg("image", "https://cdn0.celebritax.com/sites/default/files/styles/watermark_100/public/1736449128-maria-corina-machado-une-manifestacion-caracas-venezuela.jpg"),
+	   		WithArg("image", "https://cdn.discordapp.com/attachments/1317233245548449852/1329997232304291970/unnamed.jpg?ex=678c5ff2&is=678b0e72&hm=dda14e95a879cc877d0f1366664ff41091af200463f8d6f9cdc0dc8bcab09841&"),
 	   		WithArg("ipfsCID", "Maria Corina"),
 	   	).Print() */
 
@@ -190,25 +190,25 @@ func main() {
 	   		WithSigner("Telegram"),
 	   		WithArg("setID", "0"),
 	   		WithArg("cards", "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"),
-	   		WithArg("cardRarities", `["Legendary", "Common", "Uncommon", "Epic", "Rare", "Common", "Uncommon", "Rare", "Legendary", "Epic"]`),
+	   		WithArg("cardRarities", `["Legendary", "Legendary", "Epic", "Epic", "Rare", "Common", "Rare", "Uncommon", "Common", "Uncommon"]`),
 	   	).Print() */
 
 	color.Red("User should be able to buy MULTIPLE Packs")
 
-	o.Tx("buy_multiple_packs",
-		WithSigner("Telegram"),
-		WithArg("setID", "0"),
-		WithArg("amount", "10"),
-	).Print()
-	o.Script("get_owned_packs",
-		WithArg("account", "Telegram"),
-	).Print()
-	color.Red("User should be able to open MULTIPLE Pack")
+	/* 	o.Tx("buy_multiple_packs",
+	   		WithSigner("Telegram"),
+	   		WithArg("setID", "0"),
+	   		WithArg("amount", "10"),
+	   	).Print()
+	   	o.Script("get_owned_packs",
+	   		WithArg("account", "Telegram"),
+	   	).Print()
+	   	color.Red("User should be able to open MULTIPLE Pack")
 
-	o.Tx("reveal_multiple_packs",
-		WithSigner("Telegram"),
-		WithArg("amount", 10),
-	).Print()
+	   	o.Tx("reveal_multiple_packs",
+	   		WithSigner("Telegram"),
+	   		WithArg("amount", 10),
+	   	).Print() */
 	o.Script("owned_nfts",
 		WithArg("account", "Telegram"),
 	).Print()
