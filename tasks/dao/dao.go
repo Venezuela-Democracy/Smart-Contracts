@@ -22,6 +22,7 @@ func main() {
 		WithArg("title", "Next Region"),
 		WithArg("description", "Vote on which of the following five regions should be added next. The top 2 will be selected!"),
 		WithArg("minimumVotes", "20"),
+		WithArg("options", `["Barinas", "Amazonas"]`),
 	)
 	color.Red("User should be able to setup their account for IP")
 	o.Tx("influencePoint/setup_ip",

@@ -20,7 +20,7 @@ access(all) contract Governance {
     
     access(all) let TopicStoragePath: StoragePath
 	access(all) let TopicPublicPath: PublicPath
-
+	access(all) let AdministratorStoragePath: StoragePath
     // -----------------------------------------------------------------------
     // Venezuela_Governance contract-level Composite Type definitions
     // -----------------------------------------------------------------------
@@ -54,7 +54,7 @@ access(all) contract Governance {
         access(all)
         fun addTopic(topic: Topic) {
             pre {
-                self.topicsIDs[topic.id] != nil: "This Topic is already in the list"
+                self.topicsIDs[topic.id] == nil: "This Topic is already in the list"
             }
             self.topicsIDs[topic.id] = topic
         }
@@ -104,7 +104,7 @@ access(all) contract Governance {
             self.votes = {}
 
             var counter = 0
-            while 0 < options.length {
+            while counter < options.length {
                 self.votes[options[counter]] = 0
                 counter = counter + 1
             }
@@ -166,5 +166,13 @@ access(all) contract Governance {
         let identifier = "Venezuela_Governance".concat(self.account.address.toString())
         self.TopicStoragePath = StoragePath(identifier: identifier.concat("_Topics"))!
 		self.TopicPublicPath = PublicPath(identifier: identifier.concat("_Topics"))!
+		self.AdministratorStoragePath = StoragePath(identifier: identifier.concat("Administrator"))!
+
+    	// Create a Administrator resource and save it to Venezuela account storage
+		let administrator <- create Administrator()
+		self.account.storage.save(<- administrator, to: self.AdministratorStoragePath)
+    	// Create a TopicStorage resource and save it to Venezuela account storage
+		let topicStorage <- create TopicStorage()
+		self.account.storage.save(<- topicStorage, to: self.TopicStoragePath)
     }
 }

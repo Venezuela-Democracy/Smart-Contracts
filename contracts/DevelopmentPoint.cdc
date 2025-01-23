@@ -4,7 +4,7 @@ import "FungibleTokenMetadataViews"
 
 // Token contract of VenezuelaNFT (VZLA)
 access(all)
-contract VenezuelaDP: FungibleToken{ 
+contract DevelopmentPoint: FungibleToken{ 
     
     // An entitlement for Administrator access
     access(all) entitlement AdministratorEntitlement
@@ -72,7 +72,7 @@ contract VenezuelaDP: FungibleToken{
             ]
     }
 
-    /// Get a Metadata View from VenezuelaDP
+    /// Get a Metadata View from DevelopmentPoint
     ///
     /// @param view: The Type of the desired view.
     /// @return A structure representing the requested view.
@@ -103,7 +103,7 @@ contract VenezuelaDP: FungibleToken{
                     }
                 )
             case Type<FungibleTokenMetadataViews.FTVaultData>():
-                let vaultRef = VenezuelaDP.account.storage.borrow<auth(FungibleToken.Withdraw) &VenezuelaDP.Vault>(from: VenezuelaDP.TokenStoragePath)
+                let vaultRef = DevelopmentPoint.account.storage.borrow<auth(FungibleToken.Withdraw) &DevelopmentPoint.Vault>(from: DevelopmentPoint.TokenStoragePath)
                     ?? panic("Could not borrow reference to the contract's Vault!")
                 return FungibleTokenMetadataViews.FTVaultData(
                     storagePath: self.TokenStoragePath,
@@ -116,7 +116,7 @@ contract VenezuelaDP: FungibleToken{
                     })
             )
             case Type<FungibleTokenMetadataViews.TotalSupply>():
-                return FungibleTokenMetadataViews.TotalSupply(totalSupply: VenezuelaDP.totalSupply)
+                return FungibleTokenMetadataViews.TotalSupply(totalSupply: DevelopmentPoint.totalSupply)
         }
         return nil
     }
@@ -169,7 +169,7 @@ contract VenezuelaDP: FungibleToken{
         // been consumed and therefore can be destroyed.
         access(all)
         fun deposit(from: @{FungibleToken.Vault}): Void{ 
-            let vault <- from as! @VenezuelaDP.Vault
+            let vault <- from as! @DevelopmentPoint.Vault
             self.balance = self.balance + vault.balance
             emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
             vault.balance = 0.0
@@ -190,7 +190,7 @@ contract VenezuelaDP: FungibleToken{
         // Called when a fungible token is burned via the `Burner.burn()` method
         access(contract) fun burnCallback() {
             if self.balance > 0.0 {
-                VenezuelaDP.totalSupply = VenezuelaDP.totalSupply - self.balance
+                DevelopmentPoint.totalSupply = DevelopmentPoint.totalSupply - self.balance
             }
             self.balance = 0.0
         }
@@ -211,7 +211,7 @@ contract VenezuelaDP: FungibleToken{
         //         developers to know which parameter to pass to the resolveView() method.
         //
         access(all) view fun getViews(): [Type]{
-            return VenezuelaDP.getContractViews(resourceType: nil)
+            return DevelopmentPoint.getContractViews(resourceType: nil)
         }
 
         // Get a Metadata View from FlowToken
@@ -220,7 +220,7 @@ contract VenezuelaDP: FungibleToken{
         // @return A structure representing the requested view.
         //
         access(all) fun resolveView(_ view: Type): AnyStruct? {
-            return VenezuelaDP.resolveContractView(resourceType: nil, viewType: view)
+            return DevelopmentPoint.resolveContractView(resourceType: nil, viewType: view)
         }
     }
     
@@ -232,7 +232,7 @@ contract VenezuelaDP: FungibleToken{
     // account to be able to receive deposits of this token type.
     //
     access(all)
-    fun createEmptyVault(vaultType: Type): @VenezuelaDP.Vault { 
+    fun createEmptyVault(vaultType: Type): @DevelopmentPoint.Vault { 
         return <-create Vault(balance: 0.0)
     }
     
@@ -276,14 +276,14 @@ contract VenezuelaDP: FungibleToken{
         // and returns them to the calling context.
         //
         access(MinterEntitlement)
-        fun mintTokens(amount: UFix64): @VenezuelaDP.Vault{ 
+        fun mintTokens(amount: UFix64): @DevelopmentPoint.Vault{ 
             pre{ 
                 amount > 0.0:
                     "Amount minted must be greater than zero"
                 amount <= self.allowedAmount:
                     "Amount minted must be less than the allowed amount"
             }
-            VenezuelaDP.totalSupply = VenezuelaDP.totalSupply + amount
+            DevelopmentPoint.totalSupply = DevelopmentPoint.totalSupply + amount
             self.allowedAmount = self.allowedAmount - amount
             emit TokensMinted(amount: amount)
             return <-create Vault(balance: amount)
@@ -310,9 +310,9 @@ contract VenezuelaDP: FungibleToken{
         //
         access(BurnerEntitlement)
         fun burnTokens(from: @{FungibleToken.Vault}){ 
-            let vault <- from as! @VenezuelaDP.Vault
+            let vault <- from as! @DevelopmentPoint.Vault
             let amount = vault.balance
-            VenezuelaDP.totalSupply = VenezuelaDP.totalSupply - amount
+            DevelopmentPoint.totalSupply = DevelopmentPoint.totalSupply - amount
             destroy vault
             emit TokensBurned(amount: amount)
         }
@@ -324,10 +324,10 @@ contract VenezuelaDP: FungibleToken{
         // 30% will minted from staking and mining
         self.totalSupply = 350_000_000.0
 
-        self.TokenStoragePath = /storage/VenezuelaDPVault
-        self.TokenPublicReceiverPath = /public/VenezuelaDPReceiver
-        self.TokenPublicBalancePath = /public/VenezuelaDPBalance
-        self.TokenMinterStoragePath = /storage/VenezuelaDPMinter
+        self.TokenStoragePath = /storage/DevelopmentPointVault
+        self.TokenPublicReceiverPath = /public/DevelopmentPointReceiver
+        self.TokenPublicBalancePath = /public/DevelopmentPointBalance
+        self.TokenMinterStoragePath = /storage/DevelopmentPointMinter
         
         // Create the Vault with the total supply of tokens and save it in storage
         let vault <- create Vault(balance: self.totalSupply)
@@ -335,15 +335,15 @@ contract VenezuelaDP: FungibleToken{
         
         // Create a public capability to the stored Vault that only exposes
         // the `deposit` method through the `Receiver` interface
-        var capability_1 = self.account.capabilities.storage.issue<&VenezuelaDP.Vault>(self.TokenStoragePath)
+        var capability_1 = self.account.capabilities.storage.issue<&DevelopmentPoint.Vault>(self.TokenStoragePath)
         self.account.capabilities.publish(capability_1, at: self.TokenPublicReceiverPath)
         
         // Create a public capability to the stored Vault that only exposes
         // the `balance` field through the `Balance` interface
-        var capability_2 = self.account.capabilities.storage.issue<&VenezuelaDP.Vault>(self.TokenStoragePath)
+        var capability_2 = self.account.capabilities.storage.issue<&DevelopmentPoint.Vault>(self.TokenStoragePath)
         self.account.capabilities.publish(capability_2, at: self.TokenPublicBalancePath)
         let admin <- create Administrator()
-        self.account.storage.save(<-admin, to: /storage/VenezuelaDPAdmin)
+        self.account.storage.save(<-admin, to: /storage/DevelopmentPointAdmin)
         
         // Emit an event that shows that the contract was initialized
         emit TokensInitialized(initialSupply: self.totalSupply)
