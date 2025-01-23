@@ -823,7 +823,8 @@ contract VenezuelaNFT_19: NonFungibleToken, ViewResolver {
         //
         // Returns: the ID of the new Card object
         //
-        access(all) fun createLocationCard(
+        access(all) 
+        fun createLocationCard(
             name: String,
             region: String,
             description: String,

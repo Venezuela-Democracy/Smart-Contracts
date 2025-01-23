@@ -71,37 +71,48 @@ access(all) contract Governance {
     }
 
     access(all) struct Topic {
-
+        // Unique identifier for each Topic
         access(all) let id: UInt64
+        // Topic's title
         access(all) let title: String
+        // Topic's description
         access(all) let description: String
+        // Minimnum amount of votes to pass this Topic
         access(all) let minimumVote: Int
+        // Vote options
         access(all) let options: [String]
+        // Amount of votes for each option
         access(all) let votes: {String: Int}
+        // Dictionary of all voters
+        // get list with listVoters.keys
         access(all) let listVoters: {String: Bool}
+        // End date for the voting round
         access(all) var endAt: UFix64
 
         init(
-            title: String,
-            description: String,
-            minimumVote: Int,
-            options: [String],
-            votes: {String: Int}
-            ) {
+            _ title: String,
+            _ description: String,
+            _ minimumVote: Int,
+            _ options: [String]) {
             self.id = Governance.nextTopicID
             self.title = title
             self.description = description
             self.minimumVote = minimumVote
             self.options = options
-            self.votes = votes
             self.listVoters = {}
             self.endAt = getCurrentBlock().timestamp + 86400.0 * 14.0
+            self.votes = {}
 
+            var counter = 0
+            while 0 < options.length {
+                self.votes[options[counter]] = 0
+                counter = counter + 1
+            }
+            // Increase nextTopic ID
             Governance.nextTopicID = Governance.nextTopicID + 1
         }
 
         access(account) view fun hasVoted(account: Address): Bool {
-
             if self.listVoters[account.toString()] != nil {
                 return true
             }
@@ -121,7 +132,33 @@ access(all) contract Governance {
         let topicRef = self.topics[0] 
         topicRef.vote(account: account, option: option)
     }
-
+    // -----------------------------------------------------------------------
+    // Venezuela_Governance Administrator Resource
+    // -----------------------------------------------------------------------
+    // Admin is a special authorization resource that 
+    // allows the owner to perform important functions to modify the 
+    // various aspects of the DAO, like creating and magaging Topics
+    //
+    access(all) resource Administrator {
+        // createTopic creates a new Topic struct 
+        // and stores it in the TopicStorage resource inside the Venezuela_Governance account
+        //
+        // Returns: the ID of the new Topic object
+        //
+        access(all) 
+        fun createTopic(
+            title: String,
+            description: String,
+            minimumVotes: Int,
+            options: [String]) {
+                // Load the TopicStorage from the Venezuela account
+                let topicStorage = Governance.account.storage.borrow<&Governance.TopicStorage>(from: Governance.TopicStoragePath)!
+                // Create the Topic struct
+                let topic = Topic(title, description, minimumVotes, options)
+                // add Topic to the Storage
+                let topicID = topicStorage.addTopic(topic: topic)
+            }
+    }
     init() {
         self.topics = []
         self.nextTopicID = 1

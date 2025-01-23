@@ -16,6 +16,13 @@ func main() {
 	//
 	///// Probando CADENCE en Overflow /////
 	//
+	color.Red("Admin should be able to create the first Topic")
+	o.Tx("admin/create_topic",
+		WithSigner("account"),
+		WithArg("title", "Next Region"),
+		WithArg("description", "Vote on which of the following five regions should be added next. The top 2 will be selected!"),
+		WithArg("minimumVotes", "20"),
+	)
 	color.Red("User should be able to setup their account for IP")
 	o.Tx("influencePoint/setup_ip",
 		WithSigner("bob"),
