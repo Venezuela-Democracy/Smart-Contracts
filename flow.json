@@ -1,7 +1,7 @@
 {
 	"contracts": {
 		"Governance": "./contracts/Governance.cdc",
-		"DevelopmentPoints": "./contracts/DevelopmentPoints.cdc",
+		"DevelopmentPoint": "./contracts/DevelopmentPoint.cdc",
 		"InfluencePoint": "./contracts/InfluencePoint.cdc",
 		"VenezuelaNFT": {
 			"source": "./contracts/VenezuelaNFT.cdc",
@@ -144,6 +144,7 @@
 				"Xorshift128plus",
 				"NFTStorefront",
 				"InfluencePoint",
+				"DevelopmentPoint",
 				"Governance"
 			],
 			"emulator-bob": []

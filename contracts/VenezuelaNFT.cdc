@@ -580,6 +580,7 @@ contract VenezuelaNFT_19: NonFungibleToken, ViewResolver {
             metadata["cardMetadataID"] = self.id
             metadata["nftUUID"] = self.uuid
             metadata["rarity"] = self.rarity
+            metadata["serial"] = self.serial
 
             return metadata
         }
@@ -1401,6 +1402,5 @@ contract VenezuelaNFT_19: NonFungibleToken, ViewResolver {
 		self.account.capabilities.publish(storageCap, at: self.ReceiptStoragePublic)
         // Emit contract init event
 		emit ContractInitialized()
-
     }
 }

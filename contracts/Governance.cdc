@@ -1,9 +1,17 @@
-import InfluencePoint from "./InfluencePoint.cdc"
+import "InfluencePoint"
+import "DevelopmentPoint"
 
 access(all) contract Governance {
 
     access(all) let topics: [Topic]
+    // -----------------------------------------------------------------------
+    // Venezuela_Governance account paths
+    // -----------------------------------------------------------------------
     
+    access(all) let TopicsStoragePath: StoragePath
+	access(all) let TopicsPublicPath: PublicPath
+
+
     access(all) struct Topic {
 
         access(all) let title: String
@@ -14,16 +22,18 @@ access(all) contract Governance {
         access(all) let listVoters: {String: Bool}
         access(all) var endAt: UFix64
 
-        init() {
-            self.title = "Next Region"
-            self.description = "We're voting to select the next region to be integrated."
-            self.minimumVote = 3
-            self.options = []
-            self.options.append("Barinas")
-            self.options.append("Amazonas")
-            self.votes = {}
-            self.votes["Barinas"] = 0
-            self.votes["Amazonas"] = 0
+        init(
+            title: String,
+            description: String,
+            minimumVote: Int,
+            options: [String],
+            votes: {String: Int}
+            ) {
+            self.title = title
+            self.description = description
+            self.minimumVote = minimumVote
+            self.options = options
+            self.votes = votes
             self.listVoters = {}
             self.endAt = getCurrentBlock().timestamp + 86400.0 * 14.0
         }
@@ -53,7 +63,8 @@ access(all) contract Governance {
     init() {
         self.topics = []
 
-        let topic =  Topic()
-        self.topics.append(topic)
+        let identifier = "Venezuela_Governance".concat(self.account.address.toString())
+        self.TopicsStoragePath = StoragePath(identifier: identifier.concat("_Topics"))!
+		self.TopicsPublicPath = PublicPath(identifier: identifier.concat("_Topics"))!
     }
 }
