@@ -43,12 +43,15 @@ func main() {
 		WithArg("topicID", "1"),
 		WithArg("option", "Barinas"),
 	)
-	// Get votes and balance
+	// Get votes
 	color.Red("User should be able to get total votes for all options")
-	o.Script("dao/get_votes")
+	o.Script("dao/get_votes",
+		WithArg("topicID", "1"),
+	)
+	// Get IP balance on Bob
 	color.Red("Bob's IP balance should have increased")
 	o.Script("influencePoint/get_balance",
-		WithArg("account", "bob"),
+		WithArg("address", "bob"),
 	)
 	// Alice votes and her account gets
 	// setup for IP in the same transaction
@@ -71,7 +74,7 @@ func main() {
 	)
 	// Check IP balance for Account
 	o.Script("influencePoint/get_balance",
-		WithArg("account", "account"),
+		WithArg("address", "account"),
 	)
 	// Call to count the votes
 	o.Tx("dao/count_votes",

@@ -26,6 +26,7 @@ access(all) contract Governance {
     // -----------------------------------------------------------------------
     access(all) event ContractInitialized()
     access(all) event NewTopic(topicID: UInt64, topicTitle: String, minimumVotes: Int, endAt: UFix64)
+    access(all) event VoteSubmitted(topicID: UInt64, option: String, voter: Address)
     // -----------------------------------------------------------------------
     // Venezuela_Governance contract-level Composite Type definitions
     // -----------------------------------------------------------------------
@@ -74,7 +75,7 @@ access(all) contract Governance {
         fun vote(account: Address, topicID: UInt64, option: String) {
             pre {
                 self.topicsIDs[topicID]!.hasVoted(account: account) != true: "This account has already voted"
-                self.topicsIDs[topicID]!.votes[option] != nil: "This is not an option for this vote"
+                self.topicsIDs[topicID]!.votes[option] != nil: "This is not an option for this Topic"
             }
 
             self.topicsIDs[topicID]!.vote(account: account, option: option)
@@ -131,6 +132,7 @@ access(all) contract Governance {
             }
             return false
         }
+        // Vote Function
         access(all) fun vote(account: Address, option: String) {
             pre {
                 self.hasVoted(account: account) != true: "This account has already voted"
@@ -138,6 +140,9 @@ access(all) contract Governance {
             }
 
             self.votes[option] = self.votes[option]! + 1
+
+            // emit vote event
+            emit VoteSubmitted(topicID: self.id, option: option, voter: account)
         }
     }
 
@@ -172,8 +177,10 @@ access(all) contract Governance {
     // -----------------------------------------------------------------------
     // Governance public functions
     // -----------------------------------------------------------------------
+
     // Public function to get list of Topics
-    access(all) view fun getTopics(): {UInt64: Topic} {
+    access(all) 
+    view fun getTopics(): {UInt64: Topic} {
         // Load the TopicStorage from the Venezuela account
         let topicStorage = Governance.account.storage.borrow<&Governance.TopicStorage>(from: Governance.TopicStoragePath)!
         // get topics
@@ -181,7 +188,19 @@ access(all) contract Governance {
         // return topics
         return topics
     }
-    access(all) fun vote(topicID: UInt64, account: Address, option: String) {
+    // Public function to get the list of options
+    // and their vote count on a Topic
+    access(all)
+    view fun getVotes(topicID: UInt64): {String: Int} {
+        // Load the TopicStorage from the Venezuela account
+        let topicStorage = Governance.account.storage.borrow<&Governance.TopicStorage>(from: Governance.TopicStoragePath)!
+        let topic = topicStorage.getTopic(topicID: topicID)
+        return topic.votes
+    }
+
+    // Public function to vote on a Topic
+    access(all)
+    fun vote(topicID: UInt64, account: Address, option: String) {
 /*         pre {
             self.topics[topicID] == nil: "This Topic doesn't exists"
         } */
