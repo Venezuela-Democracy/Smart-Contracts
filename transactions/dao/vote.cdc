@@ -1,10 +1,10 @@
 import Governance from "../../contracts/Governance.cdc"
 
-transaction(option: String) {
+transaction(topicID: UInt64, option: String) {
 
     prepare(signer: &Account) {
 
-        Governance.vote(account: signer.address, option: option)
+        Governance.vote(topicID: topicID, account: signer.address, option: option)
     }
-
+    
 }
