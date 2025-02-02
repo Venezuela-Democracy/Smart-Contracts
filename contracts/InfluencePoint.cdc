@@ -32,6 +32,9 @@ contract InfluencePoint: FungibleToken{
     // Defines token minter storage path
     access(all)
     let TokenMinterStoragePath: StoragePath
+
+    access(all)
+    let AdminStoragePath: StoragePath
     
     // Event that is emitted when the contract is created
     access(all)
@@ -328,6 +331,7 @@ contract InfluencePoint: FungibleToken{
         self.TokenPublicReceiverPath = /public/InfluencePointReceiver
         self.TokenPublicBalancePath = /public/InfluencePointBalance
         self.TokenMinterStoragePath = /storage/InfluencePointMinter
+        self.AdminStoragePath = /storage/InfluencePointAdmin
         
         // Create the Vault with the total supply of tokens and save it in storage
         let vault <- create Vault(balance: self.totalSupply)
@@ -342,8 +346,12 @@ contract InfluencePoint: FungibleToken{
         // the `balance` field through the `Balance` interface
         var capability_2 = self.account.capabilities.storage.issue<&InfluencePoint.Vault>(self.TokenStoragePath)
         self.account.capabilities.publish(capability_2, at: self.TokenPublicBalancePath)
+        // create an Admin resource and store it
         let admin <- create Administrator()
-        self.account.storage.save(<-admin, to: /storage/InfluencePointAdmin)
+        self.account.storage.save(<-admin, to: self.AdminStoragePath)
+        // create a Minter resource and store it
+        let minter <- create Minter(allowedAmount: 350_000_000.0)
+        self.account.storage.save(<-minter, to: self.TokenMinterStoragePath)
         
         // Emit an event that shows that the contract was initialized
         emit TokensInitialized(initialSupply: self.totalSupply)

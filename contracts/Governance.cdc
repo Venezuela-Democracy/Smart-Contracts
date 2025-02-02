@@ -1,4 +1,5 @@
 import "InfluencePoint"
+import "FungibleToken"
 import "DevelopmentPoint"
 
 access(all) contract Governance {
@@ -143,6 +144,19 @@ access(all) contract Governance {
             self.votes[option] = self.votes[option]! + 1
             self.listVoters[account.toString()] = true
 
+            // Transfer Influence points to the account 
+            // Borrow a reference to the admin object
+            let tokenMinter: auth(InfluencePoint.MinterEntitlement) &InfluencePoint.Minter = Governance.account.storage.borrow<auth(InfluencePoint.MinterEntitlement) &InfluencePoint.Minter>(from: InfluencePoint.TokenMinterStoragePath)!
+            //let tokenMinter = Governance.account.storage.borrow<&InfluencePoint.Minter>(from: InfluencePoint.TokenMinterStoragePath)
+              //  ?? panic("Cannot mint: Signer does not store the InfluencePoint Minter in the contract deployer account! KAOS!!!1")
+
+            let tokenReceiver = getAccount(account).capabilities.borrow<&{FungibleToken.Receiver}>(InfluencePoint.TokenPublicReceiverPath)
+                ?? panic("This account is infected with oligarch thoughts")
+
+            // Create mint tokens
+            let mintedVault <- tokenMinter.mintTokens(amount: 10.0)
+            // Deposit to account
+            tokenReceiver.deposit(from: <- mintedVault)
             // emit vote event
             emit VoteSubmitted(topicID: self.id, option: option, voter: account)
         }
