@@ -1,7 +1,7 @@
 {
 	"contracts": {
-		"Governance": "./contracts/Governance.cdc",
 		"DevelopmentPoint": "./contracts/DevelopmentPoint.cdc",
+		"Governance": "./contracts/Governance.cdc",
 		"InfluencePoint": "./contracts/InfluencePoint.cdc",
 		"VenezuelaNFT": {
 			"source": "./contracts/VenezuelaNFT.cdc",
@@ -122,14 +122,15 @@
 		},
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
-			"key": {
-				"type": "file",
-				"location": "emulator-account.pkey"
-			}
+			"key": "af2967dbdf3d1bd15046efbd7b3841be3f9f3f92ab2264f336101f3302f18f72"
 		},
 		"emulator-bob": {
+			"address": "f3fcd2c1a78f5eee",
+			"key": "3b90c6ed0051a32a9bbbd8d584d04f9db4948a63974e0a4ac70d637193d7e4c7"
+		},
+		"emulator-alice": {
 			"address": "179b6b1cb6755e31",
-			"key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
+			"key": "7d83b4ce78fe1366e9a39001020450f348669355dfbebb94b23fc1578122d78d"
 		},
 		"testnet-Telegram": {
 			"address": "826dae42290107c3",
@@ -147,7 +148,8 @@
 				"DevelopmentPoint",
 				"Governance"
 			],
-			"emulator-bob": []
+			"emulator-bob": [],
+			"emulator-alice": []
 		},
 		"testnet": {
 			"testnet-Telegram": [

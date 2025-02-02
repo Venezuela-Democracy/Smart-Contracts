@@ -27,17 +27,17 @@ func main() {
 	// Get list of topics
 	o.Script("dao/get_topics")
 	// Setup bob with IP
-	color.Red("User should be able to setup their account for IP")
+	color.Red("Bob should be able to setup their account for IP")
 	o.Tx("influencePoint/setup_ip",
 		WithSigner("bob"),
 	)
 	// Get IP balance
-	color.Red("User should be able to check their IP balance")
+	color.Red("Bob should be able to check their IP balance")
 	o.Script("influencePoint/get_balance",
 		WithArg("address", "bob"),
 	)
 	// Vote
-	color.Red("User should be able to submit a vote")
+	color.Red("Bob should be able to submit a vote")
 	o.Tx("dao/vote",
 		WithSigner("bob"),
 		WithArg("topicID", "1"),
@@ -53,32 +53,28 @@ func main() {
 	o.Script("influencePoint/get_balance",
 		WithArg("address", "bob"),
 	)
-	// Alice votes and her account gets
+	// Account votes and her account gets
 	// setup for IP in the same transaction
-	color.Red("Alice will vote now")
-	o.Tx("dao/vote_setup",
-		WithSigner("alice"),
-		WithArg("topicID", "1"),
-		WithArg("option", "1"),
-	)
-	// Check IP balance for Alice
-	o.Script("influencePoint/get_balance",
-		WithArg("account", "alice"),
-	)
-	// Account will also vote to reach minimum voters
 	color.Red("Account will vote now")
 	o.Tx("dao/vote_setup",
 		WithSigner("account"),
-		WithArg("topicID", "0"),
-		WithArg("option", "0"),
+		WithArg("topicID", "1"),
+		WithArg("option", "Barinas"),
 	)
 	// Check IP balance for Account
 	o.Script("influencePoint/get_balance",
 		WithArg("address", "account"),
 	)
-	// Call to count the votes
-	o.Tx("dao/count_votes",
+	// Alice will also vote to reach minimum voters
+	color.Red("Alice will vote now")
+	o.Tx("dao/vote_setup",
 		WithSigner("alice"),
-		WithArg("topicID", "0"),
+		WithArg("topicID", "1"),
+		WithArg("option", "Amazonas"),
 	)
+	// Check IP balance for Account
+	o.Script("influencePoint/get_balance",
+		WithArg("address", "alice"),
+	)
+
 }

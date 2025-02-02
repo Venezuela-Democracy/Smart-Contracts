@@ -74,8 +74,9 @@ access(all) contract Governance {
         access(all)
         fun vote(account: Address, topicID: UInt64, option: String) {
             pre {
-                self.topicsIDs[topicID]!.hasVoted(account: account) != true: "This account has already voted"
+                self.topicsIDs[topicID] != nil: "There's no Topic with this ID"
                 self.topicsIDs[topicID]!.votes[option] != nil: "This is not an option for this Topic"
+                self.topicsIDs[topicID]!.hasVoted(account: account) == false: "This account has already voted"
             }
 
             self.topicsIDs[topicID]!.vote(account: account, option: option)
@@ -135,11 +136,12 @@ access(all) contract Governance {
         // Vote Function
         access(all) fun vote(account: Address, option: String) {
             pre {
-                self.hasVoted(account: account) != true: "This account has already voted"
+                self.hasVoted(account: account) == false: "This account has already voted"
                 self.votes[option] != nil: "This is not an option for this vote"
             }
 
             self.votes[option] = self.votes[option]! + 1
+            self.listVoters[account.toString()] = true
 
             // emit vote event
             emit VoteSubmitted(topicID: self.id, option: option, voter: account)

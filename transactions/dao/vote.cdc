@@ -1,4 +1,4 @@
-import Governance from "../../contracts/Governance.cdc"
+import "Governance"
 
 transaction(topicID: UInt64, option: String) {
 
@@ -6,5 +6,5 @@ transaction(topicID: UInt64, option: String) {
 
         Governance.vote(topicID: topicID, account: signer.address, option: option)
     }
-    
+
 }

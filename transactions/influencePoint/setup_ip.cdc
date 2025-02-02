@@ -2,7 +2,7 @@
 // anyone to add a Vault resource to their account so that
 // they can use the InfluencePoint
 
-import InfluencePoint from "../../contracts/InfluencePoint.cdc"
+import "InfluencePoint"
 import "FungibleToken"
 import "ViewResolver"
 import "FungibleTokenMetadataViews"
