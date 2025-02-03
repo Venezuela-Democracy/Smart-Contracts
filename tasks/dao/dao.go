@@ -76,5 +76,9 @@ func main() {
 	o.Script("influencePoint/get_balance",
 		WithArg("address", "alice"),
 	)
-
+	// Get votes
+	color.Red("User should be able to get total votes for all options")
+	o.Script("dao/get_votes",
+		WithArg("topicID", "1"),
+	)
 }

@@ -32,6 +32,33 @@ access(all) contract Governance {
     // Venezuela_Governance contract-level Composite Type definitions
     // -----------------------------------------------------------------------
 
+    // Region is a resource type that contains the functions and
+    // the Development Point balance of each region 
+    access(all) resource Region {
+        // Region name
+        access(all) let name: String
+        // region DP vault
+        access(self) let DPvault: @DevelopmentPoint.Vault
+        // DP minter resource
+        access(self) let DPminter: @DevelopmentPoint.Minter
+
+        init(name: String) {
+            self.name = name
+            self.DPvault <- DevelopmentPoint.createEmptyVault(vaultType: DevelopmentPoint.Vault.getType())
+
+            // Borrow a reference to the admin object
+            let DPadmin = Governance.account.storage.borrow<auth(DevelopmentPoint.AdministratorEntitlement) &DevelopmentPoint.Administrator>(from: DevelopmentPoint.AdminStoragePath)  
+
+
+        }
+
+        // function to deposit DP
+        access(all)
+        fun deposit(from: @{FungibleToken.Vault}): Void {
+            self.DPvault.deposit(from: <-from)
+        }
+    }
+
     /// Defines the methods that are particular to the Topics storage
     ///
     access(all) resource interface TopicStoragePublic {
@@ -114,7 +141,7 @@ access(all) contract Governance {
             self.minimumVotes = minimumVote
             self.options = options
             self.listVoters = {}
-            self.endAt = getCurrentBlock().timestamp + 86400.0 * 14.0
+            self.endAt = getCurrentBlock().timestamp + 86400.0 * 14.0 // Set top lock in 14 dayss
             self.votes = {}
 
             var counter = 0

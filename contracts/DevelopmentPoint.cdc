@@ -32,6 +32,9 @@ contract DevelopmentPoint: FungibleToken{
     // Defines token minter storage path
     access(all)
     let TokenMinterStoragePath: StoragePath
+
+    access(all)
+    let AdminStoragePath: StoragePath
     
     // Event that is emitted when the contract is created
     access(all)
@@ -328,7 +331,8 @@ contract DevelopmentPoint: FungibleToken{
         self.TokenPublicReceiverPath = /public/DevelopmentPointReceiver
         self.TokenPublicBalancePath = /public/DevelopmentPointBalance
         self.TokenMinterStoragePath = /storage/DevelopmentPointMinter
-        
+        self.AdminStoragePath = /storage/InfluencePointAdmin
+
         // Create the Vault with the total supply of tokens and save it in storage
         let vault <- create Vault(balance: self.totalSupply)
         self.account.storage.save(<-vault, to: self.TokenStoragePath)
@@ -343,7 +347,7 @@ contract DevelopmentPoint: FungibleToken{
         var capability_2 = self.account.capabilities.storage.issue<&DevelopmentPoint.Vault>(self.TokenStoragePath)
         self.account.capabilities.publish(capability_2, at: self.TokenPublicBalancePath)
         let admin <- create Administrator()
-        self.account.storage.save(<-admin, to: /storage/DevelopmentPointAdmin)
+        self.account.storage.save(<-admin, to: self.AdminStoragePath)
         
         // Emit an event that shows that the contract was initialized
         emit TokensInitialized(initialSupply: self.totalSupply)
